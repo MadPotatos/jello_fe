@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Button, Table, Input, Breadcrumb } from 'antd';
+import { Button, Table, Input, Breadcrumb, Popover, Avatar } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Backend_URL } from '@/lib/Constants';
-import Link from 'next/link';
-import { Project } from '@/lib/types';
-import { ColumnsType } from 'antd/es/table';
+import { Leader, Project } from '@/lib/types';
 
-const { Column } = Table;
 const { Search } = Input;
 
 const ProjectList = () => {
@@ -16,16 +13,29 @@ const ProjectList = () => {
   const pathname = usePathname();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const fetchProjects = async (userId: number) => {
     setLoading(true);
     try {
       const response = await fetch(`${Backend_URL}/project/all/${userId}`);
-      const rawData: { projects: Project[] } = await response.json();
-      setProjects(rawData.projects);
+      const { projects } = await response.json();
+      setProjects(projects);
       setLoading(false);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+     const handleSearch = (value: string) => {
+    setSearchValue(value);
+    if (value.trim() === '') {
+      fetchProjects(parseInt(pathname.split('/')[2]));
+    } else {
+      const filteredProjects = projects.filter(project =>
+        project.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setProjects(filteredProjects);
     }
   };
 
@@ -35,53 +45,82 @@ const ProjectList = () => {
   }, [pathname]);
 
   const columns = [
-  {
-    title: 'Project',
-    dataIndex: 'image',
-    key: 'project',
-    render: (text: string, record: Project) => (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img
-          src={text || '/images/logo.png'} 
-          alt="Project"
-          style={{ width: '50px', borderRadius: '10%' }}
-        />
-        <span style={{ marginLeft: '20px', fontWeight: 'bold', color: '#1890ff' }}>{record.name}</span>
-      </div>
-    ),
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-  },
-  {
-    title: 'Leader',
-    dataIndex: 'leaderAvatar',
-    key: 'leaderAvatar',
-    render: (avatar: string, record: Project) => (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img
-          src={avatar || '/images/default_avatar.jpg'}  
-          alt="Leader Avatar"
-          style={{ width: '40px', borderRadius: '50%', marginRight: '8px' }}
-        />
-        <span>{record?.leaderName}</span>
-      </div>
-    ),
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text: any, record: Project) => (
-      <Button size="small" danger onClick={() => console.log('Delete project', record.id)}>
-        Delete
-      </Button>
-    ),
-  },
-];
+    {
+      title: 'Project',
+      dataIndex: 'image',
+      key: 'project',
+      render: (text: string, record: Project) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={text || '/images/logo.png'} 
+            alt="Project"
+            style={{ width: '50px', borderRadius: '10%' }}
+          />
+          <span style={{ marginLeft: '20px', fontWeight: 'bold', color: '#1890ff' }}>{record.name}</span>
+        </div>
+      ),
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      width: '40%',
+    },
+    {
+      title: 'Leader',
+      dataIndex: 'leader',
+      key: 'leader',
+      render: (leader: Leader, record: Project) => (
+        <Popover
+          content={
+            <div className="max-w-xs py-3 rounded-lg">
+              <div className="flex photo-wrapper p-2 justify-center">
+                <Avatar src={leader.avatar || '/images/default_avatar.jpg'} size={64} />
+              </div>
+              <div className="p-2">
+                <h3 className="text-center text-xl text-gray-900 font-medium leading-8">{leader.name}</h3>
+                <div className="text-center text-gray-400 text-xs font-semibold">
+                  <p>{leader.email}</p>
+                </div>
+                <div className="text-center my-3">
+                  <a
+                    className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
+                    href={`/profile/${leader.userId}`}
+                  >
+                    View Profile
+                  </a>
+                </div>
+              </div>
+            </div>
+          }
+          title=""
+          trigger="click"
+        >
+          <div 
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          >
+            <Avatar
+              src={leader.avatar || '/images/default_avatar.jpg'}  
+              size={48}
+              style={{  marginRight: '10px' }}
+            />
+            <span>{leader.name}</span>
+          </div>
+        </Popover>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: any, record: Project) => (
+        <Button size="small" danger onClick={() => console.log('Delete project', record.id)}>
+          Delete
+        </Button>
+      ),
+    },
+  ];
 
-   return (
+ return (
     <div className="w-full flex flex-col justify-center px-16 py-4">
       <Breadcrumb style={{ margin: '16px 0', fontSize: '18px' }}
       items={[
@@ -96,7 +135,7 @@ const ProjectList = () => {
           placeholder="Search projects"
           prefix={<SearchOutlined />}
           style={{ width: '300px', fontSize: '16px' }}
-          onSearch={(value) => console.log('Search:', value)}
+          onSearch={handleSearch}
         />
         <Button 
           type="primary" 

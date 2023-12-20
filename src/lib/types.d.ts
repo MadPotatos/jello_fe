@@ -6,11 +6,19 @@ export type User = {
 };
 
 export type Project = {
-  id: string;
+  id: number;
   name: string;
   image?: string;
   repo?: string;
   description?: string;
-  leaderName?: string;
-  leaderAvatar?: string;
+  leader?: Leader;
+};
+
+export type Leader = {
+  userId: number;
+  projectId: number;
+  name: string;
+  avatar: string;
+  email: string;
+  isAdmin: boolean;
 };

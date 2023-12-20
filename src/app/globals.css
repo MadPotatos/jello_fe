@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-body {
-  padding: 20px; 
+.ant-table table{
+  font-size: 16px;
 }
