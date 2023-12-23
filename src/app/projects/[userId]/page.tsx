@@ -5,6 +5,7 @@ import { Button, Table, Input, Breadcrumb, Popover, Avatar } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Backend_URL } from '@/lib/Constants';
 import { Leader, Project } from '@/lib/types';
+import CreateProjectModel from './CreateProjectModel';
 
 const { Search } = Input;
 
@@ -14,6 +15,16 @@ const ProjectList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState<string>('');
+   const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const fetchProjects = async (userId: number) => {
     setLoading(true);
@@ -137,15 +148,25 @@ const ProjectList = () => {
           style={{ width: '300px', fontSize: '16px' }}
           onSearch={handleSearch}
         />
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          style={{ backgroundColor: '#1890ff', borderColor: '#1890ff', fontSize: '16px' }}>
+       <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          style={{ backgroundColor: '#1890ff',  fontSize: '16px' }}
+          onClick={showModal} 
+        >
           Create Project
         </Button>
       </div>
 
-      <Table dataSource={projects} columns={columns} loading={loading} rowKey="id" style={{ fontSize: '16px' }} />
+      <Table dataSource={projects} columns={columns} loading={loading} rowKey="id" />
+
+       <CreateProjectModel
+        visible={isModalVisible}
+        onCreate={(createdProject: any) => {
+          setProjects([...projects, createdProject]);
+        }}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };
