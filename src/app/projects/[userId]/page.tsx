@@ -96,7 +96,7 @@ const ProjectList = () => {
                 <div className="text-center my-3">
                   <a
                     className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
-                    href={`/profile/${leader.userId}`}
+                    href={`/user/${leader.userId}`}
                   >
                     View Profile
                   </a>
