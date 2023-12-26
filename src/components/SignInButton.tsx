@@ -3,7 +3,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Menu, Space, Divider, theme } from 'antd';
 import type { MenuProps } from 'antd';
 import { useSession, signOut } from 'next-auth/react';
-import { SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
 const { useToken } = theme;
@@ -34,7 +34,7 @@ const SignInButton: React.FC = () => {
       ),
       disabled: true,
     },
-    { key: 'manage-account', label: 'Manage Account', icon: <SettingOutlined />, onClick: () => handleNavigate('/manage-account') },
+    { key: 'manage-account', label: 'Profile', icon: <UserOutlined/>, onClick: () => handleNavigate('/user/'+ session?.user.id) },
     { key: 'signout', label: 'Sign Out', icon: <LogoutOutlined />, onClick: handleSignOut },
   ];
 
