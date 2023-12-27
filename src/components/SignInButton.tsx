@@ -12,6 +12,11 @@ const SignInButton: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
+   const appendTimestamp = (url: string) => {
+    const timestamp = new Date().getTime();
+    return `${url}?timestamp=${timestamp}`;
+  };
+
   const handleSignOut = () => {
     signOut();
   };
@@ -25,7 +30,7 @@ const SignInButton: React.FC = () => {
       key: 'profile',
       label: (
         <div className="flex items-center">
-          <Avatar size="large" src={session?.user?.avatar} alt={session?.user?.name} className="mr-2" />
+          <Avatar size="large" src={appendTimestamp(session?.user?.avatar ?? '')} alt={session?.user?.name} />
           <div>
             <div className="text-sky-600">{session?.user?.name}</div>
             <div className="text-gray-500">{session?.user?.email}</div>
