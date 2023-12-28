@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Form, Input, Button, Avatar, Spin, message, notification, Modal, Card } from 'antd';
 import { Backend_URL } from '@/lib/Constants';
-import { useSession } from 'next-auth/react';
+import {useSession} from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import UploadImage from '@/components/UploadImage';
 import { EditOutlined ,CheckCircleOutlined} from '@ant-design/icons';
@@ -13,7 +13,7 @@ const Profile = () => {
   const [user, setUser] = useState<any>({});
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { data: session } = useSession();
+  const { data: session,update } = useSession();
   const pathname = usePathname();
   const [image, setImage] = useState<string>(user.avatar || "");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -87,7 +87,9 @@ const Profile = () => {
       await updateUser({ id: user.id, ...values });
       setEditable(false);
       showSuccessNotification();
-      window.location.reload();
+       await update();
+     window.location.reload();
+     
     } catch (error) {
       if ((error as Error).message === 'Email already taken') {
         showEmailTakenNotification();
@@ -117,6 +119,7 @@ const Profile = () => {
 
   useEffect(() => {
     const id: number = parseInt(pathname.split('/')[2], 10);
+
     const fetchData = async () => {
       setLoading(true);
       try {

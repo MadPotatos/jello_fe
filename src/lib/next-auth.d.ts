@@ -25,6 +25,7 @@ declare module "next-auth/jwt" {
       id: number;
       email: string;
       name: string;
+      avatar?: string;
     };
 
     backendTokens: {
