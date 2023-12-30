@@ -131,6 +131,8 @@ const ProjectList = () => {
     },
   ];
 
+   
+
  return (
     <div className="w-full flex flex-col justify-center px-16 py-4">
       <Breadcrumb style={{ margin: '16px 0', fontSize: '18px' }}
@@ -158,7 +160,15 @@ const ProjectList = () => {
         </Button>
       </div>
 
-      <Table dataSource={projects} columns={columns} loading={loading} rowKey="id" />
+      <Table dataSource={projects} 
+        columns={columns} 
+        loading={loading} 
+        rowKey="id" 
+        onRow={(record) => {
+          return {
+            onClick: () => router.push(`/projects/detail/${record.id}`)
+        };
+      }}/>
 
        <CreateProjectModel
         visible={isModalVisible}
