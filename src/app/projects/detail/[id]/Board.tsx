@@ -64,7 +64,7 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
             // Update the updatedAt field for the issue after reordering (if it's an issue)
             if (!isListType) {
                 await fetch(`${Backend_URL}/issues/update/${body.id}`, {
-                    method: 'PUT', // Assuming you use PUT for updating issues
+                    method: 'PUT', 
                     headers: {
                         'Content-Type': 'application/json',
                     },
