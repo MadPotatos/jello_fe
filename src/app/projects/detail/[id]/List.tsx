@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { CheckSquareFilled, BugFilled, ThunderboltFilled, DownOutlined, UpOutlined, MinusOutlined } from '@ant-design/icons';
-import { Button, Input, message } from 'antd';
-import { EditOutlined, CheckOutlined } from '@ant-design/icons';
+import { Button, Input, Modal, message } from 'antd';
+import { EditOutlined, CheckOutlined,CloseOutlined ,DeleteOutlined} from '@ant-design/icons';
 import { Backend_URL } from '@/lib/Constants';
 
 interface ListProps {
   list: any;
   issues: any;
   index: number;
+   onDeleteList: (listId: number) => void;
 }
 
-const List: React.FC<ListProps> = ({ list, issues, index }) => {
+const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
 
       setNewListName(list.name);
     
   }, [list.name]);
+
+  const handleShowModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleHideModal = () => {
+    setIsModalVisible(false);
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -52,6 +62,30 @@ const List: React.FC<ListProps> = ({ list, issues, index }) => {
     }
   };
 
+    const handleDeleteClick = () => {
+    handleShowModal();
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`${Backend_URL}/list/${list.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        message.success('List deleted successfully!');
+        onDeleteList(list.id);
+      } else {
+        throw new Error('Failed to delete list');
+      }
+    } catch (error) {
+      console.error('Failed to delete list:', error);
+      message.error('Failed to delete list');
+    } finally {
+      handleHideModal();
+    }
+  };
+
   return (
     <Draggable draggableId={`list-${list.id}`} index={index}>
       {(provided) => (
@@ -67,6 +101,7 @@ const List: React.FC<ListProps> = ({ list, issues, index }) => {
                   value={newListName}
                   onChange={handleNameChange}
                   placeholder={list.name}
+                  className='bg-transparent text-lg font-medium text-gray-900'
                 />
               </div>
             ) : (
@@ -76,13 +111,23 @@ const List: React.FC<ListProps> = ({ list, issues, index }) => {
             )}
 
             {isEditing ? (
+                <div className='flex'>
               <Button type="text" onClick={handleSaveClick}>
                 <CheckOutlined style={{ color: '#39e75f' }} />
               </Button>
+                <Button type="text" onClick={() => setIsEditing(false)}>
+                    <CloseOutlined style={{ color: '#f44336' }} />
+                </Button>
+                </div>
             ) : (
+                <div className='flex'>
               <Button type="text" onClick={handleEditClick}>
                 <EditOutlined />
               </Button>
+              <Button type="text" danger onClick={handleDeleteClick}>
+                <DeleteOutlined />
+                </Button>
+                </div>
             )}
           </div>
           <Droppable droppableId={`list-${list.id}`} type="ISSUE">
@@ -130,6 +175,15 @@ const List: React.FC<ListProps> = ({ list, issues, index }) => {
               </div>
             )}
           </Droppable>
+          <Modal
+            title="Confirm Deletion"
+            open={isModalVisible}
+            onOk={handleConfirmDelete}
+            onCancel={handleHideModal}
+            okButtonProps={{style: {backgroundColor: '#1890ff'}}}
+          >
+            <p>Are you sure you want to delete this list?</p>
+          </Modal>
         </div>
       )}
     </Draggable>

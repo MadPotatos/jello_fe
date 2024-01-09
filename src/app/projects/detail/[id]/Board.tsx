@@ -3,7 +3,8 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import List from './List';
 import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation';
-
+import { Button, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 interface BoardProps {
     lists: any[];
     issues: any;
@@ -33,7 +34,7 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
         const body = isListType
             ? {
                     id, // The id of the list being reordered
-                    order: result.source.index, // The current order of the list
+                    order: result.source.index, // The current order of the list +1
                     newOrder: result.destination.index, // The new order of the list after reordering
                     projectId: projectId,
                 }
@@ -89,6 +90,32 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
             console.error('Error reordering:', error);        }
     };
 
+    const handleCreateList = async () => {
+        try {
+            const response = await fetch(`${Backend_URL}/list`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ projectId }),
+            });
+
+            if (response.ok) {
+                const newList = await response.json();
+                setLists([...lists, newList]);
+                message.success('List created successfully!');
+            } else {
+                throw new Error('Failed to create list');
+            }
+        } catch (error) {
+            console.error('Error creating list:', error);
+        }
+    };
+    const handleDeleteList = (listId: number) => {
+    const updatedLists = lists.filter((list) => list.id !== listId);
+    setLists(updatedLists);
+  };
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="board" direction="horizontal" type="LIST">
@@ -98,16 +125,20 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
                             <Draggable key={`list-${list.id}`} draggableId={`list-${list.id}`} index={index}>
                                 {(provided) => (
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
-                                    className="min-w-80 flex-grow">
-                                        <List key={list.id} list={list} issues={issues} index={list.order} />
+                                    className="w-80 flex-none">
+                                        <List key={list.id} list={list} issues={issues} index={list.order} onDeleteList={handleDeleteList} />
                                     </div>
                                 )}
                             </Draggable>
                         ))}
                         {provided.placeholder}
+                        <Button type="default" size="large" className="mx-auto bg-gray-100 border-none" onClick={handleCreateList}>
+                            <PlusOutlined />
+                        </Button> 
                     </div>
                 )}
             </Droppable>
+                                 
         </DragDropContext>
     );
 };
