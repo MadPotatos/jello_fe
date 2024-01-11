@@ -1,21 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { CheckSquareFilled, BugFilled, ThunderboltFilled, DownOutlined, UpOutlined, MinusOutlined } from '@ant-design/icons';
-import { Button, Input, Modal, message } from 'antd';
+import { Button, Form, Input, Modal, Radio, Select, message } from 'antd';
 import { EditOutlined, CheckOutlined,CloseOutlined ,DeleteOutlined} from '@ant-design/icons';
 import { Backend_URL } from '@/lib/Constants';
+import Issue from './Issue';
+import { useSession } from 'next-auth/react';
+import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
+
 
 interface ListProps {
   list: any;
   issues: any;
   index: number;
-   onDeleteList: (listId: number) => void;
+  onDeleteList: (listId: number) => void;
+  onCreateIssue: (createdIssue: any) => void;
 }
 
-const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList }) => {
+const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList,onCreateIssue }) => {
+  const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { data: session } = useSession();
+
+  const handleCreateIssueClick = () => {
+    setIsCreatingIssue(true);
+  };
+
+  const handleCloseIssueForm = () => {
+    setIsCreatingIssue(false);
+  };
 
   useEffect(() => {
 
@@ -86,7 +100,38 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList }) => {
     }
   };
 
+  const handleSubmitIssue = async (values: any) => {
+    try {
+    
+      values.listId = list.id;
+      values.reporterId = session?.user.id;
+
+
+      const response = await fetch(`${Backend_URL}/issues`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${session?.backendTokens.accessToken}`,
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const createdIssue = await response.json();
+        onCreateIssue(createdIssue);
+        setIsCreatingIssue(false);
+        message.success('Issue created successfully!');
+      } else {
+        throw new Error('Failed to create issue');
+      }
+    } catch (error) {
+      console.error('Error creating issue:', error);
+      message.error('Failed to create issue');
+    }
+  };
+
   return (
+    console.log(index),
     <Draggable draggableId={`list-${list.id}`} index={index}>
       {(provided) => (
         <div
@@ -133,48 +178,94 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList }) => {
           <Droppable droppableId={`list-${list.id}`} type="ISSUE">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {issues[index] && Array.isArray(issues[index])
-                  ? issues[index].map((issue: any, innerIndex: number) => (
-                    <Draggable key={issue.id} draggableId={`issue-${issue.id}`} index={innerIndex}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="bg-white shadow-md mb-2 group"
-                        >
-                          <div className="p-3">
-                            <div className="flex flex-col ">
-                              <span className="font-medium text-base text-gray-900">{issue.summary}</span>
-                              <div className="mt-3 flex items-center justify-between">
-                                <div className='mb-1 flex items-center text-lg gap-2'>
-                                  {issue.type === 1
-                                    ? <CheckSquareFilled style={{ color: issueTypeColorMapping[issue.type] }} />
-                                    : issue.type === 2
-                                      ? <BugFilled style={{ color: issueTypeColorMapping[issue.type] }} />
-                                      : <ThunderboltFilled style={{ color: issueTypeColorMapping[issue.type] }} />}
-
-                                  {issue.priority === 1
-                                    ? <UpOutlined style={{ color: priorityColorMapping[issue.priority] }} />
-                                    : issue.priority === 2
-                                      ? <MinusOutlined style={{ color: priorityColorMapping[issue.priority] }} />
-
-                                      : <DownOutlined style={{ color: priorityColorMapping[issue.priority] }} />}
-                                </div>
-                                <div></div>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))
-                  : null}
+                {issues[list.id] && Array.isArray(issues[list.id])
+                ? issues[list.id].map((issue: any, innerIndex: number) => (
+                 <Issue key={issue.id} issue={issue} index={innerIndex} />              
+             ))
+                : null}
                 {provided.placeholder}
-              </div>
+            </div>
             )}
           </Droppable>
+            {isCreatingIssue ? (
+            <Form
+                onFinish={handleSubmitIssue}
+                className="flex flex-col mt-4 bg-white shadow-md"
+                layout="vertical"
+                initialValues={{
+                    summary: '',
+                    type: 1,
+                    priority: 1,
+                }}
+                >
+                    <div className="p-3">
+                <Form.Item
+                    name="summary"
+                    rules={[{ required: true, message: 'Please enter issue summary' }]}
+                >
+                    <Input 
+                        placeholder="What needs to be done?"
+                        bordered={false}
+                         />
+                </Form.Item>
+
+                <div className="flex items-center">
+                    <Form.Item name="type">
+                    <Select
+                        placeholder="Select issue type"
+                    >
+                        <Select.Option value={1}>
+                        {getColoredIconByIssueType(1)} Task
+                        </Select.Option>
+                        <Select.Option value={2}>
+                        {getColoredIconByIssueType(2)} Bug
+                        </Select.Option>
+                        <Select.Option value={3}>
+                        {getColoredIconByIssueType(3)} Review
+                        </Select.Option>
+                    </Select>
+                    </Form.Item>
+
+                    <Form.Item name="priority" style={{ marginLeft: '10px' }}>
+                    <Select
+                        placeholder="Select priority"
+                        
+                    >
+                        <Select.Option value={1}>
+                        {getColoredIconByPriority(1)} High
+                        </Select.Option>
+                        <Select.Option value={2}>
+                        {getColoredIconByPriority(2)} Medium
+                        </Select.Option>
+                        <Select.Option value={3}>
+                        {getColoredIconByPriority(3)} Low
+                        </Select.Option>
+                    </Select>
+                    </Form.Item>
+                </div>
+
+                <div className="flex justify-between">
+                    <Button type="default" onClick={handleCloseIssueForm}>
+                    Cancel
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        htmlType="submit" 
+                        style={{ backgroundColor: '#1890ff'}}>
+                    Create Issue
+                    </Button>
+                </div>
+                </div>
+                    </Form>
+            ) : (
+                <Button
+                type="text"
+                size="large"
+                onClick={handleCreateIssueClick}
+                >
+                + Add Issue
+                </Button>
+            )}
           <Modal
             title="Confirm Deletion"
             open={isModalVisible}
@@ -190,16 +281,6 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList }) => {
   );
 };
 
-const issueTypeColorMapping: { [key: number]: string } = {
-  1: '#1890ff',
-  2: 'red',
-  3: 'orange',
-};
 
-const priorityColorMapping: { [key: number]: string } = {
-  1: 'red',
-  2: 'orange',
-  3: '#1890ff',
-};
 
 export default List;

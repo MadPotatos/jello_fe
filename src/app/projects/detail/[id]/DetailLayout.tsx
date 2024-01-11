@@ -25,12 +25,12 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children, project }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar project={project} />
-      <Layout>
+      <Layout className="bg-white">
        <Breadcrumb
         items={breadcrumbItems}
         className="px-4 py-2 text-base hover:text-blue-500"
       />
-      <Content style={{ padding: 24, margin: 20, minHeight: 280, backgroundColor: 'white' }}>
+      <Content className="p-6 m-5 min-h-280">
         {children}
       </Content>
       </Layout>

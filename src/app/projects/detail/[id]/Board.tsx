@@ -116,18 +116,27 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
     setLists(updatedLists);
   };
 
+  const handleCreateIssue = (createdIssue: any) => {
+    const updatedIssues = { ...issues };
+    updatedIssues[createdIssue.listId] = [...updatedIssues[createdIssue.listId], createdIssue];
+    setIssues(updatedIssues);
+  };
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="board" direction="horizontal" type="LIST">
                 {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}  className="flex space-x-4 p-8 overflow-x-auto">
                         {lists.map((list, index) => (
-                            <Draggable key={`list-${list.id}`} draggableId={`list-${list.id}`} index={index}>
-                                {(provided) => (
+                            console.log(index),
+                            <Draggable key={`list-${list.id}`} draggableId={`list-${list.id}`} index={index}>             
+                                {(provided) => (                                    
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                                     className="w-80 flex-none">
-                                        <List key={list.id} list={list} issues={issues} index={list.order} onDeleteList={handleDeleteList} />
+                                        <List key={list.id} list={list} issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue}/>
+                                        
                                     </div>
+                                  
                                 )}
                             </Draggable>
                         ))}
