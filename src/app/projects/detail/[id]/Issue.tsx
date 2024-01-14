@@ -6,9 +6,12 @@ import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils
 interface IssueProps {
   issue: any;
   index: number;
+  onClick: (issue: any) => void;
 }
 
-const Issue: React.FC<IssueProps> = ({ issue, index }) => {
+
+
+const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
   return (
     <Draggable key={issue.id} draggableId={`issue-${issue.id}`} index={index}>
       {(provided) => (
@@ -17,6 +20,7 @@ const Issue: React.FC<IssueProps> = ({ issue, index }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="bg-white shadow-md mb-2 group"
+          onClick={() => onClick(issue)}
         >
           <div className="p-3">
             <div className="flex flex-col ">

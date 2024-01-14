@@ -24,7 +24,7 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children, project }) => {
   ];
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar project={project} />
+      <Sidebar />
       <Layout className="bg-white">
        <Breadcrumb
         items={breadcrumbItems}

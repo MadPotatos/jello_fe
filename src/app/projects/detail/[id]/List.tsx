@@ -6,6 +6,7 @@ import { Backend_URL } from '@/lib/Constants';
 import Issue from './Issue';
 import { useSession } from 'next-auth/react';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
+import IssueDetailModal from './IssueDetail';
 
 
 interface ListProps {
@@ -22,6 +23,8 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList,onCreateIs
   const [newListName, setNewListName] = useState(list.name);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { data: session } = useSession();
+  const [selectedIssue, setSelectedIssue] = useState<any>(null); 
+  const [visible, setVisible] = useState(false)
 
   const handleCreateIssueClick = () => {
     setIsCreatingIssue(true);
@@ -52,6 +55,12 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList,onCreateIs
   const handleNameChange = (e: any) => {
     setNewListName(e.target.value);
   };
+
+  const handleIssueClick = (issue: any) => {
+  setSelectedIssue(issue);
+  setVisible(true);
+};
+
 
   const handleSaveClick = async () => {
     try {
@@ -180,7 +189,7 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList,onCreateIs
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {issues[list.id] && Array.isArray(issues[list.id])
                 ? issues[list.id].map((issue: any, innerIndex: number) => (
-                 <Issue key={issue.id} issue={issue} index={innerIndex} />              
+                 <Issue key={issue.id} issue={issue} index={innerIndex} onClick={() => handleIssueClick(issue)}/>              
              ))
                 : null}
                 {provided.placeholder}
@@ -275,9 +284,14 @@ const List: React.FC<ListProps> = ({ list, issues, index,onDeleteList,onCreateIs
           >
             <p>Are you sure you want to delete this list?</p>
           </Modal>
+       {selectedIssue && (
+        <IssueDetailModal issue={selectedIssue} visible={visible} onClose={()=>setVisible(false)} />
+                )}
+
         </div>
       )}
     </Draggable>
+    
   );
 };
 
