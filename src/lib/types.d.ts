@@ -26,10 +26,10 @@ export type Leader = {
 export type Member = {
   id: number;
   isAdmin: boolean;
-  createdAt: Date;
-  project?: Project;
   projectId: number;
-  user?: User;
+  name: string;
+  avatar: string;
+  email: string;
   userId: number;
 };
 
