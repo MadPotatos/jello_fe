@@ -62,11 +62,7 @@ const ProjectList = () => {
       key: 'project',
       render: (text: string, record: Project) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src={text || '/images/logo.png'} 
-            alt="Project"
-            style={{ width: '50px', borderRadius: '10%' }}
-          />
+          <Avatar src={record.image || '/images/default_avatar.jpg'} size={50} shape='square' />
           <span style={{ marginLeft: '20px', fontWeight: 'bold', color: '#1890ff' }}>{record.name}</span>
         </div>
       ),

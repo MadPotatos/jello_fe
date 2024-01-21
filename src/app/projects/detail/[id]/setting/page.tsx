@@ -3,7 +3,7 @@ import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation'; 
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Input, Button, Image, Form, message, Modal, Avatar } from 'antd';
+import { Input, Button, Image, Form, message, Modal, Avatar, Popover } from 'antd';
 import { Member } from '@/lib/types';
 import UploadImage from '@/components/UploadImage';
 
@@ -105,7 +105,7 @@ const ProjectSettingPage = () => {
   console.log(project.descr),
   <div className="site-layout-content">
   <h1 className='mb-4 text-xl font-semibold text-c-text'>Project Settings</h1>
-     <div className='flex mt-10 px-5 justify-center '>
+     <div className='flex mt-10 px-5 justify-center'>
 
         <Form layout="vertical" className='min-w-[25rem] flex-col gap-4' 
             onFinish={handleUpdateProject}
@@ -146,14 +146,40 @@ const ProjectSettingPage = () => {
               </Button>
             )}
           </div>
-          <h2 className="mt-8">Members</h2>
-          <ul className="list-disc text-center">
-            {members.map((member) => (
-              <li key={member.userId} className="ml-4">
-                {member.name}
-              </li>
-            ))}
-          </ul>
+          <h2 className="mt-8 font-bold">Members</h2>
+          <div className="py-4">
+          <Avatar.Group maxCount={6} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
+                    {members.map((member: any) => (
+                      <Popover
+                                        content={
+                                          <div className="max-w-xs py-3 rounded-lg">
+                                            <div className="flex photo-wrapper p-2 justify-center">
+                                              <Avatar src={member.avatar || '/images/default_avatar.jpg'} size={64} />
+                                            </div>
+                                            <div className="p-2">
+                                              <h3 className="text-center text-xl text-gray-900 font-medium leading-8">{member.name}</h3>
+                                              <div className="text-center text-gray-400 text-xs font-semibold">
+                                                <p>{member.email}</p>
+                                              </div>
+                                              <div className="text-center my-3">
+                                                <a
+                                                  className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
+                                                  href={`/user/${member.userId}`}
+                                                >
+                                                  View Profile
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        }
+                                        title=""
+                                        trigger="click"
+                                      >
+                      <Avatar key={member.userId} src={member.avatar} size={40} />
+                      </Popover>
+                    ))}
+                  </Avatar.Group>
+          </div>
         </Form>
       </div>
       <Modal
