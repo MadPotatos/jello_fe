@@ -116,6 +116,16 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
     setLists(updatedLists);
   };
 
+  const handleUpdateListName = (updatedList: any) => {
+  const listIndex = lists.findIndex((l) => l.id === updatedList.id);
+
+  if (listIndex !== -1) {
+    const updatedLists = [...lists];
+    updatedLists[listIndex].name = updatedList.name;
+    setLists(updatedLists);
+  }
+};
+
   const handleCreateIssue = (createdIssue: any) => {
     const updatedIssues = { ...issues };
     updatedIssues[createdIssue.listId] = [...updatedIssues[createdIssue.listId], createdIssue];
@@ -133,7 +143,7 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
                                 {(provided) => (                                    
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                                     className="w-80 flex-none">
-                                        <List key={list.id} list={list} issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue}/>
+                                        <List key={list.id} list={list} lists = {lists}issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue} onUpdateListName={handleUpdateListName}/>
                                         
                                     </div>
                                   
