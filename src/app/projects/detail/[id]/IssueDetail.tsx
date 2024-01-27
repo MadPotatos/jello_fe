@@ -19,6 +19,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visibl
   const [members, setMembers] = useState<Member[]>([]);
   const pathname = usePathname();
   const projectId = Number(pathname.split('/')[3]);
+  const [form] = Form.useForm();
 
    const fetchMembers = async (id: number) => {
         try {
@@ -30,9 +31,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visibl
         throw error;
         }
     };
-
-
-  const [form] = Form.useForm();
 
 const typeOptions = [
   { label: <span>{getColoredIconByIssueType(1)} Task</span>, value: 1 },
@@ -48,12 +46,22 @@ const priorityOptions = [
 
 
   const comments = issue.comments || [];
+  const reporter = members.find(member => member.userId === issue.reporterId);
+  const defaultAssigneeIds = issue.assignees.map((assignee: { userId: string }) => Number(assignee.userId));
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchData = async () => {
       try {
         const membersData = await fetchMembers(projectId);
         setMembers(membersData);
+      if (issue && members) {
+      form.setFieldsValue({
+      type: issue.type,
+      priority: issue.priority,
+      listId: issue.listId,
+      assignees: defaultAssigneeIds
+    });
+  }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -61,12 +69,13 @@ const priorityOptions = [
 
     fetchData();
   }
-  , [projectId]);
+  , [projectId,issue]);
 
   return (
+    console.log(form.getFieldsValue()),
     <Modal
       title={issue.summary}
-      visible={visible}
+      open={visible}
       onOk={onClose}
       onCancel={onClose}
       width={800}
@@ -100,7 +109,9 @@ const priorityOptions = [
                 </li>
               )}
             />
-            <Form form={form} layout="vertical">
+            <Form 
+            layout="vertical"
+          >
               <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
@@ -123,26 +134,27 @@ const priorityOptions = [
           </div>
         </Col>
         <Col span={8}>
+          <Form 
+            form={form} 
+            layout="vertical"
+          >
           <div className="p-4">
-            <Space direction="vertical" size={16}>
+            <Space direction="vertical" size={8}>
               <Form.Item
                    label="Type"
                    name="type"
-                   rules={[{ required: true }]}
                    labelCol={{ span: 24 }} 
                    wrapperCol={{ span: 24 }}
                     >
               <Select
                 style={{ width: '100%' }}
                 options={typeOptions}
-                defaultValue={issue.type}
                 
               />
               </Form.Item>
               <Form.Item
                 label="Priority"
                 name="priority"
-                rules={[{ required: true }]}
                 labelCol={{ span: 24 }} 
                 wrapperCol={{ span: 24 }}
               >
@@ -150,18 +162,18 @@ const priorityOptions = [
                 style={{ width: '100%' }}
                 placeholder="Select Priority"
                 options={priorityOptions}
-                defaultValue={issue.priority}
               />
               </Form.Item>
               <Form.Item
                 label="Status"
+                name = "listId"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
               >
                  <Select 
                  style={{ width: '100%' }}
                  placeholder="Select List"
-                 defaultValue={issue.listId}>
+                 >
                   {lists.map((list:any) => (
                       <Select.Option key={list.id} value={list.id}>
                           {list.name}
@@ -171,13 +183,42 @@ const priorityOptions = [
               </Form.Item>
 
 
+               <Form.Item
+                label="Reporter"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                  <div className="border border-gray-300 rounded-md p-2 cursor-not-allowed">
+                      <Typography.Text>{reporter ? <Avatar src={reporter.avatar} /> : 
+                      null} {reporter ? reporter.name : null}
+                      </Typography.Text>
+                    </div>
+                </Form.Item>  
 
-              <Typography.Text type="secondary">Reporter: {issue.reporter}</Typography.Text>
-              <Typography.Text type="secondary">Assignees: {issue.assignee}</Typography.Text>
+              <Form.Item 
+                label="Assignees" 
+                name="assignees" 
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}>
+                    <Select mode="multiple" 
+                    style={{ width: '100%' }}
+                    placeholder="Select Assignees"
+                    
+                    >
+                    
+                    {members.map((member: Member) => (
+                      <Select.Option key={member.userId} value={member.userId}>
+                        {member.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                
               <Typography.Text type="secondary">Updated At: {new Date(issue.updatedAt).toLocaleString()}</Typography.Text>
               <Typography.Text type="secondary">Created At: {new Date(issue.createdAt).toLocaleString()}</Typography.Text>
             </Space>
           </div>
+          </Form>
         </Col>
       </Row>
     </Modal>
