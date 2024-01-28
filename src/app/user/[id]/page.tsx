@@ -6,11 +6,16 @@ import {useSession} from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import UploadImage from '@/components/UploadImage';
 import { EditOutlined ,CheckCircleOutlined} from '@ant-design/icons';
+import { Project } from '@/lib/types';
+import { Typography } from 'antd';
+
+const { Title, Text } = Typography;
 
 const { Item } = Form;
 
 const Profile = () => {
   const [user, setUser] = useState<any>({});
+  const [projects, setProjects] = useState<Project[]>([]);
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(false);
   const { data: session,update } = useSession();
@@ -20,7 +25,7 @@ const Profile = () => {
 
   const updateUser = async ({ id, name, email,job,organization}: any) => {
     try {
-      const response = await fetch(`${Backend_URL}/user/profile/${id}`, {
+      const response = await fetch(`${Backend_URL}/user/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -59,12 +64,23 @@ const Profile = () => {
 
   const fetchUser = async (id: number) => {
     try {
-      const response = await fetch(`${Backend_URL}/user/${id}`);
+      const response = await fetch(`${Backend_URL}/user/profile/${id}`);
       const data = await response.json();
       return data;
     } catch (error) {
       console.error('Error fetching user:', error);
       throw error;
+    }
+  };
+
+  const fetchProjects = async (userId: number) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${Backend_URL}/project/all/${userId}`);
+      const {projects} = await response.json();
+      return projects;
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -124,7 +140,9 @@ const Profile = () => {
       setLoading(true);
       try {
         const userData = await fetchUser(id);
+        const projectsData = await fetchProjects(id);
         setUser(userData);
+        setProjects(projectsData);
       } catch (error) {
         console.error('Error fetching user:', error);
       } finally {
@@ -246,17 +264,30 @@ const Profile = () => {
         </Card>
 
         {/* Project List */}
-        <Card className="flex-1 mt-4" title="PROJECT">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            voluptates obcaecati numquam error et ut fugiat asperiores. Sunt
-            nulla ad incidunt laboriosam, laudantium est unde natus cum numquam,
-            neque facere. Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Ut, magni odio magnam commodi sunt ipsum eum! Voluptas
-            eveniet aperiam at maxime, iste id dicta autem odio laudantium
-            eligendi com
-          </p>
+          <Card className="flex-1 mt-4" title="PROJECTS">
+  <div className="overflow-x-scroll max-w-3xl flex flex-row h-96 space-x-4">
+    {projects.map((project: Project) => (
+      <div key={project.id} className="mb-4">
+        <Card className="w-80 shadow-lg border border-gray-300 rounded-lg">
+          <div className="flex flex-col items-center">
+            <Title level={4} className="mb-2">{project.name}</Title>
+            <img alt={project.name} src={project.image} className="h-40 w-full object-cover mb-4" />
+            <Text className="mb-4">{project.description}</Text>
+            <div className="flex items-center">
+              <span className="font-semibold">Leader:</span>
+              {project.leader && (
+                <Avatar src={project.leader.avatar} size={32} className="ml-2" />
+              )}
+              <Text className="ml-2">{project.leader?.name}</Text>
+            </div>
+          </div>
         </Card>
+      </div>
+    ))}
+  </div>
+</Card>
+
+
       </div>
    
 

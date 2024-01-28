@@ -3,6 +3,7 @@ import AppBar from "@/components/Header";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import { usePathname } from "next/navigation";
+import Footer from "@/components/Footer";
 
 
 
@@ -26,7 +27,7 @@ export default function RootLayout(props: Props) {
             props.children
           )}
           
-       
+       <Footer  />
         </Providers>
       </body>
     </html>

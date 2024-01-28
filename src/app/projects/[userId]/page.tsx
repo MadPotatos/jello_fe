@@ -26,6 +26,12 @@ const ProjectList = () => {
     setIsModalVisible(false);
   };
 
+  const handleCreate = async () => {
+    setIsModalVisible(false);
+    const userId: number = parseInt(pathname.split('/')[2]);
+    await fetchProjects(userId);
+  }
+
   const fetchProjects = async (userId: number) => {
     setLoading(true);
     try {
@@ -168,9 +174,7 @@ const ProjectList = () => {
 
        <CreateProjectModel
         visible={isModalVisible}
-        onCreate={(createdProject: any) => {
-          setProjects([...projects, createdProject]);
-        }}
+        onCreate={handleCreate}
         onCancel={handleCancel}
       />
     </div>
