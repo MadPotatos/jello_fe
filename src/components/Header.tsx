@@ -15,7 +15,7 @@ const AppBar = () => {
   const router = useRouter();
 
   const items = [
-    { label: <span className="text-lg">Home Page</span>, icon: <HomeOutlined />, key: 'home', onClick: () => router.push('/') },
+    { label: <span className="text-lg">Home Page</span>, icon: <HomeOutlined />, key: 'home', onClick: () => router.push('/home') },
     { label: <span className="text-lg">Project</span>, icon: <DashboardOutlined />, key: 'dashboard', onClick: () => router.push(`/projects/${session?.user?.id}`) }, // Use the user ID
   ];
 

@@ -15,7 +15,7 @@ const LoginPage = () => {
         username: email.current,
         password: pass.current,
         redirect: true,
-        callbackUrl: "/",
+        callbackUrl: "/home",
       });
     } catch (error) {
       console.error("An error occurred during login:", error);
