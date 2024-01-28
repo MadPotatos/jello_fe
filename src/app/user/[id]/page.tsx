@@ -20,7 +20,7 @@ const Profile = () => {
 
   const updateUser = async ({ id, name, email,job,organization}: any) => {
     try {
-      const response = await fetch(`${Backend_URL}/user/${id}`, {
+      const response = await fetch(`${Backend_URL}/user/profile/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

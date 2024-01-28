@@ -81,11 +81,17 @@ const ProjectDetailPage = () => {
     fetchData();
   }, [projectId]);
 
+  const handleAddMember = async () => {
+
+    const membersData = await fetchMembers(projectId);
+    setMembers(membersData);
+  }
+
   return (
       console.log(filteredIssues),
       <div className="site-layout-content">
          <h1 className='mb-4 text-xl font-semibold text-c-text'>Kanban Board</h1>
-     <Filter members={members} onSearch={handleSearch} /> 
+     <Filter members={members} onSearch={handleSearch} onAddMember = {handleAddMember}/> 
         {lists ? (
         <Board lists={lists} issues={Object.keys(filteredIssues).length > 0 ? filteredIssues : issues} />
       ) : (
