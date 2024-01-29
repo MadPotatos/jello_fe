@@ -5,7 +5,7 @@ import type { MenuProps } from 'antd';
 import { useSession, signOut } from 'next-auth/react';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
-import { NotificationOutlined } from '@ant-design/icons';
+import { NotificationOutlined,DeleteOutlined } from '@ant-design/icons';
 
 const { useToken } = theme;
 
@@ -41,6 +41,7 @@ const SignInButton: React.FC = () => {
       disabled: true,
     },
     { key: 'manage-account', label: 'Profile', icon: <UserOutlined/>, onClick: () => handleNavigate('/user/'+ session?.user.id) },
+    { key: 'trash', label: 'Recycle Bin', icon: <DeleteOutlined/>, onClick: () => handleNavigate('/trash/'+session?.user.id) },
     { key: 'signout', label: 'Sign Out', icon: <LogoutOutlined />, onClick: handleSignOut },
   ];
 

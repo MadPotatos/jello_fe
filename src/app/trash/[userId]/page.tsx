@@ -5,43 +5,25 @@ import { Button, Table, Input, Breadcrumb, Popover, Avatar, message, Modal } fro
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { Backend_URL } from '@/lib/Constants';
 import { Leader, Project } from '@/lib/types';
-import CreateProjectModel from './CreateProjectModel';
 import { useSession } from 'next-auth/react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
 const { confirm } = Modal;
 
-const ProjectList = () => {
-  const router = useRouter();
+const DeletedProjectList = () => {
   const pathname = usePathname();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState<string>('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const { data: session } = useSession();
 
    
 
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCreate = async () => {
-    setIsModalVisible(false);
-    const userId: number = parseInt(pathname.split('/')[2]);
-    await fetchProjects(userId);
-  }
-
   const fetchProjects = async (userId: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`${Backend_URL}/project/all/${userId}`);
+      const response = await fetch(`${Backend_URL}/project/deleted/${userId}`);
       const { projects } = await response.json();
       setProjects(projects);
       setLoading(false);
@@ -132,32 +114,30 @@ const ProjectList = () => {
       title: 'Action',
       key: 'action',
       render: (text: any, record: Project) => (
-        record.leader?.userId === session?.user.id ? (
-          <Button size="small" danger onClick={(e) => handleDelete(record.id,e )}>
-            Delete
+          <Button size="small" type='default' onClick={(e) => handleRestore(record.id,e )}>
+            Restore
           </Button>
-        ) : null
+    
       ),
     },
   ];
 
-  const handleDelete = async (projectId: number,event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const handleRestore = async (projectId: number,event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation();
     confirm({
-      title: 'Do you want to delete this project?',
+      title: 'Do you want to restore this project?',
       icon: <ExclamationCircleOutlined />,
-      content: 'The project will be moved to the recycle bin and will be permanently deleted in 30 days.',
-      okType: 'danger',
+      okType: 'default',
       onOk: async () => {
         try {
-          const response = await fetch(`${Backend_URL}/project/delete/${projectId}`, {
+          const response = await fetch(`${Backend_URL}/project/restore/${projectId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
               authorization: `Bearer ${session?.backendTokens.accessToken}`,
             },
           });
-          message.success('Project is moved to recycle bin !');
+          message.success('Project is removed to recycle bin !');
           const userId: number = parseInt(pathname.split('/')[2]);
           fetchProjects(userId);
         } catch (err) {
@@ -171,13 +151,7 @@ const ProjectList = () => {
 
  return (
     <div className="w-full flex flex-col justify-center px-16 py-4 bg-gradient-to-b from-white to-purple-200">
-      <Breadcrumb style={{ margin: '16px 0', fontSize: '18px' }}
-      items={[
-        { title: 'Home', key: 'home', href: '/' },
-        { title: 'Projects', key: 'projects' },   
-      ]}
-      >
-      </Breadcrumb>
+        <h1 className="text-3xl font-bold text-center mb-10">Recycle Bin</h1>
 
       <div className="flex justify-between items-center mb-10">
         <Search
@@ -186,33 +160,15 @@ const ProjectList = () => {
           style={{ width: '300px', fontSize: '16px' }}
           onSearch={handleSearch}
         />
-       <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          style={{ backgroundColor: '#1890ff',  fontSize: '16px' }}
-          onClick={showModal} 
-        >
-          Create Project
-        </Button>
       </div>
 
       <Table dataSource={projects} 
         columns={columns} 
         loading={loading} 
         rowKey="id" 
-        onRow={(record) => {
-          return {
-            onClick: () => router.push(`/projects/detail/${record.id}`)
-        };
-      }}/>
-
-       <CreateProjectModel
-        visible={isModalVisible}
-        onCreate={handleCreate}
-        onCancel={handleCancel}
-      />
+        />
     </div>
   );
 };
 
-export default ProjectList;
+export default DeletedProjectList;
