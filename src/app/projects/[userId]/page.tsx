@@ -170,7 +170,7 @@ const ProjectList = () => {
    
 
  return (
-    <div className="w-full flex flex-col justify-center px-16 py-4 bg-gradient-to-b from-white to-purple-200">
+    <div className="w-full flex flex-col justify-start px-16 py-4 bg-gradient-to-b from-white to-purple-200 min-h-screen">
       <Breadcrumb style={{ margin: '16px 0', fontSize: '18px' }}
       items={[
         { title: 'Home', key: 'home', href: '/' },
