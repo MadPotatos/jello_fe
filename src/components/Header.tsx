@@ -3,7 +3,7 @@
 import React from 'react';
 import SignInButton from './SignInButton';
 import { Layout, Menu } from 'antd';
-import { HomeOutlined, DashboardOutlined } from '@ant-design/icons';
+import { HomeOutlined, DashboardOutlined,TeamOutlined,PhoneOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -16,7 +16,9 @@ const AppBar = () => {
 
   const items = [
     { label: <span className="text-lg">Home Page</span>, icon: <HomeOutlined />, key: 'home', onClick: () => router.push('/home') },
-    { label: <span className="text-lg">Project</span>, icon: <DashboardOutlined />, key: 'dashboard', onClick: () => router.push(`/projects/${session?.user?.id}`) }, // Use the user ID
+    { label: <span className="text-lg">Project</span>, icon: <DashboardOutlined />, key: 'dashboard', onClick: () => router.push(`/projects/${session?.user?.id}`) }, 
+    { label: <span className="text-lg">Features</span>, icon: <TeamOutlined />,key: 'about', onClick: () => router.push('/features')},
+    { label: <span className="text-lg">Contact Us</span>, icon: <PhoneOutlined />,key: 'contact', onClick: () => router.push('/contact')},
   ];
 
   return (

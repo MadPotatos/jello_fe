@@ -5,6 +5,7 @@ import type { MenuProps } from 'antd';
 import { useSession, signOut } from 'next-auth/react';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import { NotificationOutlined } from '@ant-design/icons';
 
 const { useToken } = theme;
 
@@ -57,6 +58,8 @@ const SignInButton: React.FC = () => {
 
   if (session?.user)
     return (
+      <div className="flex gap-4 ml-auto items-center">
+        <NotificationOutlined className='text-lg px-2'/>
       <Dropdown
         menu={{ items }}
         dropdownRender={(menu) => (
@@ -69,11 +72,13 @@ const SignInButton: React.FC = () => {
       >
         <a onClick={(e) => e.preventDefault()}>
           <Space>
+            
             <Avatar size="large" src={session?.user?.avatar} alt={session?.user?.name} />
             <DownOutlined />
           </Space>
         </a>
       </Dropdown>
+      </div>
     );
 
   return (
