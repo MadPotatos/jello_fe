@@ -17,10 +17,10 @@ interface ListProps {
   onDeleteList: (listId: number) => void;
   onCreateIssue: (createdIssue: any) => void;
   onUpdateListName: (updatedList: any) => void;
-  
+  onUpdateIssues: () => void; 
 }
 
-const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCreateIssue,onUpdateListName }) => {
+const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCreateIssue,onUpdateListName,onUpdateIssues }) => {
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
@@ -289,7 +289,7 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
             <p>Are you sure you want to delete this list?</p>
           </Modal>
        {selectedIssue && (
-        <IssueDetailModal issue={selectedIssue} lists={lists} visible={visible} onClose={()=>setVisible(false)} />
+        <IssueDetailModal issue={selectedIssue} lists={lists} visible={visible} onClose={()=>setVisible(false)} onUpdateIssue={onUpdateIssues}/>
                 )}
 
         </div>

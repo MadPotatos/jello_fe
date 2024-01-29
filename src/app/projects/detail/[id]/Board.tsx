@@ -8,9 +8,10 @@ import { PlusOutlined } from '@ant-design/icons';
 interface BoardProps {
     lists: any[];
     issues: any;
+    onUpdateIssue: () => void;
 }
 
-const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssues }) => {
+const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssues,onUpdateIssue }) => {
     const reorderListsEndpoint = `${Backend_URL}/list/reorder`;
     const reorderIssuesEndpoint = `${Backend_URL}/issues/reorder`;
     const pathname = usePathname();
@@ -132,6 +133,8 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
     setIssues(updatedIssues);
   };
 
+
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="board" direction="horizontal" type="LIST">
@@ -143,7 +146,7 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
                                 {(provided) => (                                    
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                                     className="w-80 flex-none">
-                                        <List key={list.id} list={list} lists = {lists}issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue} onUpdateListName={handleUpdateListName}/>
+                                        <List key={list.id} list={list} lists = {lists}issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue} onUpdateListName={handleUpdateListName} onUpdateIssues={onUpdateIssue}/>
                                         
                                     </div>
                                   

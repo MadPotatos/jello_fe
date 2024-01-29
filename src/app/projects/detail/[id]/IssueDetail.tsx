@@ -16,15 +16,17 @@ interface IssueDetailModalProps {
   lists: any[];
   visible: boolean;
   onClose: () => void;
+  onUpdateIssue: () => void;
 }
 
-const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visible, onClose }) => {
+const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visible, onClose,onUpdateIssue }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [comments, setComments] = useState<any[]>([]);
   const pathname = usePathname();
   const { data: session } = useSession();
   const projectId = Number(pathname.split('/')[3]);
   const [form] = Form.useForm();
+
 
    const fetchMembers = async (id: number) => {
         try {
@@ -75,7 +77,8 @@ const priorityOptions = [
       type: issue.type,
       priority: issue.priority,
       listId: issue.listId,
-      assignees: defaultAssigneeIds
+      assignees: defaultAssigneeIds,
+      descr : issue.descr
     });
   }
       } catch (error) {
@@ -136,30 +139,66 @@ const handleDeleteComment = async (commentId: number) => {
   }
 };
 
+const updateIssue = async (type: string, value: any) => {
+  try {
+    const response = await fetch(`${Backend_URL}/issues/${issue.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.backendTokens.accessToken}`,
+      },
+      body: JSON.stringify({ type, value, projectId }),
+    });
+
+    if (response.ok) {
+      message.success('Issue updated successfully');
+      onUpdateIssue();
+    } else {
+      console.error('Failed to update issue');
+    }
+  } catch (error) {
+    console.error('Error updating issue:', error);
+  }
+};
+
 
 
   return (
-    console.log(form.getFieldsValue()),
     <Modal
       title={issue.summary}
       open={visible}
-      onOk={onClose}
       onCancel={onClose}
       width={800}
       footer={[
-        <Button key="back" onClick={onClose} >
-          Back
-        </Button>,
-        <Button key="submit" type="primary" onClick={onClose} style={{ backgroundColor: '#1890ff' }}>
-          Save
+        <Button key="back" onClick={onClose}>
+          Close
         </Button>,
       ]}
     >
+      
       <Row>
         <Col span={16}>
              
           <div className="p-4">
-            <Typography.Paragraph>{issue.descr}</Typography.Paragraph>
+            <Form 
+            form={form}>
+            <Form.Item
+              label="Description"
+              name="descr"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+            <Input.TextArea
+              className="mb-4"
+              style={{ border: 'none', outline: 'none', borderBottom: '1px solid #ccc' }}             
+              onPressEnter={(e) => {
+                updateIssue('descr', (e.target as HTMLInputElement).value);
+              }
+              }
+            >
+           </Input.TextArea>
+            </Form.Item>
+            </Form>
             <List
               className="comment-list max-h-[450px] overflow-y-auto"
               header={`${comments.length} comments`}
@@ -220,6 +259,7 @@ const handleDeleteComment = async (commentId: number) => {
           >
           <div className="p-4">
             <Space direction="vertical" size={8}>
+          
               <Form.Item
                    label="Type"
                    name="type"
@@ -229,7 +269,8 @@ const handleDeleteComment = async (commentId: number) => {
               <Select
                 style={{ width: '100%' }}
                 options={typeOptions}
-                
+                placeholder="Select Type"
+                onChange={(value) => updateIssue('type', value)}
               />
               </Form.Item>
               <Form.Item
@@ -242,6 +283,7 @@ const handleDeleteComment = async (commentId: number) => {
                 style={{ width: '100%' }}
                 placeholder="Select Priority"
                 options={priorityOptions}
+                onChange={(value) => updateIssue('priority', value)}
               />
               </Form.Item>
               <Form.Item
@@ -253,6 +295,7 @@ const handleDeleteComment = async (commentId: number) => {
                  <Select 
                  style={{ width: '100%' }}
                  placeholder="Select List"
+                 onChange={(value) => updateIssue('listId', value)}
                  >
                   {lists.map((list:any) => (
                       <Select.Option key={list.id} value={list.id}>
@@ -283,7 +326,7 @@ const handleDeleteComment = async (commentId: number) => {
                     <Select mode="multiple" 
                     style={{ width: '100%' }}
                     placeholder="Select Assignees"
-                    
+                    onChange={(value) => updateIssue('addAssignee', value)}
                     >
                     
                     {members.map((member: Member) => (

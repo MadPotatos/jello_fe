@@ -87,13 +87,18 @@ const ProjectDetailPage = () => {
     setMembers(membersData);
   }
 
+  const handleUpdateIssue = async () => {
+    const issuesData = await fetchIssues(projectId);
+    setIssues(issuesData);
+  };
+
   return (
       console.log(filteredIssues),
       <div className="site-layout-content">
          <h1 className='mb-4 text-xl font-semibold text-c-text'>Kanban Board</h1>
      <Filter members={members} onSearch={handleSearch} onAddMember = {handleAddMember}/> 
         {lists ? (
-        <Board lists={lists} issues={Object.keys(filteredIssues).length > 0 ? filteredIssues : issues} />
+        <Board lists={lists} issues={Object.keys(filteredIssues).length > 0 ? filteredIssues : issues} onUpdateIssue={handleUpdateIssue}/>
       ) : (
         <div className="grid h-[40vh] w-full place-items-center">
           <Spin size="large" />
