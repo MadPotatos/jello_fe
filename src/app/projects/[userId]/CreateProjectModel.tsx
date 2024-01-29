@@ -27,11 +27,11 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
 
       if (response.ok) {
         const projectData = await response.json();
-        onCreate(projectData);
+        onCreate();
         message.success('Project created successfully');
         form.resetFields();
         onCancel();
-        window.location.reload();
+
 
       } else {
         // Handle API error
