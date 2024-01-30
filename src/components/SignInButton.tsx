@@ -1,12 +1,22 @@
-import { useSession, signOut } from "next-auth/react";
-import { Button, Avatar, Dropdown, Menu } from "antd";
-import { SettingOutlined, LogoutOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
-import React from "react";
+import React from 'react';
+import { DownOutlined } from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Menu, Space, Divider, theme } from 'antd';
+import type { MenuProps } from 'antd';
+import { useSession, signOut } from 'next-auth/react';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
+import { NotificationOutlined,DeleteOutlined } from '@ant-design/icons';
 
-const SignInButton = () => {
+const { useToken } = theme;
+
+const SignInButton: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
+
+   const appendTimestamp = (url: string) => {
+    const timestamp = new Date().getTime();
+    return `${url}?timestamp=${timestamp}`;
+  };
 
   const handleSignOut = () => {
     signOut();
@@ -16,43 +26,59 @@ const SignInButton = () => {
     router.push(path);
   };
 
-  const menuItems = [
-    { key: "manage-account", label: "Manage Account", icon: <SettingOutlined />, onClick: () => handleNavigate("/manage-account") },
-    { key: "signout", label: "Sign Out", icon: <LogoutOutlined />, onClick: handleSignOut },
+  const items: MenuProps['items'] = [
+    {
+      key: 'profile',
+      label: (
+        <div className="flex items-center">
+          <Avatar size="large" src={appendTimestamp(session?.user?.avatar ?? '')} alt={session?.user?.name} />
+          <div>
+            <div className="text-sky-600">{session?.user?.name}</div>
+            <div className="text-gray-500">{session?.user?.email}</div>
+          </div>
+        </div>
+      ),
+      disabled: true,
+    },
+    { key: 'manage-account', label: 'Profile', icon: <UserOutlined/>, onClick: () => handleNavigate('/user/'+ session?.user.id) },
+    { key: 'trash', label: 'Recycle Bin', icon: <DeleteOutlined/>, onClick: () => handleNavigate('/trash/'+session?.user.id) },
+    { key: 'signout', label: 'Sign Out', icon: <LogoutOutlined />, onClick: handleSignOut },
   ];
 
-  if (session && session.user)
+  const { token } = useToken();
+
+  const contentStyle: React.CSSProperties = {
+    backgroundColor: token.colorBgElevated,
+    borderRadius: token.borderRadiusLG,
+    boxShadow: token.boxShadowSecondary,
+  };
+
+  const menuStyle: React.CSSProperties = {
+    boxShadow: 'none',
+  };
+
+  if (session?.user)
     return (
       <div className="flex gap-4 ml-auto items-center">
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key="profile" disabled>
-                <div className="flex items-center">
-                  <Avatar
-                    size="large"
-                    src={session.user.avatar}
-                    alt={session.user.name}
-                    className="mr-2"
-                  />
-                  <div>
-                    <div className="text-sky-600">{session.user.name}</div>
-                    <div className="text-gray-500">{session.user.email}</div>
-                  </div>
-                </div>
-              </Menu.Item>
-              <Menu.Divider />
-              {menuItems.map(item => (
-                <Menu.Item key={item.key} icon={item.icon} onClick={item.onClick}>
-                  {item.label}
-                </Menu.Item>
-              ))}
-            </Menu>
-          }
-          trigger={['click']}
-        >
-          <Avatar size="large" src={session.user.avatar} alt={session.user.name} />
-        </Dropdown>
+        <NotificationOutlined className='text-lg px-2'/>
+      <Dropdown
+        menu={{ items }}
+        dropdownRender={(menu) => (
+          <div style={contentStyle}>
+            {React.cloneElement(menu as React.ReactElement, { style: menuStyle })}
+            <Divider style={{ margin: 0 }} />
+          </div>
+        )}
+        trigger={['click']}
+      >
+        <a onClick={(e) => e.preventDefault()}>
+          <Space>
+            
+            <Avatar size="large" src={session?.user?.avatar} alt={session?.user?.name} />
+            <DownOutlined />
+          </Space>
+        </a>
+      </Dropdown>
       </div>
     );
 
@@ -60,8 +86,8 @@ const SignInButton = () => {
     <div className="flex gap-4 ml-auto items-center">
       <Button
         type="primary"
-        style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-        onClick={() => handleNavigate("/api/auth/signin")}
+        style={{ backgroundColor: '#1890ff', borderColor: '#1890ff' }}
+        onClick={() => handleNavigate('/api/auth/signin')}
         className="text-l font-bold"
       >
         Sign In
@@ -71,5 +97,3 @@ const SignInButton = () => {
 };
 
 export default SignInButton;
-
-

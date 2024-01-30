@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ant-table table{
+  font-size: 16px;
+}
+
+.ant-form-item-label label{
+  font-size: 16px;
+  font-weight: bold;
+}
