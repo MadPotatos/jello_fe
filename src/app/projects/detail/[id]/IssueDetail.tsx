@@ -78,7 +78,8 @@ const priorityOptions = [
       priority: issue.priority,
       listId: issue.listId,
       assignees: defaultAssigneeIds,
-      descr : issue.descr
+      descr : issue.descr,
+      summary: issue.summary,
     });
   }
       } catch (error) {
@@ -165,7 +166,6 @@ const updateIssue = async (type: string, value: any) => {
 
   return (
     <Modal
-      title={issue.summary}
       open={visible}
       onCancel={onClose}
       width={800}
@@ -182,6 +182,19 @@ const updateIssue = async (type: string, value: any) => {
           <div className="p-4">
             <Form 
             form={form}>
+            <Form.Item
+              name="summary"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              >
+            <Input
+              className="mb-4 font-bold text-2xl"
+              style={{ border: 'none', outline: 'none', borderBottom: '1px solid #ccc' }}
+              onPressEnter={(e) => {
+                updateIssue('summary', (e.target as HTMLInputElement).value);
+              }}
+            />
+              </Form.Item>
             <Form.Item
               label="Description"
               name="descr"
