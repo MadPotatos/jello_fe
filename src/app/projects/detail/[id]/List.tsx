@@ -144,7 +144,6 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
   };
 
   return (
-    console.log(index),
     <Draggable draggableId={`list-${list.id}`} index={index}>
       {(provided) => (
         <div

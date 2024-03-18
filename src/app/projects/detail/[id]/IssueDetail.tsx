@@ -9,7 +9,9 @@ import { Member } from '@/lib/types';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import { Popconfirm } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined,ExclamationCircleOutlined } from '@ant-design/icons';
+
+const { confirm } = Modal;
 
 interface IssueDetailModalProps {
   issue: any;
@@ -26,6 +28,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visibl
   const { data: session } = useSession();
   const projectId = Number(pathname.split('/')[3]);
   const [form] = Form.useForm();
+
 
 
    const fetchMembers = async (id: number) => {
@@ -63,7 +66,7 @@ const priorityOptions = [
 ];
 
   const reporter = members.find(member => member.userId === issue.reporterId);
-  const defaultAssigneeIds = issue.assignees.map((assignee: { userId: string }) => Number(assignee.userId));
+  const defaultAssigneeIds = issue.assignees.map((assignee: { userId: string }) => Number(assignee.userId)) ;
 
    useEffect(() => {
     const fetchData = async () => {
@@ -162,6 +165,39 @@ const updateIssue = async (type: string, value: any) => {
   }
 };
 
+  const deteleIssue = async () => {
+    try {
+      confirm(
+        {
+          title: 'Are you sure you want to delete this issue?',
+          icon: <ExclamationCircleOutlined />,
+          content: 'This action cannot be undone',
+          okText: 'Yes',
+          okButtonProps: { style: { backgroundColor: '#1890ff' } },
+          cancelText: 'No',
+          onOk: async () => {
+            const response = await fetch(`${Backend_URL}/issues/${issue.id}`, {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${session?.backendTokens.accessToken}`,
+              },
+            });
+
+            if (response.ok) {
+              message.success('Issue deleted successfully');
+              onClose();
+              onUpdateIssue();
+            } else {
+              console.error('Failed to delete issue');
+            }
+          },
+        }
+      )
+    } catch (error) {
+      console.error('Error deleting issue:', error);
+    }
+  }
+
 
 
   return (
@@ -170,9 +206,10 @@ const updateIssue = async (type: string, value: any) => {
       onCancel={onClose}
       width={800}
       footer={[
-        <Button key="back" onClick={onClose}>
-          Close
-        </Button>,
+        
+    <Button type="text" danger onClick={deteleIssue}>
+               Delete Issue
+                </Button>
       ]}
     >
       
@@ -357,7 +394,9 @@ const updateIssue = async (type: string, value: any) => {
           </Form>
         </Col>
       </Row>
+
     </Modal>
+    
   );
 };
 
