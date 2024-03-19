@@ -167,7 +167,7 @@ const Profile = () => {
   };
 
    return (
-    <div className="h-full bg-gray-200 py-8 px-28 flex flex-col items-center space-y-4">
+    <div className="h-full bg-gradient-to-b from-white to-purple-200 py-8 px-28 flex flex-col items-center space-y-4">
 
       <Card
         className="w-full"

@@ -33,8 +33,8 @@ const SignInButton: React.FC = () => {
         <div className="flex items-center">
           <Avatar size="large" src={appendTimestamp(session?.user?.avatar ?? '')} alt={session?.user?.name} />
           <div>
-            <div className="text-sky-600">{session?.user?.name}</div>
-            <div className="text-gray-500">{session?.user?.email}</div>
+            <div className="pl-2 text-sky-600">{session?.user?.name}</div>
+            <div className="pl-2 text-gray-500">{session?.user?.email}</div>
           </div>
         </div>
       ),

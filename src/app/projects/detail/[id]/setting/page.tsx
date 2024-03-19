@@ -89,6 +89,7 @@ const ProjectSettingPage = () => {
         });
         const data = await response.json();
         message.success('Image updated successfully');
+        setIsModalVisible(false);
         window.location.reload();       
         } catch (error) {
         console.error('Error updating image:', error);
