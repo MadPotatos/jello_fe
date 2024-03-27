@@ -10,6 +10,17 @@ export const fetchProjects = async (userId: number): Promise<Project[]> => {
   return data.projects;
 };
 
+export const fetchDeletedProjects = async (
+  userId: number
+): Promise<Project[]> => {
+  const response = await fetch(`${Backend_URL}/project/deleted/${userId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch projects");
+  }
+  const data = await response.json();
+  return data.projects;
+};
+
 export const deleteProject = async (
   projectId: number,
   accessToken?: string
@@ -23,6 +34,22 @@ export const deleteProject = async (
   });
   if (!response.ok) {
     throw new Error("Failed to delete project");
+  }
+};
+
+export const restoreProject = async (
+  projectId: number,
+  accessToken?: string
+) => {
+  const response = await fetch(`${Backend_URL}/project/restore/${projectId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to restore project");
   }
 };
 

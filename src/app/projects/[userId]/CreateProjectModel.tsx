@@ -44,7 +44,7 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title="Create New Project"
       okText="Create"
       cancelText="Cancel"
