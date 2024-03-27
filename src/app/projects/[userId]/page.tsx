@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button, Table, Input, Breadcrumb, Popover, Avatar, message, Modal } from 'antd';
@@ -8,21 +8,22 @@ import { Leader, Project } from '@/lib/types';
 import CreateProjectModel from './CreateProjectModel';
 import { useSession } from 'next-auth/react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import useSWR, { mutate } from 'swr';
+import { deleteProject, fetchProjects } from '@/app/api/projectApi';
 
 const { Search } = Input;
 const { confirm } = Modal;
 
-const ProjectList = () => {
+const ProjectList: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
   const [searchValue, setSearchValue] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { data: session } = useSession();
 
-   
+  const userId: number = parseInt(pathname.split('/')[2]);
 
+  const { data: projects, error: projectsError } = useSWR<Project[]>(`project-all-${userId}`, () => fetchProjects(userId));
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -32,42 +33,21 @@ const ProjectList = () => {
     setIsModalVisible(false);
   };
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     setIsModalVisible(false);
-    const userId: number = parseInt(pathname.split('/')[2]);
-    await fetchProjects(userId);
-  }
-
-  const fetchProjects = async (userId: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${Backend_URL}/project/all/${userId}`);
-      const { projects } = await response.json();
-      setProjects(projects);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-    }
+    mutate(`project-all-${userId}`);
   };
 
-     const handleSearch = (value: string) => {
+  const handleSearch = (value: string) => {
     setSearchValue(value);
-    if (value.trim() === '') {
-      fetchProjects(parseInt(pathname.split('/')[2]));
-    } else {
-      const filteredProjects = projects.filter(project =>
-        project.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setProjects(filteredProjects);
-    }
   };
 
-  useEffect(() => {
-    const userId: number = parseInt(pathname.split('/')[2]);
-    fetchProjects(userId);
-  }, [pathname]);
 
-  const columns = [
+  const filteredProjects = projects?.filter(project =>
+    project.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const columns: any[] = [
     {
       title: 'Project',
       dataIndex: 'image',
@@ -113,15 +93,15 @@ const ProjectList = () => {
             </div>
           }
           title=""
-          trigger="click"
+          trigger="hover"
         >
-          <div 
+          <div
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           >
             <Avatar
-              src={leader.avatar || '/images/default_avatar.jpg'}  
+              src={leader.avatar || '/images/default_avatar.jpg'}
               size={48}
-              style={{  marginRight: '10px' }}
+              style={{ marginRight: '10px' }}
             />
             <span>{leader.name}</span>
           </div>
@@ -133,7 +113,7 @@ const ProjectList = () => {
       key: 'action',
       render: (text: any, record: Project) => (
         record.leader?.userId === session?.user.id ? (
-          <Button size="small" danger onClick={(e) => handleDelete(record.id,e )}>
+          <Button size="small" danger onClick={(e) => handleDelete(record.id, e)}>
             Delete
           </Button>
         ) : null
@@ -141,7 +121,7 @@ const ProjectList = () => {
     },
   ];
 
-  const handleDelete = async (projectId: number,event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const handleDelete = async (projectId: number, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation();
     confirm({
       title: 'Do you want to delete this project?',
@@ -150,26 +130,19 @@ const ProjectList = () => {
       okType: 'danger',
       onOk: async () => {
         try {
-          const response = await fetch(`${Backend_URL}/project/delete/${projectId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${session?.backendTokens.accessToken}`,
-            },
-          });
+          await deleteProject(projectId, session?.backendTokens.accessToken);
           message.success('Project is moved to recycle bin !');
-          const userId: number = parseInt(pathname.split('/')[2]);
-          fetchProjects(userId);
+          mutate(`project-all-${userId}`);
         } catch (err) {
           console.error(err);
+          message.error('Failed to delete project');
         }
       },
       onCancel() {},
     });
   };
-   
 
- return (
+  return (
     <div className="w-full flex flex-col justify-start px-16 py-4 bg-gradient-to-b from-white to-purple-200 min-h-screen">
       <Breadcrumb style={{ margin: '16px 0', fontSize: '18px' }}
       items={[
@@ -186,31 +159,29 @@ const ProjectList = () => {
           style={{ width: '300px', fontSize: '16px' }}
           onSearch={handleSearch}
         />
-       <Button
+        <Button
           type="primary"
           icon={<PlusOutlined />}
-          style={{ backgroundColor: '#1890ff',  fontSize: '16px' }}
-          onClick={showModal} 
+          style={{ backgroundColor: '#1890ff', fontSize: '16px' }}
+          onClick={showModal}
         >
           Create Project
         </Button>
       </div>
 
-      <Table dataSource={projects} 
-        columns={columns} 
-        loading={loading} 
-        rowKey="id" 
+      <Table
+        dataSource={filteredProjects || []}
+        columns={columns}
+        loading={!projects && !projectsError}
+        rowKey="id"
         onRow={(record) => {
           return {
-            onClick: () => router.push(`/projects/detail/${record.id}`)
-        };
-      }}/>
-
-       <CreateProjectModel
-        visible={isModalVisible}
-        onCreate={handleCreate}
-        onCancel={handleCancel}
+            onClick: () => router.push(`/projects/detail/${record.id}`),
+          };
+        }}
       />
+
+      <CreateProjectModel visible={isModalVisible} onCreate={handleCreate} onCancel={handleCancel} />
     </div>
   );
 };

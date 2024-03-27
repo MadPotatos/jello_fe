@@ -29,3 +29,5 @@ export const getColoredIconByPriority = (priority: number) => {
       return null;
   }
 };
+
+export const fetcher = (url: string) => fetch(url).then(r => r.json())
