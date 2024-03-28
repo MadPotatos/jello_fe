@@ -1,96 +1,45 @@
 "use client";
-import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation'; 
-import React, { useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Input, Button, Image, Form, message, Modal, Avatar, Popover } from 'antd';
-import { Member } from '@/lib/types';
+import { Input, Button, Form, message, Modal, Avatar, Popover } from 'antd';
+import { Member, ProjectDetail } from '@/lib/types';
 import UploadImage from '@/components/UploadImage';
+import useSWR, { mutate } from 'swr';
+import { fetchProjectById ,updateProject,updateProjectImage} from '@/app/api/projectApi';
+import { fetchMembers } from '@/app/api/memberApi';
+import { validateRepository } from '@/lib/utils';
 
 const ProjectSettingPage = () => {
-  const [project, setProject] = useState<any>({});
-  const [members, setMembers] = useState<Member[]>([]);
   const {data: session} = useSession();
   const pathname = usePathname();
-  const projectId = Number(pathname.split('/')[3]);
-  const [form] = Form.useForm();
-   const [image, setImage] = useState<string>(project.image || "");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const projectId: number = parseInt(pathname.split('/')[3]);
+  const {data: project} = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
+  const {data: members} = useSWR<Member[]>(`members-${projectId}`, () => fetchMembers(projectId));
 
-  const fetchProject = async (id: number) => {
-    try {
-      const response = await fetch(`${Backend_URL}/project/${id}`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching project:', error);
-      throw error;
-    }
-  };
+  const [image, setImage] = useState<string>(project?.image || "");
 
-    const fetchMembers = async (id: number) => {
-        try {
-        const response = await fetch(`${Backend_URL}/member/${id}`);
-        const data = await response.json();
-        return data.members;
-        } catch (error) {
-        console.error('Error fetching members:', error);
-        throw error;
-        }
-    };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const projectData = await fetchProject(projectId);
-        const membersData = await fetchMembers(projectId);
-        setMembers(membersData);
-        setProject(projectData);
-        form.setFieldsValue({name: projectData.name, repo: projectData.repo, descr: projectData.descr});
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [projectId]);
-
-  const isAdmin = members.some((member) => member.userId === session?.user?.id && member.isAdmin);
+  const isAdmin = members?.some((member) => member.userId === session?.user?.id && member.isAdmin);
+ const [form] = Form.useForm();
 
   const handleUpdateProject = async (values: any) => {
     try {
-      const response = await fetch(`${Backend_URL}/project/${projectId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${session?.backendTokens.accessToken}`,
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await response.json();
+      await updateProject(projectId, values, session?.backendTokens.accessToken);
       message.success('Project updated successfully');
-      window.location.reload();
+      mutate(`project-${projectId}`);
     } catch (error) {
-      console.error('Error updating project:', error);
       message.error('Error updating project');
     }
   };
   
   const handleUpdateImage = async (id: number, image: string) => {
         try {
-        const response = await fetch(`${Backend_URL}/project/${id}/image`, {
-            method: 'PUT',
-            headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${session?.backendTokens.accessToken}`,
-            },
-            body: JSON.stringify({ image }),
-        });
-        const data = await response.json();
+        await updateProjectImage(id, image, session?.backendTokens.accessToken);
         message.success('Image updated successfully');
         setIsModalVisible(false);
-        window.location.reload();       
+        mutate(`project-${projectId}`);     
         } catch (error) {
         console.error('Error updating image:', error);
         throw error;
@@ -102,8 +51,16 @@ const ProjectSettingPage = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  useEffect(() => {
+    form.setFieldsValue({
+      name: project?.name,
+      repo: project?.repo,
+      descr: project?.description,
+    });
+  });
+
  return (
-  console.log(project.descr),
   <div className="site-layout-content">
   <h1 className='mb-4 text-xl font-semibold text-c-text'>Project Settings</h1>
      <div className='flex mt-10 px-5 justify-center'>
@@ -114,7 +71,7 @@ const ProjectSettingPage = () => {
             >
           <div className="flex flex-col items-center justify-center gap-4">
            
-            <Avatar src={project.image} alt={project.name} size={150} shape='square'/>
+            <Avatar src={project?.image} alt={project?.name} size={150} shape='square'/>
 
             {isAdmin && (
               <Button type="text" className="" onClick={() => setIsModalVisible(true)} style={{ backgroundColor: '#ccc',  fontSize: '16px' }}>
@@ -130,12 +87,15 @@ const ProjectSettingPage = () => {
                 disabled={!isAdmin}    
               />
             </Form.Item>
-            <Form.Item label="Repo" name="repo">
+            <Form.Item label="Repository" name="repo" rules={[
+            { required: true, message: 'Please enter the repository URL' },
+            { validator: validateRepository },
+          ]}>
               <Input
                 disabled={!isAdmin}
               />
             </Form.Item>
-            <Form.Item label="Description" name="descr">
+            <Form.Item label="Description" name="descr" rules={[{ required: true, message: 'Please enter the project description' }]}>
               <Input.TextArea
                 disabled={!isAdmin}
                 rows={4}
@@ -150,8 +110,11 @@ const ProjectSettingPage = () => {
           <h2 className="mt-8 font-bold">Members</h2>
           <div className="py-4">
           <Avatar.Group maxCount={6} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
-                    {members.map((member: any) => (
+
+                    {members && members.length > 0 ?(
+                    members.map((member: any) => (
                       <Popover
+                                        key={member.userId} 
                                         content={
                                           <div className="max-w-xs py-3 rounded-lg">
                                             <div className="flex photo-wrapper p-2 justify-center">
@@ -178,7 +141,8 @@ const ProjectSettingPage = () => {
                                       >
                       <Avatar key={member.userId} src={member.avatar} size={40} />
                       </Popover>
-                    ))}
+                    ))
+                  ):(<p>No members</p>)}
                   </Avatar.Group>
           </div>
         </Form>

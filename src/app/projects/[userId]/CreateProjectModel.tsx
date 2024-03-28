@@ -3,6 +3,7 @@ import { Modal, Form, Input, message } from 'antd';
 import { useSession } from 'next-auth/react';
 import UploadImage from '@/components/UploadImage';
 import { createProject } from '@/app/api/projectApi';
+import { validateRepository } from '@/lib/utils';
 
 
 const { Item } = Form;
@@ -12,14 +13,6 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
   const [image, setImage] = useState<string>('');
   const { data: session } = useSession();
 
-  const validateRepository = (rule: any, value: string, callback: any) => {
-    const regex = /^(https:\/\/github\.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-_]+)(\.git)?$/;
-    if (regex.test(value)) {
-      callback();
-    } else {
-      callback('Invalid repository format');
-    }
-  };
 
   const onFinish = async (values: any) => {
     try {

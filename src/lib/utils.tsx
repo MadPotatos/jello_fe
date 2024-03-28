@@ -31,3 +31,12 @@ export const getColoredIconByPriority = (priority: number) => {
 };
 
 export const fetcher = (url: string) => fetch(url).then(r => r.json())
+
+export  const validateRepository = (rule: any, value: string, callback: any) => {
+    const regex = /^(https:\/\/github\.com\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-_]+)(\.git)?$/;
+    if (regex.test(value)) {
+      callback();
+    } else {
+      callback('Invalid repository format');
+    }
+  };

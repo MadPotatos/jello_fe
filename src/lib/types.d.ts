@@ -16,6 +16,16 @@ export type Project = {
   leader?: Leader;
 };
 
+export type ProjectDetail = {
+  id: number;
+  name: string;
+  image?: string;
+  repo?: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type Leader = {
   userId: number;
   projectId: number;

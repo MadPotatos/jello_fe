@@ -1,5 +1,5 @@
 import { Backend_URL } from "@/lib/Constants";
-import { Project } from "@/lib/types";
+import { Project, ProjectDetail } from "@/lib/types";
 
 export const fetchProjects = async (userId: number): Promise<Project[]> => {
   const response = await fetch(`${Backend_URL}/project/all/${userId}`);
@@ -8,6 +8,17 @@ export const fetchProjects = async (userId: number): Promise<Project[]> => {
   }
   const data = await response.json();
   return data.projects;
+};
+
+export const fetchProjectById = async (
+  projectId: number
+): Promise<ProjectDetail> => {
+  const response = await fetch(`${Backend_URL}/project/${projectId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch project");
+  }
+  const data = await response.json();
+  return data;
 };
 
 export const fetchDeletedProjects = async (
@@ -70,6 +81,50 @@ export const createProject = async (
     return response.ok;
   } catch (error) {
     console.error("Error creating project:", error);
+    return false;
+  }
+};
+
+export const updateProject = async (
+  projectId: number,
+  projectData: any,
+  accessToken?: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${Backend_URL}/project/${projectId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(projectData),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error("Error updating project:", error);
+    return false;
+  }
+};
+
+export const updateProjectImage = async (
+  projectId: number,
+  image: string,
+  accessToken?: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${Backend_URL}/project/${projectId}/image`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ image }),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error("Error updating project image:", error);
     return false;
   }
 };
