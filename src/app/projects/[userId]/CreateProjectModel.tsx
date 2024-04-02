@@ -1,44 +1,35 @@
-"use client";
 import React, { useState } from 'react';
-import { Modal, Form, Input, Button, message } from 'antd';
+import { Modal, Form, Input, message } from 'antd';
 import { useSession } from 'next-auth/react';
 import UploadImage from '@/components/UploadImage';
-import { Backend_URL } from '@/lib/Constants';
-import { useRouter } from 'next/navigation';
+import { createProject } from '@/app/api/projectApi';
+import { validateRepository } from '@/lib/utils';
+
+
+const { Item } = Form;
 
 const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
   const [form] = Form.useForm();
-  const router = useRouter();
-  const [image, setImage] = useState<string>("");
-  const { data: session } = useSession(); 
+  const [image, setImage] = useState<string>('');
+  const { data: session } = useSession();
+
 
   const onFinish = async (values: any) => {
     try {
       values.userId = session?.user?.id;
-        values.image = image ;
-      const response = await fetch(Backend_URL + '/project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${session?.backendTokens.accessToken}`,
-        },
-        body: JSON.stringify(values),
-      });
+      values.image = image;
 
-      if (response.ok) {
-        const projectData = await response.json();
+      const success = await createProject(values, session?.backendTokens.accessToken);
+
+      if (success) {
         onCreate();
         message.success('Project created successfully');
         form.resetFields();
         onCancel();
-
-
       } else {
-        // Handle API error
         message.error('Failed to create project. Please try again.');
       }
     } catch (error) {
-      // Handle fetch or other errors
       console.error('Error creating project:', error);
       message.error('An error occurred. Please try again.');
     }
@@ -52,34 +43,36 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{style: {backgroundColor: '#1890ff'}}}
+      okButtonProps={{ style: { backgroundColor: '#1890ff' } }}
     >
       <Form form={form} onFinish={onFinish} layout="vertical">
-         <Form.Item label="Project Image">
+        <Item label="Project Image">
           <UploadImage image={image} setImage={setImage} />
-        </Form.Item>
-        <Form.Item
+        </Item>
+        <Item
           name="name"
           label="Project Name"
           rules={[{ required: true, message: 'Please enter the project name' }]}
         >
           <Input />
-        </Form.Item>
-        <Form.Item
+        </Item>
+        <Item
           name="description"
           label="Description"
           rules={[{ required: true, message: 'Please enter the project description' }]}
         >
           <Input.TextArea />
-        </Form.Item>
-        <Form.Item
+        </Item>
+        <Item
           name="repo"
-          label="Repository"
-          rules={[{ required: true, message: 'Please enter the repository URL' }]}
+          label="Repository (Example: https://github.com/{user}/{repo})"
+          rules={[
+            { required: true, message: 'Please enter the repository URL' },
+            { validator: validateRepository },
+          ]}
         >
           <Input />
-        </Form.Item>
-        
+        </Item>
       </Form>
     </Modal>
   );

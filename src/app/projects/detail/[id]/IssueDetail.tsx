@@ -1,15 +1,18 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col, Form, Input, Modal, Row, Select, Space, List, message } from 'antd';
 import { Avatar, Typography } from 'antd';
 import { Comment } from '@ant-design/compatible';
-import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation';
-import { Member } from '@/lib/types';
+import { IssueComment, Member } from '@/lib/types';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import { Popconfirm } from 'antd';
 import { DeleteOutlined,ExclamationCircleOutlined } from '@ant-design/icons';
+import useSWR, { mutate } from 'swr';
+import { fetchMembers } from '@/app/api/memberApi';
+import { createComment, deleteComment, fetchComments } from '@/app/api/commentApi';
+import { deleteIssue, updateIssue } from '@/app/api/issuesApi';
 
 const { confirm } = Modal;
 
@@ -18,40 +21,17 @@ interface IssueDetailModalProps {
   lists: any[];
   visible: boolean;
   onClose: () => void;
-  onUpdateIssue: () => void;
 }
 
-const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visible, onClose,onUpdateIssue }) => {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [comments, setComments] = useState<any[]>([]);
+const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visible, onClose}) => {
   const pathname = usePathname();
   const { data: session } = useSession();
   const projectId = Number(pathname.split('/')[3]);
   const [form] = Form.useForm();
 
+  const {data: members} = useSWR<Member[]>(`members-${projectId}`, () => fetchMembers(projectId));
+  const {data: comments} = useSWR<IssueComment[]>(`comments-${issue.id}`, () => fetchComments(issue.id));
 
-
-   const fetchMembers = async (id: number) => {
-        try {
-        const response = await fetch(`${Backend_URL}/member/${id}`);
-        const data = await response.json();
-        return data.members;
-        } catch (error) {
-        console.error('Error fetching members:', error);
-        throw error;
-        }
-    };
-
-    const fetchComments = async (id: number) => {
-        try {
-        const response = await fetch(`${Backend_URL}/comments/${id}`);
-        const data = await response.json();
-        return data;
-        } catch (error) {
-        console.error('Error fetching comments:', error);
-        throw error;
-        }
-    }
 
 const typeOptions = [
   { label: <span>{getColoredIconByIssueType(1)} Task</span>, value: 1 },
@@ -65,16 +45,12 @@ const priorityOptions = [
   { label: <span>{getColoredIconByPriority(3)} Low</span>, value: 3 }
 ];
 
-  const reporter = members.find(member => member.userId === issue.reporterId);
+  const reporter = members?.find(member => member.userId === issue.reporterId);
   const defaultAssigneeIds = issue.assignees.map((assignee: { userId: string }) => Number(assignee.userId)) ;
 
    useEffect(() => {
     const fetchData = async () => {
       try {
-        const membersData = await fetchMembers(projectId);
-        const commentsData = await fetchComments(issue.id);
-        setMembers(membersData);
-        setComments(commentsData);
       if (issue && members) {
       form.setFieldsValue({
       type: issue.type,
@@ -94,29 +70,11 @@ const priorityOptions = [
   }
   , [projectId,issue]);
 
-  const addComment = async (commentText: string) => {
+  const handleAddComment = async (commentText: string) => {
   try {
-    const response = await fetch(`${Backend_URL}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.backendTokens.accessToken}`,
-      },
-      body: JSON.stringify({
-        userId: session?.user.id,
-        issueId: issue.id,
-        descr: commentText,
-      }),
-    });
-
-    if (response.ok) {
+      await createComment(session?.user.id, issue.id, commentText, session?.backendTokens.accessToken);
       message.success('Comment added successfully');
-      const data = await response.json();
-      setComments([...comments, data]);
-    } else {
-      // Handle error case
-      console.error('Failed to add comment');
-    }
+      mutate(`comments-${issue.id}`);
   } catch (error) {
     console.error('Error adding comment:', error);
   }
@@ -124,48 +82,26 @@ const priorityOptions = [
 
 const handleDeleteComment = async (commentId: number) => {
   try {
-    const response = await fetch(`${Backend_URL}/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${session?.backendTokens.accessToken}`,
-      },
-    });
-
-    if (response.ok) {
+      await deleteComment(commentId, session?.backendTokens.accessToken);
       message.success('Comment deleted successfully');
-      setComments(comments.filter(comment => comment.id !== commentId));
-    } else {
-      // Handle error case
-      console.error('Failed to delete comment');
-    }
+      mutate(`comments-${issue.id}`);
+    
   } catch (error) {
     console.error('Error deleting comment:', error);
   }
 };
 
-const updateIssue = async (type: string, value: any) => {
+const handleUpdateIssue = async (type: string, value: any) => {
   try {
-    const response = await fetch(`${Backend_URL}/issues/${issue.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.backendTokens.accessToken}`,
-      },
-      body: JSON.stringify({ type, value, projectId }),
-    });
-
-    if (response.ok) {
+      await updateIssue(issue.id,type, value, projectId, session?.backendTokens.accessToken);
       message.success('Issue updated successfully');
-      onUpdateIssue();
-    } else {
-      console.error('Failed to update issue');
-    }
+      mutate(`issues-${projectId}`);
   } catch (error) {
     console.error('Error updating issue:', error);
   }
 };
 
-  const deteleIssue = async () => {
+  const handleDeteleIssue = async () => {
     try {
       confirm(
         {
@@ -176,20 +112,10 @@ const updateIssue = async (type: string, value: any) => {
           okButtonProps: { style: { backgroundColor: '#1890ff' } },
           cancelText: 'No',
           onOk: async () => {
-            const response = await fetch(`${Backend_URL}/issues/${issue.id}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${session?.backendTokens.accessToken}`,
-              },
-            });
-
-            if (response.ok) {
+            await deleteIssue(issue.id, session?.backendTokens.accessToken);
               message.success('Issue deleted successfully');
               onClose();
-              onUpdateIssue();
-            } else {
-              console.error('Failed to delete issue');
-            }
+              mutate(`issues-${projectId}`);
           },
         }
       )
@@ -207,7 +133,7 @@ const updateIssue = async (type: string, value: any) => {
       width={800}
       footer={[
         
-    <Button type="text" danger onClick={deteleIssue}>
+    <Button type="text" danger onClick={handleDeteleIssue}>
                Delete Issue
                 </Button>
       ]}
@@ -228,7 +154,7 @@ const updateIssue = async (type: string, value: any) => {
               className="mb-4 font-bold text-2xl"
               style={{ border: 'none', outline: 'none', borderBottom: '1px solid #ccc' }}
               onPressEnter={(e) => {
-                updateIssue('summary', (e.target as HTMLInputElement).value);
+                handleUpdateIssue('summary', (e.target as HTMLInputElement).value);
               }}
             />
               </Form.Item>
@@ -242,7 +168,7 @@ const updateIssue = async (type: string, value: any) => {
               className="mb-4"
               style={{ border: 'none', outline: 'none', borderBottom: '1px solid #ccc' }}             
               onPressEnter={(e) => {
-                updateIssue('descr', (e.target as HTMLInputElement).value);
+                handleUpdateIssue('descr', (e.target as HTMLInputElement).value);
               }
               }
             >
@@ -251,7 +177,7 @@ const updateIssue = async (type: string, value: any) => {
             </Form>
             <List
               className="comment-list max-h-[450px] overflow-y-auto"
-              header={`${comments.length} comments`}
+              header={`${comments?.length} comments`}
               itemLayout="horizontal"
               dataSource={comments}
               renderItem={(comment: any) => (
@@ -280,7 +206,7 @@ const updateIssue = async (type: string, value: any) => {
                 </li>
               )}
             />
-            <Form layout="vertical" onFinish={(values) => addComment(values.comment)}>
+            <Form layout="vertical" onFinish={(values) => handleAddComment(values.comment)}>
               <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
@@ -320,7 +246,7 @@ const updateIssue = async (type: string, value: any) => {
                 style={{ width: '100%' }}
                 options={typeOptions}
                 placeholder="Select Type"
-                onChange={(value) => updateIssue('type', value)}
+                onChange={(value) => handleUpdateIssue('type', value)}
               />
               </Form.Item>
               <Form.Item
@@ -333,7 +259,7 @@ const updateIssue = async (type: string, value: any) => {
                 style={{ width: '100%' }}
                 placeholder="Select Priority"
                 options={priorityOptions}
-                onChange={(value) => updateIssue('priority', value)}
+                onChange={(value) => handleUpdateIssue('priority', value)}
               />
               </Form.Item>
               <Form.Item
@@ -345,7 +271,7 @@ const updateIssue = async (type: string, value: any) => {
                  <Select 
                  style={{ width: '100%' }}
                  placeholder="Select List"
-                 onChange={(value) => updateIssue('listId', value)}
+                 onChange={(value) => handleUpdateIssue('listId', value)}
                  >
                   {lists.map((list:any) => (
                       <Select.Option key={list.id} value={list.id}>
@@ -376,10 +302,11 @@ const updateIssue = async (type: string, value: any) => {
                     <Select mode="multiple" 
                     style={{ width: '100%' }}
                     placeholder="Select Assignees"
-                    onChange={(value) => updateIssue('addAssignee', value)}
+                    onChange={(value) => handleUpdateIssue('addAssignee', value)}
                     >
                     
-                    {members.map((member: Member) => (
+                    {members && 
+                    members.map((member: Member) => (
                       <Select.Option key={member.userId} value={member.userId}>
                         {member.name}
                       </Select.Option>

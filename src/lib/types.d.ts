@@ -16,6 +16,16 @@ export type Project = {
   leader?: Leader;
 };
 
+export type ProjectDetail = {
+  id: number;
+  name: string;
+  image?: string;
+  repo?: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type Leader = {
   userId: number;
   projectId: number;
@@ -41,8 +51,6 @@ export type List = {
   order: number;
   createdAt: Date;
   updatedAt: Date;
-  issues?: Issue[];
-  project?: Project;
   projectId: number;
 };
 
@@ -74,12 +82,11 @@ export type Assignee = {
   projectId: number;
 };
 
-export type Comment = {
+export type IssueComment = {
   id: number;
   descr: string;
   createdAt: Date;
-  issue?: Issue;
-  issueId: number;
-  user?: User;
   userId: number;
+  name: string;
+  avatar: string;
 };

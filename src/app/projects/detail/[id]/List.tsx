@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { Button, Form, Input, Modal, Radio, Select, message } from 'antd';
-import { EditOutlined, CheckOutlined,CloseOutlined ,DeleteOutlined} from '@ant-design/icons';
-import { Backend_URL } from '@/lib/Constants';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { Button, Form, Input, Modal, Select, message } from 'antd';
+import { EditOutlined, CheckOutlined,CloseOutlined ,DeleteOutlined,ExclamationCircleOutlined} from '@ant-design/icons';
 import Issue from './Issue';
 import { useSession } from 'next-auth/react';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 import IssueDetailModal from './IssueDetail';
+import { mutate } from 'swr';
+import { usePathname } from 'next/navigation';
+import { deleteList, updateList } from '@/app/api/listApi';
+import { createIssue } from '@/app/api/issuesApi';
 
+const { confirm } = Modal;
 
 interface ListProps {
   list: any;
   lists: any[];
   issues: any;
   index: number;
-  onDeleteList: (listId: number) => void;
-  onCreateIssue: (createdIssue: any) => void;
-  onUpdateListName: (updatedList: any) => void;
-  onUpdateIssues: () => void; 
 }
 
-const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCreateIssue,onUpdateListName,onUpdateIssues }) => {
+const List: React.FC<ListProps> = ({ list, issues,lists, index }) => {
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const { data: session } = useSession();
   const [selectedIssue, setSelectedIssue] = useState<any>(null); 
   const [visible, setVisible] = useState(false)
+  const pathname = usePathname();
+  const projectId = Number(pathname.split('/')[3]);
 
   const handleCreateIssueClick = () => {
     setIsCreatingIssue(true);
@@ -38,18 +39,10 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
   };
 
   useEffect(() => {
-
       setNewListName(list.name);
     
   }, [list.name]);
 
-  const handleShowModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleHideModal = () => {
-    setIsModalVisible(false);
-  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -66,51 +59,40 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
 
 
   const handleSaveClick = async () => {
-    try {
-      const response = await fetch(`${Backend_URL}/list/${list.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newListName }),
-      });
-
-      if (response.ok) {
-        const updatedList = await response.json();
+    try {   
+        await updateList(list.id, newListName);
         setIsEditing(false);
-        
-        onUpdateListName(updatedList);
+        mutate(`lists-${projectId}`);
         message.success('List name updated successfully!');
-      } else {
-        throw new Error('Failed to update list name');
-      }
+      
     } catch (error) {
       message.error('Failed to update list name');
     }
   };
 
-    const handleDeleteClick = () => {
-    handleShowModal();
-  };
 
-  const handleConfirmDelete = async () => {
+
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`${Backend_URL}/list/${list.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        message.success('List deleted successfully!');
-        onDeleteList(list.id);
-      } else {
-        throw new Error('Failed to delete list');
-      }
+      confirm(
+        {
+          title: 'Are you sure you want to delete this list?',
+          icon: <ExclamationCircleOutlined />,
+          content: 'This action cannot be undone',
+          okText: 'Yes',
+          okButtonProps: { style: { backgroundColor: '#1890ff' } },
+          cancelText: 'No',
+          onOk: async () => {
+            await deleteList(list.id);
+              message.success('List deleted successfully');
+              mutate(`lists-${projectId}`);
+          },
+        }
+      )
     } catch (error) {
-      console.error('Failed to delete list:', error);
-      message.error('Failed to delete list');
-    } finally {
-      handleHideModal();
+      console.error('Error deleting issue:', error);
     }
+    
   };
 
   const handleSubmitIssue = async (values: any) => {
@@ -118,25 +100,11 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
     
       values.listId = list.id;
       values.reporterId = session?.user.id;
-
-
-      const response = await fetch(`${Backend_URL}/issues`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${session?.backendTokens.accessToken}`,
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (response.ok) {
-        const createdIssue = await response.json();
-        onCreateIssue(createdIssue);
+        await createIssue(values, session?.backendTokens.accessToken);     
+        mutate(`issues-${projectId}`);
         setIsCreatingIssue(false);
         message.success('Issue created successfully!');
-      } else {
-        throw new Error('Failed to create issue');
-      }
+     
     } catch (error) {
       console.error('Error creating issue:', error);
       message.error('Failed to create issue');
@@ -181,7 +149,7 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
               <Button type="text" onClick={handleEditClick}>
                 <EditOutlined />
               </Button>
-              <Button type="text" danger onClick={handleDeleteClick}>
+              <Button type="text" danger onClick={handleDelete}>
                 <DeleteOutlined />
                 </Button>
                 </div>
@@ -278,17 +246,9 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index,onDeleteList,onCr
                 + Add Issue
                 </Button>
             )}
-          <Modal
-            title="Confirm Deletion"
-            open={isModalVisible}
-            onOk={handleConfirmDelete}
-            onCancel={handleHideModal}
-            okButtonProps={{style: {backgroundColor: '#1890ff'}}}
-          >
-            <p>Are you sure you want to delete this list?</p>
-          </Modal>
+          
        {selectedIssue && (
-        <IssueDetailModal issue={selectedIssue} lists={lists} visible={visible} onClose={()=>setVisible(false)} onUpdateIssue={onUpdateIssues}/>
+        <IssueDetailModal issue={selectedIssue} lists={lists} visible={visible} onClose={()=>setVisible(false)}/>
                 )}
 
         </div>

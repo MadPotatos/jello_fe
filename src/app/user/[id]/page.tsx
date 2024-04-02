@@ -1,88 +1,32 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Form, Input, Button, Avatar, Spin, message, notification, Modal, Card } from 'antd';
-import { Backend_URL } from '@/lib/Constants';
 import {useSession} from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import UploadImage from '@/components/UploadImage';
 import { EditOutlined ,CheckCircleOutlined} from '@ant-design/icons';
-import { Project } from '@/lib/types';
+import { Project, User } from '@/lib/types';
 import { Typography } from 'antd';
+import useSWR, { mutate } from 'swr';
+import { fetchProjects } from '@/app/api/projectApi';
+import { fetchUser, updateAvatar, updateUser } from '@/app/api/userApi';
 
 const { Title, Text } = Typography;
 
 const { Item } = Form;
 
 const Profile = () => {
-  const [user, setUser] = useState<any>({});
-  const [projects, setProjects] = useState<Project[]>([]);
   const [editable, setEditable] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { data: session,update } = useSession();
   const pathname = usePathname();
-  const [image, setImage] = useState<string>(user.avatar || "");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const updateUser = async ({ id, name, email,job,organization}: any) => {
-    try {
-      const response = await fetch(`${Backend_URL}/user/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${session?.backendTokens.accessToken}`,
-        },
-        body: JSON.stringify({ name, email ,job,organization}),
-      });
-      const data = await response.json();
-      if (response.status === 409) {
-        throw new Error('Email already taken');
-      }
-      return data;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw error;
-    }
-  };
+  const userId: number = parseInt(pathname.split('/')[2]);
 
-    const updateAvatar = async (id: number, avatar: string) => {
-        try {
-        const response = await fetch(`${Backend_URL}/user/${id}/avatar`, {
-            method: 'PUT',
-            headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${session?.backendTokens.accessToken}`,
-            },
-            body: JSON.stringify({ avatar }),
-        });
-        const data = await response.json();
-        return data;
-        } catch (error) {
-        console.error('Error updating avatar:', error);
-        throw error;
-        }
-    };
+  const { data: projects } = useSWR<Project[]>(`project-all-${userId}`, () => fetchProjects(userId));
+  const { data: user } = useSWR<User>(`user-profile-${userId}`, () => fetchUser(userId) || {} as User);
 
-  const fetchUser = async (id: number) => {
-    try {
-      const response = await fetch(`${Backend_URL}/user/profile/${id}`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      throw error;
-    }
-  };
-
-  const fetchProjects = async (userId: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${Backend_URL}/project/all/${userId}`);
-      const {projects} = await response.json();
-      return projects;
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const [image, setImage] = useState<string>(user?.avatar || "");
 
   const showSuccessNotification = () => {
     notification.success({
@@ -100,12 +44,11 @@ const Profile = () => {
 
   const handleUpdateInfo = async (values: any) => {
     try {
-      await updateUser({ id: user.id, ...values });
+      await updateUser(user?.id, values, session?.backendTokens.accessToken);
       setEditable(false);
       showSuccessNotification();
-       await update();
-     window.location.reload();
-     
+      await update();
+      mutate(`user-profile-${userId}`);
     } catch (error) {
       if ((error as Error).message === 'Email already taken') {
         showEmailTakenNotification();
@@ -119,9 +62,11 @@ const Profile = () => {
     try {
       // Check if the user has uploaded a new image
       if (image !== null) {
-        await updateAvatar(user.id, image);
+        await updateAvatar(user?.id, image, session?.backendTokens.accessToken);
+        handleCancel();
         showSuccessNotification();
-        window.location.reload();
+        await update();
+        mutate(`user-profile-${userId}`);
       } else {
         message.warning('Please choose a new avatar to update.');
       }
@@ -129,30 +74,6 @@ const Profile = () => {
       message.error('Failed to update avatar. Please try again.');
     }
   };
-
-
-
-
-  useEffect(() => {
-    const id: number = parseInt(pathname.split('/')[2], 10);
-
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const userData = await fetchUser(id);
-        const projectsData = await fetchProjects(id);
-        setUser(userData);
-        setProjects(projectsData);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [pathname]);
-
- 
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -174,26 +95,26 @@ const Profile = () => {
         cover={
           <img
             alt="Profile Background"
-            src="https://vojislavd.com/ta-template-demo/assets/img/profile-background.jpg"
+            src="/images/profile-background.jpg"
             className="rounded-tl-lg rounded-tr-lg"
           />
         }
       >
         <div className="flex flex-col items-center -mt-20">
           <Avatar
-            src={user.avatar}
-            alt={`${user.name}'s avatar`}
+            src={user?.avatar}
+            alt={`${user?.name}'s avatar`}
             size={160}
-            onClick={() => session?.user?.id === user.id && showModal()}
+            onClick={() => session?.user?.id === user?.id && showModal()}
             className="cursor-pointer"
             style={{ border: '4px solid #fff' }}
           />
           <div className="flex items-center space-x-2 mt-2">
-            <p className="text-2xl">{user.name}</p>
+            <p className="text-2xl">{user?.name}</p>
             <CheckCircleOutlined style={{ color: '#1890ff' }} />
           </div>
-          <p className="text-gray-700">{user.job}</p>
-          <p className="text-sm text-gray-500">{user.organization}</p>
+          <p className="text-gray-700">{user?.job}</p>
+          <p className="text-sm text-gray-500">{user?.organization}</p>
         </div>
         
       </Card>
@@ -203,10 +124,10 @@ const Profile = () => {
             <Form
               onFinish={handleUpdateInfo}
               initialValues={{
-                name: user.name,
-                email: user.email,
-                job: user.job,
-                organization: user.organization,
+                name: user?.name,
+                email: user?.email,
+                job: user?.job,
+                organization: user?.organization,
               }}
             >
               <Item label="Full name" name="name" rules={[{ required: true }]}>
@@ -234,7 +155,7 @@ const Profile = () => {
             <div>
               <div className="flex items-center justify-between">
                 <h4 className="text-xl text-gray-900 font-bold">Personal Info</h4>
-                {session?.user?.id === user.id && (
+                {session?.user?.id === user?.id && (
                   <EditOutlined
                     style={{ fontSize: '20px', color: '#1890ff', cursor: 'pointer' }}
                     onClick={() => setEditable(true)}
@@ -244,19 +165,19 @@ const Profile = () => {
               <ul className="mt-2 text-gray-700">
                 <li className="flex border-y py-2">
                   <span className="font-bold w-24">Full name:</span>
-                  <span className="text-gray-700">{user.name}</span>
+                  <span className="text-gray-700">{user?.name}</span>
                 </li>
                 <li className="flex border-b py-2">
                   <span className="font-bold w-24">Email:</span>
-                  <span className="text-gray-700">{user.email}</span>
+                  <span className="text-gray-700">{user?.email}</span>
                 </li>
                 <li className="flex border-b py-2">
                   <span className="font-bold w-24">Job title:</span>
-                  <span className="text-gray-700">{user.job}</span>
+                  <span className="text-gray-700">{user?.job}</span>
                 </li>
                 <li className="flex border-b py-2">
                   <span className="font-bold w-24">Organization:</span>
-                  <span className="text-gray-700">{user.organization}</span>
+                  <span className="text-gray-700">{user?.organization}</span>
                 </li>
               </ul>
             </div>
@@ -264,26 +185,30 @@ const Profile = () => {
         </Card>
 
         {/* Project List */}
-          <Card className="flex-1 mt-4" title="PROJECTS">
+         <Card className="flex-1 mt-4" title="PROJECTS">
   <div className="overflow-x-scroll max-w-3xl flex flex-row h-96 space-x-4">
-    {projects.map((project: Project) => (
-      <div key={project.id} className="mb-4">
-        <Card className="w-80 shadow-lg border border-gray-300 rounded-lg">
-          <div className="flex flex-col items-center">
-            <Title level={4} className="mb-2">{project.name}</Title>
-            <img alt={project.name} src={project.image} className="h-40 w-full object-cover mb-4" />
-            <Text className="mb-4">{project.description}</Text>
-            <div className="flex items-center">
-              <span className="font-semibold">Leader:</span>
-              {project.leader && (
-                <Avatar src={project.leader.avatar} size={32} className="ml-2" />
-              )}
-              <Text className="ml-2">{project.leader?.name}</Text>
+    {projects && projects.length > 0 ? (
+      projects.map((project: Project) => (
+        <div key={project.id} className="mb-4">
+          <Card className="w-80 shadow-lg border border-gray-300 rounded-lg">
+            <div className="flex flex-col items-center">
+              <Title level={4} className="mb-2">{project.name}</Title>
+              <img alt={project.name} src={project.image} className="h-40 w-full object-cover mb-4" />
+              <Text className="mb-4">{project.description}</Text>
+              <div className="flex items-center">
+                <span className="font-semibold">Leader:</span>
+                {project.leader && (
+                  <Avatar src={project.leader.avatar} size={32} className="ml-2" />
+                )}
+                <Text className="ml-2">{project.leader?.name}</Text>
+              </div>
             </div>
-          </div>
-        </Card>
-      </div>
-    ))}
+          </Card>
+        </div>
+      ))
+    ) : (
+      <p>No projects found.</p>
+    )}
   </div>
 </Card>
 

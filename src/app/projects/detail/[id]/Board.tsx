@@ -1,29 +1,24 @@
-import React, { use, useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import React from 'react';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import List from './List';
 import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation';
-import { Button, message } from 'antd';
+import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { mutate } from 'swr';
+import { createList, reorderLists } from '@/app/api/listApi';
+import { reorderIssues, updateIssueDate } from '@/app/api/issuesApi';
 interface BoardProps {
     lists: any[];
     issues: any;
-    onUpdateIssue: () => void;
 }
 
-const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssues,onUpdateIssue }) => {
+const Board: React.FC<BoardProps> = ({ lists, issues}) => {
     const reorderListsEndpoint = `${Backend_URL}/list/reorder`;
     const reorderIssuesEndpoint = `${Backend_URL}/issues/reorder`;
     const pathname = usePathname();
     const projectId = Number(pathname.split('/')[3]);
 
-    const [lists, setLists] = useState(initialLists);
-    const [issues, setIssues] = useState(initialIssues);
-    
-    useEffect(() => {
-        setLists(initialLists);
-        setIssues(initialIssues);
-    }, [initialLists, initialIssues]);
 
     const onDragEnd = async (result: DropResult) => {
         if (!result.destination) return;
@@ -52,88 +47,26 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
                 };
 
         try {
-            // Call the backend endpoint based on the type
-            const endpoint = isListType ? reorderListsEndpoint : reorderIssuesEndpoint;
-
-            await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
-            });
-
-            // Update the updatedAt field for the issue after reordering (if it's an issue)
-            if (!isListType) {
-                await fetch(`${Backend_URL}/issues/update/${body.id}`, {
-                    method: 'PUT', 
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-            }
-            if (isListType) {
-                const newLists = [...lists];
-                const [removed] = newLists.splice(result.source.index, 1);
-                newLists.splice(result.destination.index, 0, removed);
-                setLists(newLists);
+           if (isListType) {
+                await reorderLists(body);
+                mutate(`lists-${projectId}`);
             } else {
-       
-                const newIssues = { ...issues };
-                const sourceIssues = newIssues[body.s?.sId ?? 0];
-                const [removed] = sourceIssues.splice(body.s?.order ?? 0, 1);
-                const destinationIssues = newIssues[body.d?.dId ?? 0];
-                destinationIssues.splice(body.d?.newOrder ?? 0, 0, removed);
-                setIssues(newIssues);
+                await reorderIssues(body);
+                await updateIssueDate(body.id);
+                mutate(`issues-${projectId}`);
             }
-        
         } catch (error) {
             console.error('Error reordering:', error);        }
     };
 
     const handleCreateList = async () => {
         try {
-            const response = await fetch(`${Backend_URL}/list`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ projectId }),
-            });
-
-            if (response.ok) {
-                const newList = await response.json();
-                setLists([...lists, newList]);
-                message.success('List created successfully!');
-            } else {
-                throw new Error('Failed to create list');
-            }
+            await createList(projectId);
+            mutate(`lists-${projectId}`);
         } catch (error) {
             console.error('Error creating list:', error);
         }
     };
-    const handleDeleteList = (listId: number) => {
-    const updatedLists = lists.filter((list) => list.id !== listId);
-    setLists(updatedLists);
-  };
-
-  const handleUpdateListName = (updatedList: any) => {
-  const listIndex = lists.findIndex((l) => l.id === updatedList.id);
-
-  if (listIndex !== -1) {
-    const updatedLists = [...lists];
-    updatedLists[listIndex].name = updatedList.name;
-    setLists(updatedLists);
-  }
-};
-
-  const handleCreateIssue = (createdIssue: any) => {
-    const updatedIssues = { ...issues };
-    updatedIssues[createdIssue.listId] = [...updatedIssues[createdIssue.listId], createdIssue];
-    setIssues(updatedIssues);
-  };
-
-
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -141,12 +74,11 @@ const Board: React.FC<BoardProps> = ({ lists: initialLists, issues: initialIssue
                 {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}  className="flex space-x-4 p-8 overflow-x-auto">
                         {lists.map((list, index) => (
-                            console.log(index),
                             <Draggable key={`list-${list.id}`} draggableId={`list-${list.id}`} index={index}>             
                                 {(provided) => (                                    
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                                     className="w-80 flex-none">
-                                        <List key={list.id} list={list} lists = {lists}issues={issues} index={index+1} onDeleteList={handleDeleteList} onCreateIssue={handleCreateIssue} onUpdateListName={handleUpdateListName} onUpdateIssues={onUpdateIssue}/>
+                                        <List list={list} lists = {lists}issues={issues} index={index+1}   />
                                         
                                     </div>
                                   

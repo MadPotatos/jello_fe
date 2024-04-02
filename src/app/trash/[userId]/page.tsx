@@ -1,53 +1,34 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, {  useState } from 'react';
+import {  usePathname } from 'next/navigation';
 import { Button, Table, Input, Breadcrumb, Popover, Avatar, message, Modal } from 'antd';
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { Backend_URL } from '@/lib/Constants';
+import { SearchOutlined } from '@ant-design/icons';
 import { Leader, Project } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import useSWR, { mutate } from 'swr';
+import { fetchDeletedProjects, restoreProject } from '@/app/api/projectApi';
 
 const { Search } = Input;
 const { confirm } = Modal;
 
 const DeletedProjectList = () => {
   const pathname = usePathname();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState<string>('');
   const { data: session } = useSession();
 
+  const userId: number = parseInt(pathname.split('/')[2]);
+
+  const { data: projects, error: projectsError } = useSWR<Project[]>(`project-deleted-${userId}`, () => fetchDeletedProjects(userId));
+
    
-
-  const fetchProjects = async (userId: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${Backend_URL}/project/deleted/${userId}`);
-      const { projects } = await response.json();
-      setProjects(projects);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-     const handleSearch = (value: string) => {
+  const handleSearch = (value: string) => {
     setSearchValue(value);
-    if (value.trim() === '') {
-      fetchProjects(parseInt(pathname.split('/')[2]));
-    } else {
-      const filteredProjects = projects.filter(project =>
-        project.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setProjects(filteredProjects);
-    }
   };
 
-  useEffect(() => {
-    const userId: number = parseInt(pathname.split('/')[2]);
-    fetchProjects(userId);
-  }, [pathname]);
+  const filteredProjects = projects?.filter(project =>
+    project.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   const columns = [
     {
@@ -95,7 +76,7 @@ const DeletedProjectList = () => {
             </div>
           }
           title=""
-          trigger="click"
+          trigger="hover"
         >
           <div 
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
@@ -130,18 +111,12 @@ const DeletedProjectList = () => {
       okType: 'default',
       onOk: async () => {
         try {
-          const response = await fetch(`${Backend_URL}/project/restore/${projectId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${session?.backendTokens.accessToken}`,
-            },
-          });
-          message.success('Project is removed to recycle bin !');
-          const userId: number = parseInt(pathname.split('/')[2]);
-          fetchProjects(userId);
+          await restoreProject(projectId, session?.backendTokens.accessToken);
+          message.success('Project is removed from recycle bin !');
+          mutate(`project-deleted-${userId}`);
         } catch (err) {
           console.error(err);
+          message.error('Failed to restore project');
         }
       },
       onCancel() {},
@@ -162,9 +137,9 @@ const DeletedProjectList = () => {
         />
       </div>
 
-      <Table dataSource={projects} 
+      <Table dataSource={filteredProjects || []}
         columns={columns} 
-        loading={loading} 
+        loading={!projects && !projectsError} 
         rowKey="id" 
         />
     </div>
