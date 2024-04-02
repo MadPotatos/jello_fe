@@ -58,3 +58,16 @@ export const fetchUser = async (userId: number): Promise<User> => {
     throw error;
   }
 };
+
+export const searchUsers = async (name: string): Promise<User[]> => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/user/searchbyName?name=${name}`
+    );
+    const data = await response.json();
+    return data.users;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};

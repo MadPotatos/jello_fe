@@ -1,5 +1,5 @@
 import React from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import { Avatar } from 'antd';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 
@@ -11,7 +11,9 @@ interface IssueProps {
 
 
 
+
 const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
+  
   return (
     <Draggable key={issue.id} draggableId={`issue-${issue.id}`} index={index}>
       {(provided) => (
