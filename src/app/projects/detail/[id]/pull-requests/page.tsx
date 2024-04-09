@@ -1,40 +1,88 @@
 "use client";
 import { fetchPullRequests, fetchRepoDetail } from "@/app/api/repoApi";
 import { PullRequest, Repo } from "@/lib/types";
-import { GithubOutlined, StarOutlined, ForkOutlined } from "@ant-design/icons"; 
-import { Button, Card, Empty, Spin } from "antd";
+import { GithubOutlined, StarOutlined, ForkOutlined ,SearchOutlined} from "@ant-design/icons"; 
+import { Button, Card, Empty, Space, Spin, Table } from "antd";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
 
 const PullRequestsManagementPage = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[3]);
 
-  const { data: repo, error } = useSWR<Repo>(`repo-${projectId}`, () => fetchRepoDetail(projectId));
-  const { data: pullRequests } = useSWR<PullRequest[]>(`pull-requests-${projectId}`, () => fetchPullRequests(projectId));
+  const { data: repo } = useSWR<Repo>(`repo-${projectId}`, () => fetchRepoDetail(projectId));
+  const { data: pullRequests, error: pullRequestsError  } = useSWR<PullRequest[]>(`pull-requests-${projectId}`, () => fetchPullRequests(projectId));
 
-  const handleRepoLink = () => {
-    if (repo?.url) {
-      router.push(repo.url);
-    }
-  };
+  const columns :any[] = [
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: string) => new Date(date).toLocaleDateString(),
+      sorter: (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(), 
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      width : '30%'
+    },
+    {
+      title: 'State',
+      dataIndex: 'state',
+      key: 'state',
+      render :(state: string) => (
+        <span className={`text-xs font-semibold text-white px-2 py-1 rounded-full bg-green-500`}>
+          {state}
+        </span>
+      )
+    },
+    {
+      title: 'User',
+      dataIndex: 'user',
+      key: 'user',
+    },
+    {
+      title: 'Head',
+      dataIndex: 'head',
+      key: 'head',
+    },
+    {
+      title: 'Base',
+      dataIndex: 'base',
+      key: 'base',
+    },
+    {
+      title: 'Detail',
+      key: 'url',
+      render: (record: any) => (
+        <Space size="middle">
+          <Button type="primary" style={{ backgroundColor: '#1890ff', fontSize: '16px' }} >
+            <Link href={record.url} target="_blank">
+              <SearchOutlined />
+            </Link>
+          </Button>
+        </Space>
+      ),
+    },
 
-   return (
-    console.log(repo),
+  ];
+
+     return (
     <div className="site-layout-content">
       <h1 className="mb-4 text-xl font-semibold text-c-text">Repository</h1>
       {repo && "message" in repo ? (
-        <Empty description="Failed to load repository details. Please check your repo URL in setting" /> 
+        <Empty description="Failed to load repository details. Please check your repo URL in setting" />
       ) : repo ? (
         <Card
           title={
-            <a onClick={handleRepoLink} className="text-xl cursor-pointer hover:text-blue-600">
+            <Link href={repo.url} target="_blank" className="text-xl cursor-pointer hover:text-blue-600">
               {repo?.owner}/{repo?.name} <GithubOutlined className="ml-2" />
-            </a>
+            </Link>
           }
-          bordered={false} 
+          bordered={false}
           className="mb-4 repo-card bg-gray-100 shadow-md rounded-lg"
         >
           <div className="px-4 ">
@@ -51,17 +99,17 @@ const PullRequestsManagementPage = () => {
             <div className="mt-4 flex gap-2">
               <Button type="primary" ghost icon={<StarOutlined />} >
                 Star
-              <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
-                {repo?.stars || 0}
-              </span>
-            </Button>
-            <Button  type="primary" ghost icon={<ForkOutlined />} >
-               Fork
-              <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
-                {repo?.forks || 0}
-              </span>
-            </Button>
-          </div>  
+                <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
+                  {repo?.stars || 0}
+                </span>
+              </Button>
+              <Button type="primary" ghost icon={<ForkOutlined />} >
+                Fork
+                <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
+                  {repo?.forks || 0}
+                </span>
+              </Button>
+            </div>
           </div>
         </Card>
       ) : (
@@ -69,7 +117,12 @@ const PullRequestsManagementPage = () => {
       )}
 
       <h1 className="mb-4 text-xl font-semibold text-c-text">Pull requests</h1>
-      {/* Table implementation here */}
+      <Table
+         columns={columns}
+          dataSource={pullRequests && Array.isArray(pullRequests) ? pullRequests : []}
+          loading={!pullRequests && !pullRequestsError}
+          rowKey="id"
+      />
     </div>
   );
 };

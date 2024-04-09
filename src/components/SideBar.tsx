@@ -80,6 +80,7 @@ const items: MenuItem[] = [
       <Menu
         mode="inline"
         defaultSelectedKeys={['1']}
+        defaultOpenKeys={['grp-1', 'grp-2']}
         style={{ height: '100%' }}
         items={items}
         className="h-full text-base"
