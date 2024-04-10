@@ -90,3 +90,23 @@ export type IssueComment = {
   name: string;
   avatar: string;
 };
+
+export type Repo = {
+  name: string;
+  url: string;
+  description: string;
+  owner: string;
+  language: string;
+  stars: number;
+  forks: number;
+};
+
+export type PullRequest = {
+  title: string;
+  url: string;
+  user: string;
+  state: string;
+  createdAt: string;
+  head: string;
+  base: string;
+};

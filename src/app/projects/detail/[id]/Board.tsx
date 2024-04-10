@@ -1,7 +1,6 @@
 import React from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import List from './List';
-import { Backend_URL } from '@/lib/Constants';
 import { usePathname } from 'next/navigation';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -14,8 +13,6 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ lists, issues}) => {
-    const reorderListsEndpoint = `${Backend_URL}/list/reorder`;
-    const reorderIssuesEndpoint = `${Backend_URL}/issues/reorder`;
     const pathname = usePathname();
     const projectId = Number(pathname.split('/')[3]);
 

@@ -4,8 +4,10 @@ import { Avatar, Layout, Menu } from 'antd';
 import {
   ProjectOutlined,
   ToolOutlined,
-  CodeOutlined,
-  GroupOutlined 
+  PullRequestOutlined,
+  GroupOutlined,
+  BugOutlined,
+  IssuesCloseOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
@@ -46,10 +48,17 @@ const Sidebar = () => {
    
    
 const items: MenuItem[] = [
+  getItem('Planning','grp-1',null,[
   getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id)),
   getItem('Timeline', '2', <GroupOutlined />, undefined, () => router.push('/timeline')),
-  getItem('Code', '3', <CodeOutlined />, undefined, () => router.push('/code')),
-  getItem('Project setting', '4', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
+  ]),
+  getItem('Development','grp-2',null,[
+  getItem('Pull requests', '3', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
+  getItem('Issues', '4', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
+  getItem('Bug tracking', '5', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
+  ]),
+  {type: 'divider'},
+  getItem('Project setting', '6', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
 ];
 
   return (
@@ -71,6 +80,7 @@ const items: MenuItem[] = [
       <Menu
         mode="inline"
         defaultSelectedKeys={['1']}
+        defaultOpenKeys={['grp-1', 'grp-2']}
         style={{ height: '100%' }}
         items={items}
         className="h-full text-base"
