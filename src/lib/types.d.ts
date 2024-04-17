@@ -110,3 +110,19 @@ export type PullRequest = {
   head: string;
   base: string;
 };
+
+export type Sprint = {
+  id: number;
+  name: string;
+  goal?: string;
+  startDate?: Date;
+  endDate?: Date;
+  createdAt: Date;
+  status: SprintStatus;
+};
+
+export enum SprintStatus {
+  CREATED = "CREATED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+}

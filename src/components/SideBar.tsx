@@ -7,7 +7,8 @@ import {
   PullRequestOutlined,
   GroupOutlined,
   BugOutlined,
-  IssuesCloseOutlined
+  IssuesCloseOutlined,
+  TableOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
@@ -51,14 +52,15 @@ const items: MenuItem[] = [
   getItem('Planning','grp-1',null,[
   getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id)),
   getItem('Timeline', '2', <GroupOutlined />, undefined, () => router.push('/timeline')),
+  getItem('Backlog', '3', <TableOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/backlog')),
   ]),
   getItem('Development','grp-2',null,[
-  getItem('Pull requests', '3', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
-  getItem('Issues', '4', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
-  getItem('Bug tracking', '5', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
+  getItem('Pull requests', '4', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
+  getItem('Issues', '5', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
+  getItem('Bug tracking', '6', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
   ]),
   {type: 'divider'},
-  getItem('Project setting', '6', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
+  getItem('Project setting', '7', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
 ];
 
   return (
