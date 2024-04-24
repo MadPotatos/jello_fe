@@ -90,7 +90,7 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index }) => {
         }
       )
     } catch (error) {
-      console.error('Error deleting issue:', error);
+      console.error('Error deleting list:', error);
     }
     
   };

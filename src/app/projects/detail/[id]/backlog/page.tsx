@@ -20,7 +20,7 @@ const ProjectBacklogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () => fetchMembers(projectId));
-  const { data: sprints } = useSWR<Sprint[]>(`lists-${projectId}`, () => fetchSprints(projectId));
+  const { data: sprints } = useSWR<Sprint[]>(`sprints-${projectId}`, () => fetchSprints(projectId));
   const { data: issues } = useSWR<any>(`sprint-issues-${projectId}`, () => fetchIssuesInSprint(projectId));
 
   const onDragEnd = async (result: DropResult) => {};

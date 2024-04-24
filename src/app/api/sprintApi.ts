@@ -8,3 +8,25 @@ export const fetchSprints = async (projectId: number): Promise<Sprint[]> => {
   }
   return response.json();
 };
+
+export const createSprint = async (projectId: number) => {
+  const response = await fetch(`${Backend_URL}/sprint`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ projectId }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create sprint");
+  }
+};
+
+export const deleteSprint = async (sprintId: number) => {
+  const response = await fetch(`${Backend_URL}/sprint/${sprintId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete list");
+  }
+};

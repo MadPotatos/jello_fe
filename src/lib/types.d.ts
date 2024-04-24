@@ -115,6 +115,7 @@ export type Sprint = {
   id: number;
   name: string;
   goal?: string;
+  order: number;
   startDate?: Date;
   endDate?: Date;
   createdAt: Date;
