@@ -69,7 +69,7 @@ const Board: React.FC<BoardProps> = ({ lists, issues}) => {
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="board" direction="horizontal" type="LIST">
                 {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}  className="flex space-x-4 p-8 overflow-x-auto">
+                    <div ref={provided.innerRef} {...provided.droppableProps}  className="flex space-x-4 py-4 overflow-x-auto">
                         {lists.map((list, index) => (
                             <Draggable key={`list-${list.id}`} draggableId={`list-${list.id}`} index={index}>             
                                 {(provided) => (                                    
