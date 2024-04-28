@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { Spin } from 'antd';
 import { Member, Sprint } from '@/lib/types';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { fetchMembers } from '@/app/api/memberApi';
-import { fetchIssuesInSprint } from '@/app/api/issuesApi';
+import { fetchIssuesInSprint, reorderIssues, updateIssueDate } from '@/app/api/issuesApi';
 import { fetchSprints } from '@/app/api/sprintApi';
 import Filter from '../Filter';
 import { DragDropContext, DropResult, Droppable } from '@hello-pangea/dnd';
@@ -23,7 +23,34 @@ const ProjectBacklogPage: React.FC = () => {
   const { data: sprints } = useSWR<Sprint[]>(`sprints-${projectId}`, () => fetchSprints(projectId));
   const { data: issues } = useSWR<any>(`sprint-issues-${projectId}`, () => fetchIssuesInSprint(projectId));
 
-  const onDragEnd = async (result: DropResult) => {};
+   const onDragEnd = async (result: DropResult) => {
+        if (!result.destination) return;
+        // Extract numeric ID from the draggable ID
+        const id = parseInt(result.draggableId.split('-')[1], 10);
+        const body = 
+           {
+                    id, // The id of the issue being reordered
+                    s: {
+                        sId: parseInt(result.source.droppableId.split('-')[1], 10), // The source list ID
+                        order: result.source.index, // The current order of the issue in the source list
+                    },
+                    d: {
+                        dId: parseInt(result.destination.droppableId.split('-')[1], 10), // The destination list ID
+                        newOrder: result.destination.index, // The new order of the issue in the destination list
+                    },
+                    type:'sprint'
+                };
+
+
+        try {
+         
+                await reorderIssues(body);
+                await updateIssueDate(body.id);
+                mutate(`sprint-issues-${projectId}`);
+            
+        } catch (error) {
+            console.error('Error reordering:', error);        }
+    };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -58,9 +85,7 @@ const ProjectBacklogPage: React.FC = () => {
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
       <Filter members={members} onSearch={handleSearch} />
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="backlog" type="COLUMN" direction="vertical">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
               {sprints
                   .slice(1)
                   .concat(sprints.slice(0, 1)) 
@@ -70,12 +95,10 @@ const ProjectBacklogPage: React.FC = () => {
                       sprint={sprint}
                       issues={issues}
                       filteredIssues={filteredIssues}
+                      projectId={projectId}
                     />
                   ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+             </div>       
       </DragDropContext>
     </div>
   );

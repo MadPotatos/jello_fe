@@ -112,12 +112,7 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index }) => {
   };
 
   return (
-    <Draggable draggableId={`list-${list.id}`} index={index}>
-      {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          className="flex flex-col bg-gray-100 shadow-md mb-4 p-4 group"
+        <div className="flex flex-col bg-gray-100 shadow-md mb-4 p-4 group"
         >
           <div className="flex items-center justify-between border-gray-200 pb-4">
             {isEditing ? (
@@ -252,8 +247,8 @@ const List: React.FC<ListProps> = ({ list, issues,lists, index }) => {
                 )}
 
         </div>
-      )}
-    </Draggable>
+      
+ 
     
   );
 };

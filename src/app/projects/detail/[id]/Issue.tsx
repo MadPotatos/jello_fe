@@ -21,7 +21,7 @@ const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="bg-white shadow-md mb-2 group"
+          className="bg-white hover:bg-gray-200 shadow-md mb-2 group"
           onClick={() => onClick(issue)}
         >
           <div className="p-3">

@@ -1,3 +1,5 @@
+import { SprintStatus } from "./enum";
+
 export type User = {
   id: number;
   name: string;
@@ -121,9 +123,3 @@ export type Sprint = {
   createdAt: Date;
   status: SprintStatus;
 };
-
-export enum SprintStatus {
-  CREATED = "CREATED",
-  IN_PROGRESS = "IN_PROGRESS",
-  COMPLETED = "COMPLETED",
-}
