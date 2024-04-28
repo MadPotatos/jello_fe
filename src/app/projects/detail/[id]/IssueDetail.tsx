@@ -13,6 +13,7 @@ import useSWR, { mutate } from 'swr';
 import { fetchMembers } from '@/app/api/memberApi';
 import { createComment, deleteComment, fetchComments } from '@/app/api/commentApi';
 import { deleteIssue, updateIssue } from '@/app/api/issuesApi';
+import dayjs from 'dayjs';
 
 const { confirm } = Modal;
 
@@ -28,6 +29,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({ issue, lists,visibl
   const { data: session } = useSession();
   const projectId = Number(pathname.split('/')[3]);
   const [form] = Form.useForm();
+
+  const formattedUpdatedAt = dayjs(issue.updatedAt).format('DD-MM-YYYY HH:mm');
+  const formattedCreatedAt = dayjs(issue.createdAt).format('DD-MM-YYYY HH:mm');
 
   const {data: members} = useSWR<Member[]>(`members-${projectId}`, () => fetchMembers(projectId));
   const {data: comments} = useSWR<IssueComment[]>(`comments-${issue.id}`, () => fetchComments(issue.id));
@@ -314,8 +318,8 @@ const handleUpdateIssue = async (type: string, value: any) => {
                   </Select>
                 </Form.Item>
                 
-              <Typography.Text type="secondary">Updated At: {new Date(issue.updatedAt).toLocaleString()}</Typography.Text>
-              <Typography.Text type="secondary">Created At: {new Date(issue.createdAt).toLocaleString()}</Typography.Text>
+              <Typography.Text type="secondary">Updated At: {formattedCreatedAt}</Typography.Text>
+              <Typography.Text type="secondary">Created At: {formattedUpdatedAt}</Typography.Text>
             </Space>
           </div>
           </Form>

@@ -22,6 +22,19 @@ export const createSprint = async (projectId: number) => {
   }
 };
 
+export const updateSprint = async (sprintId: number, body: any) => {
+  const response = await fetch(`${Backend_URL}/sprint/${sprintId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update sprint");
+  }
+};
+
 export const deleteSprint = async (sprintId: number) => {
   const response = await fetch(`${Backend_URL}/sprint/${sprintId}`, {
     method: "DELETE",
