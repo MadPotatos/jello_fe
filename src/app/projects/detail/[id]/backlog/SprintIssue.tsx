@@ -1,25 +1,22 @@
 import React from 'react';
-import { Avatar ,List } from 'antd';
+import { Avatar, List, Button } from 'antd';
 import { Draggable } from '@hello-pangea/dnd';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
-
-
-
 
 interface SprintIssuesProps {
   issues: any;
   sprintId: number;
+  sprintOrder: number;
   filteredIssues: any;
 }
 
-const SprintIssues: React.FC<SprintIssuesProps> = ({ issues, sprintId, filteredIssues }) => {
-
+const SprintIssues: React.FC<SprintIssuesProps> = ({ issues, sprintId, filteredIssues, sprintOrder }) => {
 
   return (
     <List
       locale={{ emptyText: (
         <div className="border border-gray-400 border-dashed py-3 px-6 text-center text-lg">
-          Plan a sprint by creating issues, or by dragging issues here.
+          {sprintOrder === 0 ? 'Your backlog is empty' : 'Plan your sprint by dragging issues here or create new issues'}
         </div>
       )}}
       dataSource={filteredIssues[sprintId] || issues[sprintId]}
@@ -36,11 +33,26 @@ const SprintIssues: React.FC<SprintIssuesProps> = ({ issues, sprintId, filteredI
               {...provided.dragHandleProps}             
             >
               <div className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center">
-                <div className="flex items-center gap-6 text-lg">
-                <div>{getColoredIconByIssueType(issue.type)}</div>
-                <p>{issue.summary}</p>
+                <div className="flex items-center justify-between gap-6 text-lg">
+                  <div>{getColoredIconByIssueType(issue.type)}</div>
+                  <p>{issue.summary}</p>
+                   
                 </div>
-                <div className="flex items-center gap-6 text-lg">
+
+                
+
+
+                <div className="flex items-center gap-8 text-lg">
+                 <div className="text-center" style={{minWidth:'200px'}}>
+                  {issue.List && (
+                    <Button
+                      type='primary'
+                      ghost
+                    >
+                      {issue.List.name}
+                    </Button>
+                  )}
+                </div>
                   <div>{getColoredIconByPriority(issue.priority)}</div>
                   <Avatar.Group
                     maxCount={2}

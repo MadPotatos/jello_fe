@@ -40,8 +40,6 @@ const ProjectBacklogPage: React.FC = () => {
                     },
                     type:'sprint'
                 };
-
-
         try {
          
                 await reorderIssues(body);

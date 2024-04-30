@@ -1,6 +1,6 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { Avatar } from 'antd';
+import { Avatar, Button } from 'antd';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 
 interface IssueProps {
@@ -31,7 +31,10 @@ const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
                 <div className='mb-1 flex items-center text-lg gap-2'>
                     {getColoredIconByIssueType(issue.type)}
                     {getColoredIconByPriority(issue.priority)}
+                    {issue.comments > 0 && (
+                      <Button type = 'primary' shape='circle' size='small' ghost>{issue.comments}</Button>)}
                 </div>
+                
                 <div>
                   <Avatar.Group maxCount={2} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
                     {issue.assignees?.map((assignee: any) => (

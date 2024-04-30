@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Sprint } from '@/lib/types';
+import { Sprint,List } from '@/lib/types';
 import SprintIssues from './SprintIssue';
 import { Button, Dropdown, Form, Input, MenuProps, Modal, Select, message } from 'antd';
 import { createSprint, deleteSprint } from '@/app/api/sprintApi';
 import { ExclamationCircleOutlined} from '@ant-design/icons';
-import { mutate } from 'swr';
+import useSWR, { mutate } from 'swr';
 import { SprintStatus } from '@/lib/enum';
 import { Droppable } from '@hello-pangea/dnd';
 import { createIssue } from '@/app/api/issuesApi';
@@ -13,6 +13,7 @@ import { CheckOutlined,CloseOutlined } from '@ant-design/icons';
 import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
 import dayjs from 'dayjs';
 import EditSprintModel from './EditSprintModel';
+import { fetchLists } from '@/app/api/listApi';
 
 
 const { confirm } = Modal;
@@ -28,6 +29,10 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
   const { data: session } = useSession();
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const { data: lists } = useSWR<List[]>(`lists-${projectId}`, () => fetchLists(projectId));
+
+  
 
   const formattedStartDate = dayjs(sprint.startDate).format('D MMM');
   const formattedEndDate = dayjs(sprint.endDate).format('D MMM');
@@ -149,6 +154,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
       <SprintIssues
         issues={issues}
         sprintId={sprint.id}
+        sprintOrder={sprint.order}
         filteredIssues={filteredIssues}
       />
       {provided.placeholder}
@@ -195,9 +201,20 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
               <Input placeholder="What needs to be done?" variant='borderless' autoFocus style={{minWidth:'500px'}} />
             </Form.Item>
             </div>
-            <div className="flex  gap-2">
+            <div className="flex gap-2">
+             <Form.Item name="listId" initialValue={lists && lists.length > 0 ? lists[0].id : undefined}>
+              <Select style={{ minWidth: '120px' }}>
+                {(lists ?? []).map((list: any) => (
+                  <Select.Option key={list.id} value={list.id}>
+                    {list.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+
             <Form.Item name="priority">
-              <Select placeholder="Select priority">
+              <Select placeholder="Select priority" style={{ minWidth: '100px' }}>
                 <Select.Option value={1}>
                   {getColoredIconByPriority(1)} High
                 </Select.Option>
@@ -209,6 +226,8 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
                 </Select.Option>
               </Select>
             </Form.Item>
+
+            
 
             <Button
               type="primary"
@@ -244,6 +263,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
         onCancel={() => setIsModalVisible(false)}
         sprint={sprint}
         onUpdate={handleUpdate}
+        
       />
     </div>
   );
