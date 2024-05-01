@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Sprint,List } from '@/lib/types';
 import SprintIssues from './SprintIssue';
-import { Button, Dropdown, Form, Input, MenuProps, Modal, Select, message } from 'antd';
-import { createSprint, deleteSprint } from '@/app/api/sprintApi';
+import { Button, Dropdown, Form, Input, MenuProps, Modal, Select, message, notification } from 'antd';
+import { createSprint, deleteSprint, updateSprint } from '@/app/api/sprintApi';
 import { ExclamationCircleOutlined} from '@ant-design/icons';
 import useSWR, { mutate } from 'swr';
 import { SprintStatus } from '@/lib/enum';
@@ -14,6 +14,8 @@ import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils
 import dayjs from 'dayjs';
 import EditSprintModel from './EditSprintModel';
 import { fetchLists } from '@/app/api/listApi';
+import { useRouter } from 'next/navigation';
+
 
 
 const { confirm } = Modal;
@@ -27,6 +29,7 @@ interface SprintProps {
 
 const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,projectId}) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -73,6 +76,50 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
         }
     };
 
+  const handleStartSprint = async () => {
+    try {
+      
+      if (!sprint.startDate || !sprint.endDate) {
+        setIsModalVisible(true);
+        notification.warning({
+          message: 'Please set sprint dates',
+          description: 'You need to set sprint dates before starting the sprint',
+        });
+        return;
+      }
+
+      if(issues[sprint.id]?.length === 0){
+        notification.warning({
+          message: 'Cannot start sprint',
+          description: 'There are no issues in the sprint',
+        });
+        return;
+      }
+
+    const res = await updateSprint(sprint.id, { status: SprintStatus.IN_PROGRESS });  
+    if (res.statusCode === 409) {
+      notification.warning({
+        message: 'Cannot start sprint',
+        description: 'Another sprint is already in progress',
+      });
+      return;
+    }
+      mutate(`sprints-${projectId}`);
+      router.push(`/projects/detail/${projectId}`);
+      notification.success({
+      message: 'Sprint started',
+      description: 'We have filled the board with your sprint issues. Good luck!',
+    });
+
+
+    } catch (error:any) {        
+       notification.error({
+          message: 'Failed to start sprint',
+          description: 'An error occurred while starting the sprint',
+        });      
+    }
+  }
+
   const handleDelete = async () => {
     try {
       confirm(
@@ -117,7 +164,11 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
           <Button 
             type="text" 
             className="bg-gray-300"
-            size='large'>Start Sprint</Button>
+            size='large'
+            onClick={() => handleStartSprint()} 
+          >
+            Start Sprint
+          </Button>
         )}
         {(sprint.order !== 0 && sprint.status === SprintStatus.IN_PROGRESS) && (
           <Button 

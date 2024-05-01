@@ -1,5 +1,5 @@
 "use client";
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { Avatar, Layout, Menu } from 'antd';
 import {
   ProjectOutlined,
@@ -42,10 +42,24 @@ const Sidebar = () => {
    const router = useRouter();
    const pathname = usePathname();
    const projectId: number = parseInt(pathname.split('/')[3]);
+   const [selectedKeys, setSelectedKeys] = useState<string[]>(['1']);
+   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
 
-    const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
-
-
+  useEffect(() => {
+    if (pathname.includes('backlog')) {
+      setSelectedKeys(['3']);
+    } else if (pathname.includes('pull-requests')) {
+      setSelectedKeys(['4']);
+    } else if (pathname.includes('issues')) {
+      setSelectedKeys(['5']);
+    } else if (pathname.includes('bug-tracking')) {
+      setSelectedKeys(['6']);
+    } else if (pathname.includes('setting')) {
+      setSelectedKeys(['7']);
+    } else {
+      setSelectedKeys(['1']); // Default key
+    }
+  }, [pathname]);
    
    
 const items: MenuItem[] = [
@@ -81,7 +95,7 @@ const items: MenuItem[] = [
 
       <Menu
         mode="inline"
-        defaultSelectedKeys={['1']}
+        selectedKeys={selectedKeys}
         defaultOpenKeys={['grp-1', 'grp-2']}
         style={{ height: '100%' }}
         items={items}

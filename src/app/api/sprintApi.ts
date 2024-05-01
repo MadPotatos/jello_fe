@@ -31,8 +31,9 @@ export const updateSprint = async (sprintId: number, body: any) => {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new Error("Failed to update sprint");
+    return response.json();
   }
+  return response;
 };
 
 export const deleteSprint = async (sprintId: number) => {

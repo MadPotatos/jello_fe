@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { Form, Input, Button, Avatar, Spin, message, notification, Modal, Card } from 'antd';
+import { Form, Input, Button, Avatar, message, notification, Modal, Card } from 'antd';
 import {useSession} from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import UploadImage from '@/components/UploadImage';

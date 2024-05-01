@@ -54,7 +54,7 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
         initialValues={
           {
             name: sprint.name,
-            date: [dayjs(sprint.startDate), dayjs(sprint.endDate)],
+            date: sprint.startDate && sprint.endDate ? [dayjs(sprint.startDate),dayjs(sprint.endDate)]:'' ,
             goal: sprint.goal,
           }
         
@@ -67,7 +67,11 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
           <Input />
         </Item>
 
-        <Item label="Start and End Date" name="date">
+        <Item 
+          label="Start and End Date" 
+          name="date"
+          rules={[{ required: true, message: 'Please enter the sprint duration' }]}
+          >
           <RangePicker 
           disabledDate={(current) => current && current < dayjs().startOf('day')}
           format="DD-MM-YYYY" />
