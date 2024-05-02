@@ -64,7 +64,7 @@ const Sidebar = () => {
    
 const items: MenuItem[] = [
   getItem('Planning','grp-1',null,[
-  getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id)),
+  getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/board')),
   getItem('Timeline', '2', <GroupOutlined />, undefined, () => router.push('/timeline')),
   getItem('Backlog', '3', <TableOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/backlog')),
   ]),

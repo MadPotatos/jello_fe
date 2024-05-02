@@ -175,7 +175,7 @@ const ProjectList: React.FC = () => {
         rowKey="id"
         onRow={(record) => {
           return {
-            onClick: () => router.push(`/projects/detail/${record.id}`),
+            onClick: () => router.push(`/projects/detail/${record.id}/board`),
           };
         }}
       />

@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import EditSprintModel from './EditSprintModel';
 import { fetchLists } from '@/app/api/listApi';
 import { useRouter } from 'next/navigation';
+import CompleteSprintModel from './CompleteSprintModel';
 
 
 
@@ -32,6 +33,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
   const router = useRouter();
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
 
   const { data: lists } = useSWR<List[]>(`lists-${projectId}`, () => fetchLists(projectId));
 
@@ -46,6 +48,12 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
     setIsModalVisible(false);
     mutate(`sprints-${projectId}`);
   };
+
+  const handleComplete = () => {
+    setIsCompleteModalVisible(false);
+    mutate(`sprints-${projectId}`);
+    mutate(`sprint-issues-${projectId}`);
+  }
 
    const handleSubmitIssue = async (values: any) => {
     try {
@@ -69,7 +77,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
 
   const handleCreateSprint = async () => {
         try {
-            await createSprint(projectId);
+            await createSprint(projectId, session?.backendTokens.accessToken);
             mutate(`sprints-${projectId}`);
         } catch (error) {
             console.error('Error creating sprint:', error);
@@ -96,7 +104,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
         return;
       }
 
-    const res = await updateSprint(sprint.id, { status: SprintStatus.IN_PROGRESS });  
+    const res = await updateSprint(sprint.id, { status: SprintStatus.IN_PROGRESS }, session?.backendTokens.accessToken);  
     if (res.statusCode === 409) {
       notification.warning({
         message: 'Cannot start sprint',
@@ -105,7 +113,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
       return;
     }
       mutate(`sprints-${projectId}`);
-      router.push(`/projects/detail/${projectId}`);
+      router.push(`/projects/detail/${projectId}/board`);
       notification.success({
       message: 'Sprint started',
       description: 'We have filled the board with your sprint issues. Good luck!',
@@ -131,7 +139,7 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
           okButtonProps: { style: { backgroundColor: '#1890ff' } },
           cancelText: 'No',
           onOk: async () => {
-            await deleteSprint(sprint.id);
+            await deleteSprint(sprint.id, session?.backendTokens.accessToken);
               message.success('List deleted successfully');
               mutate(`sprints-${projectId}`);
           },
@@ -162,19 +170,25 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
       <div className="flex gap-2 items-center">
    {(sprint.order !== 0 && sprint.status === SprintStatus.CREATED) && (
           <Button 
-            type="text" 
-            className="bg-gray-300"
+            type="primary" 
             size='large'
+            style={{ backgroundColor: '#0064f2' }}
             onClick={() => handleStartSprint()} 
           >
             Start Sprint
           </Button>
         )}
         {(sprint.order !== 0 && sprint.status === SprintStatus.IN_PROGRESS) && (
-          <Button 
+          <>
+            <Button 
               type="text"
               className="bg-gray-300"
-              size='large' >Complete Sprint</Button>
+              size='large'
+              onClick={() => setIsCompleteModalVisible(true)}
+            >
+              Complete Sprint
+            </Button>
+          </>
         )}
         {sprint.order !== 0 ? (
           <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
@@ -315,6 +329,15 @@ const SprintCard: React.FC<SprintProps> = ({ sprint, issues, filteredIssues,proj
         sprint={sprint}
         onUpdate={handleUpdate}
         
+      />
+
+      <CompleteSprintModel
+        visible={isCompleteModalVisible}
+        onCancel={() => setIsCompleteModalVisible(false)}
+        onComplete={handleComplete}
+        sprint={sprint}
+        projectId={projectId}
+        sprintLength={issues[sprint.id]?.length}
       />
     </div>
   );

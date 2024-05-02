@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker, message } from 'antd';
 import { Sprint } from '@/lib/types';
 import { updateSprint } from '@/app/api/sprintApi';
 import dayjs from 'dayjs'; 
+import { useSession } from 'next-auth/react';
 
 
 const { Item } = Form;
@@ -17,6 +18,7 @@ interface EditSprintModelProps {
 
 const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, onCancel, sprint }) => {
   const [form] = Form.useForm();
+  const {data: session} = useSession();
 
 
   const onFinish = async (values: any) => {
@@ -28,7 +30,7 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
         goal: values.goal,
       };
 
-      await updateSprint(sprint.id, formattedValues);
+      await updateSprint(sprint.id, formattedValues, session?.backendTokens.accessToken);
       onUpdate();
       message.success('Sprint updated successfully');
     } catch (error) {
@@ -45,7 +47,7 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{ style: { backgroundColor: '#1890ff' } }}
+      okButtonProps={{ style: { backgroundColor: '#0064f2' } }}
     >
       <Form 
         form={form} 

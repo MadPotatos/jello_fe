@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { Spin } from 'antd';
 import Board from './Board';
-import Filter from './Filter';
+import Filter from '../Filter';
 import { List, Member } from '@/lib/types';
 import useSWR from 'swr';
 import { fetchMembers } from '@/app/api/memberApi';
