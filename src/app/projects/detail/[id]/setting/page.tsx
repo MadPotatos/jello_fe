@@ -21,7 +21,7 @@ const ProjectSettingPage = () => {
 
   const [image, setImage] = useState<string>(project?.image || "");
 
-  const isAdmin = members?.some((member) => member.userId === session?.user?.id && member.isAdmin);
+ const isAdmin = members?.some((member) => member.userId === session?.user?.id && member.isAdmin);
  const [form] = Form.useForm();
 
   const handleUpdateProject = async (values: any) => {

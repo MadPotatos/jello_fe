@@ -17,6 +17,14 @@ export const fetchNotInProgressSprints = async (projectId: number) => {
   return response.json();
 };
 
+export const fetchCurrentSprint = async (projectId: number) => {
+  const response = await fetch(`${Backend_URL}/sprint/current/${projectId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch current sprint");
+  }
+  return response.json();
+};
+
 export const createSprint = async (
   projectId: number,
   accessToken: string | undefined

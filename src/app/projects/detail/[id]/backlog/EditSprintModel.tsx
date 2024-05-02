@@ -1,10 +1,9 @@
-import React from 'react';
-import { Modal, Form, Input, DatePicker, message } from 'antd';
-import { Sprint } from '@/lib/types';
-import { updateSprint } from '@/app/api/sprintApi';
-import dayjs from 'dayjs'; 
-import { useSession } from 'next-auth/react';
-
+import React from "react";
+import { Modal, Form, Input, DatePicker, message } from "antd";
+import { Sprint } from "@/lib/types";
+import { updateSprint } from "@/app/api/sprintApi";
+import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -16,10 +15,14 @@ interface EditSprintModelProps {
   sprint: Sprint;
 }
 
-const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, onCancel, sprint }) => {
+const EditSprintModel: React.FC<EditSprintModelProps> = ({
+  visible,
+  onUpdate,
+  onCancel,
+  sprint,
+}) => {
   const [form] = Form.useForm();
-  const {data: session} = useSession();
-
+  const { data: session } = useSession();
 
   const onFinish = async (values: any) => {
     try {
@@ -30,12 +33,16 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
         goal: values.goal,
       };
 
-      await updateSprint(sprint.id, formattedValues, session?.backendTokens.accessToken);
+      await updateSprint(
+        sprint.id,
+        formattedValues,
+        session?.backendTokens.accessToken
+      );
       onUpdate();
-      message.success('Sprint updated successfully');
+      message.success("Sprint updated successfully");
     } catch (error) {
-      console.error('Error updating sprint:', error);
-      message.error('Failed to update sprint');
+      console.error("Error updating sprint:", error);
+      message.error("Failed to update sprint");
     }
   };
 
@@ -47,39 +54,43 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({ visible, onUpdate, on
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{ style: { backgroundColor: '#0064f2' } }}
+      okButtonProps={{ style: { backgroundColor: "#0064f2" } }}
     >
-      <Form 
-        form={form} 
-        onFinish={onFinish} 
+      <Form
+        form={form}
+        onFinish={onFinish}
         layout="vertical"
-        initialValues={
-          {
-            name: sprint.name,
-            date: sprint.startDate && sprint.endDate ? [dayjs(sprint.startDate),dayjs(sprint.endDate)]:'' ,
-            goal: sprint.goal,
-          }
-        
-        }>
+        initialValues={{
+          name: sprint.name,
+          date:
+            sprint.startDate && sprint.endDate
+              ? [dayjs(sprint.startDate), dayjs(sprint.endDate)]
+              : "",
+          goal: sprint.goal,
+        }}
+      >
         <Item
           name="name"
           label="Sprint Name"
-          rules={[{ required: true, message: 'Please enter the sprint name' }]}
+          rules={[{ required: true, message: "Please enter the sprint name" }]}
         >
           <Input />
         </Item>
 
-        <Item 
-          label="Start and End Date" 
+        <Item
+          label="Start and End Date"
           name="date"
-          rules={[{ required: true, message: 'Please enter the sprint duration' }]}
-          >
-          <RangePicker 
-          disabledDate={(current) => current && current < dayjs().startOf('day')}
-          format="DD-MM-YYYY" />
+          rules={[
+            { required: true, message: "Please enter the sprint duration" },
+          ]}
+        >
+          <RangePicker
+            disabledDate={(current) =>
+              current && current < dayjs().startOf("day")
+            }
+            format="DD-MM-YYYY"
+          />
         </Item>
-
-
 
         <Item name="goal" label="Sprint Goal">
           <Input.TextArea />

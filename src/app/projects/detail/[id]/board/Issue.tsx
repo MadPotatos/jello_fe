@@ -1,7 +1,10 @@
-import React from 'react';
-import { Draggable } from '@hello-pangea/dnd';
-import { Avatar, Button } from 'antd';
-import { getColoredIconByIssueType, getColoredIconByPriority } from '@/lib/utils';
+import React from "react";
+import { Draggable } from "@hello-pangea/dnd";
+import { Avatar, Button } from "antd";
+import {
+  getColoredIconByIssueType,
+  getColoredIconByPriority,
+} from "@/lib/utils";
 
 interface IssueProps {
   issue: any;
@@ -9,11 +12,7 @@ interface IssueProps {
   onClick: (issue: any) => void;
 }
 
-
-
-
-const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
-  
+const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
   return (
     <Draggable key={issue.id} draggableId={`issue-${issue.id}`} index={index}>
       {(provided) => (
@@ -26,19 +25,30 @@ const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
         >
           <div className="p-3">
             <div className="flex flex-col ">
-              <span className="font-medium text-base text-gray-900">{issue.summary}</span>
+              <span className="font-medium text-base text-gray-900">
+                {issue.summary}
+              </span>
               <div className="mt-3 flex items-center justify-between">
-                <div className='mb-1 flex items-center text-lg gap-2'>
-                    {getColoredIconByIssueType(issue.type)}
-                    {getColoredIconByPriority(issue.priority)}
-                    {issue.comments > 0 && (
-                      <Button type = 'primary' shape='circle' size='small' ghost>{issue.comments}</Button>)}
+                <div className="mb-1 flex items-center text-lg gap-2">
+                  {getColoredIconByIssueType(issue.type)}
+                  {getColoredIconByPriority(issue.priority)}
+                  {issue.comments > 0 && (
+                    <Button type="primary" shape="circle" size="small" ghost>
+                      {issue.comments}
+                    </Button>
+                  )}
                 </div>
-                
+
                 <div>
-                  <Avatar.Group maxCount={2} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>
+                  <Avatar.Group
+                    maxCount={2}
+                    maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
+                  >
                     {issue.assignees?.map((assignee: any) => (
-                      <Avatar key={assignee.userId} src={assignee.User.avatar} />
+                      <Avatar
+                        key={assignee.userId}
+                        src={assignee.User.avatar}
+                      />
                     ))}
                   </Avatar.Group>
                 </div>
@@ -50,7 +60,5 @@ const Issue: React.FC<IssueProps> = ({ issue, index,onClick }) => {
     </Draggable>
   );
 };
-
-
 
 export default Issue;
