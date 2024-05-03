@@ -78,7 +78,7 @@ export const deleteSprint = async (
 };
 
 export const completeSprint = async (
-  sprintId: number,
+  sprintId: number | undefined,
   destinationId: number,
   accessToken: string | undefined
 ) => {

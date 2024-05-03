@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Spin } from "antd";
 import { Member, Sprint } from "@/lib/types";
 import useSWR, { mutate } from "swr";
@@ -15,6 +15,7 @@ import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import { usePathname } from "next/navigation";
 import SprintCard from "./SprintCard";
 import { useSession } from "next-auth/react";
+import { set } from "lodash";
 
 const ProjectBacklogPage: React.FC = () => {
   const pathname = usePathname();
@@ -103,8 +104,11 @@ const ProjectBacklogPage: React.FC = () => {
               <SprintCard
                 key={sprint.id}
                 sprint={sprint}
-                issues={issues}
-                filteredIssues={filteredIssues}
+                filteredIssues={
+                  Object.keys(filteredIssues).length > 0
+                    ? filteredIssues[sprint.id]
+                    : issues[sprint.id]
+                }
                 projectId={projectId}
                 isAdmin={isAdmin}
               />

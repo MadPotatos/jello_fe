@@ -30,14 +30,13 @@ import dayjs from "dayjs";
 import EditSprintModel from "./EditSprintModel";
 import { fetchLists } from "@/app/api/listApi";
 import { useRouter } from "next/navigation";
-import CompleteSprintModel from "./CompleteSprintModel";
+import CompleteSprintModel from "../../../../../components/CompleteSprintModel";
 import IssueDetailModal from "@/components/IssueDetail";
 
 const { confirm } = Modal;
 
 interface SprintProps {
   sprint: Sprint;
-  issues: any;
   filteredIssues: any;
   projectId: number;
   isAdmin: any;
@@ -45,7 +44,6 @@ interface SprintProps {
 
 const SprintCard: React.FC<SprintProps> = ({
   sprint,
-  issues,
   filteredIssues,
   projectId,
   isAdmin,
@@ -74,6 +72,7 @@ const SprintCard: React.FC<SprintProps> = ({
     setIsCompleteModalVisible(false);
     mutate(`sprints-${projectId}`);
     mutate(`sprint-issues-${projectId}`);
+    mutate(`current-sprint-${projectId}`, undefined, false);
   };
 
   const handleSubmitIssue = async (values: any) => {
@@ -128,7 +127,7 @@ const SprintCard: React.FC<SprintProps> = ({
         return;
       }
 
-      if (issues[sprint.id]?.length === 0) {
+      if (filteredIssues[sprint.id]?.length === 0) {
         notification.warning({
           message: "Cannot start sprint",
           description: "There are no issues in the sprint",
@@ -201,7 +200,7 @@ const SprintCard: React.FC<SprintProps> = ({
           )}
           <div>
             <span className="text-lg text-gray-400">
-              ({issues[sprint.id]?.length ?? 0} issues)
+              ({filteredIssues?.length ?? 0} issues)
             </span>
           </div>
         </div>
@@ -274,7 +273,7 @@ const SprintCard: React.FC<SprintProps> = ({
                   </div>
                 ),
               }}
-              dataSource={filteredIssues[sprint.id] || issues[sprint.id]}
+              dataSource={filteredIssues}
               renderItem={(issue: any, issueIndex: number) => (
                 <SprintIssues
                   key={issue.id}
@@ -319,7 +318,10 @@ const SprintCard: React.FC<SprintProps> = ({
               name="summary"
               rules={[
                 { required: true, message: "Please enter issue summary" },
-                { max: 100, message: "Summary must be at most 100 characters" },
+                {
+                  max: 100,
+                  message: "Summary must be at most 100 characters",
+                },
               ]}
             >
               <Input
@@ -402,7 +404,7 @@ const SprintCard: React.FC<SprintProps> = ({
         onComplete={handleComplete}
         sprint={sprint}
         projectId={projectId}
-        sprintLength={issues[sprint.id]?.length}
+        sprintLength={filteredIssues[sprint.id]?.length}
       />
 
       {selectedIssue && (

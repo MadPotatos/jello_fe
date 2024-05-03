@@ -9,7 +9,7 @@ interface CompleteSprintModelProps {
   visible: boolean;
   onComplete: () => void;
   onCancel: () => void;
-  sprint: Sprint;
+  sprint: Sprint | undefined;
   projectId: number;
   sprintLength: number;
 }
@@ -31,7 +31,7 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
   const onFinish = async (values: any) => {
     try {
       await completeSprint(
-        sprint.id,
+        sprint?.id,
         values.sprint,
         session?.backendTokens.accessToken
       );
@@ -45,7 +45,7 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
   return (
     <Modal
       open={visible}
-      title={`Complete Sprint ${sprint.name}`}
+      title={`Complete Sprint ${sprint?.name}`}
       okText="Complete"
       cancelText="Cancel"
       onCancel={onCancel}

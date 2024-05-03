@@ -150,8 +150,8 @@ const List: React.FC<ListProps> = ({ list, issues, lists, index }) => {
       <Droppable droppableId={`list-${list.id}`} type="ISSUE">
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
-            {issues[list.id] && Array.isArray(issues[list.id])
-              ? issues[list.id].map((issue: any, innerIndex: number) => (
+            {issues && Array.isArray(issues)
+              ? issues.map((issue: any, innerIndex: number) => (
                   <Issue
                     key={issue.id}
                     issue={issue}
