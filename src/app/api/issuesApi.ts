@@ -11,6 +11,17 @@ export const fetchIssues = async (projectId: number) => {
   }
 };
 
+export const fetchIssuesInSprint = async (projectId: number) => {
+  try {
+    const response = await fetch(`${Backend_URL}/issues/sprint/${projectId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching issues:", error);
+    throw error;
+  }
+};
+
 export const createIssue = async (
   values: any,
   accessToken: string | undefined

@@ -46,16 +46,3 @@ export const deleteList = async (listId: number) => {
     throw new Error("Failed to delete list");
   }
 };
-
-export const reorderLists = async (body: any) => {
-  const response = await fetch(`${Backend_URL}/list/reorder`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to reorder lists");
-  }
-};

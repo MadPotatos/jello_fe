@@ -66,7 +66,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
   };
 
   return (
-    <div className="flex justify-between items-center mb-4 px-8">
+    <div className="flex justify-between items-center mb-4 pr-8">
       <div className="flex items-center">
         <Input.Search
           placeholder="Search issues"

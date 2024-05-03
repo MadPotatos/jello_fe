@@ -1,3 +1,5 @@
+import { SprintStatus } from "./enum";
+
 export type User = {
   id: number;
   name: string;
@@ -109,4 +111,15 @@ export type PullRequest = {
   createdAt: string;
   head: string;
   base: string;
+};
+
+export type Sprint = {
+  id: number;
+  name: string;
+  goal?: string;
+  order: number;
+  startDate?: Date;
+  endDate?: Date;
+  createdAt: Date;
+  status: SprintStatus;
 };

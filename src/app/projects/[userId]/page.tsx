@@ -1,9 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button, Table, Input, Breadcrumb, Popover, Avatar, message, Modal } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { Backend_URL } from '@/lib/Constants';
 import { Leader, Project } from '@/lib/types';
 import CreateProjectModel from './CreateProjectModel';
 import { useSession } from 'next-auth/react';
@@ -74,7 +73,7 @@ const ProjectList: React.FC = () => {
           content={
             <div className="max-w-xs py-3 rounded-lg">
               <div className="flex photo-wrapper p-2 justify-center">
-                <Avatar src={leader.avatar || '/images/default_avatar.jpg'} size={64} />
+                <Avatar src={leader.avatar || '/images/logo.png'} size={64} />
               </div>
               <div className="p-2">
                 <h3 className="text-center text-xl text-gray-900 font-medium leading-8">{leader.name}</h3>
@@ -176,7 +175,7 @@ const ProjectList: React.FC = () => {
         rowKey="id"
         onRow={(record) => {
           return {
-            onClick: () => router.push(`/projects/detail/${record.id}`),
+            onClick: () => router.push(`/projects/detail/${record.id}/board`),
           };
         }}
       />

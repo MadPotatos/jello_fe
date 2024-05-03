@@ -1,10 +1,12 @@
 "use client";
-import { Input, Button, Form, message } from "antd";
+import { Input, Button, Form, message, notification } from "antd";
 import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const email = useRef("");
   const pass = useRef("");
@@ -14,11 +16,22 @@ const LoginPage = () => {
       const result = await signIn("credentials", {
         username: email.current,
         password: pass.current,
-        redirect: true,
-        callbackUrl: "/home",
+        redirect: false,
       });
+      if (result?.error) {
+        notification.error({
+          message: "Login failed",
+          description: "Invalid email or password",
+        });
+        return;
+      }
+      notification.success({
+        message: "Login successful",
+        description: "You have been logged in",
+      });
+      router.push("/home");
+
     } catch (error) {
-      console.error("An error occurred during login:", error);
       message.error("Login failed. Please try again.");
     }
   };
@@ -39,7 +52,7 @@ const LoginPage = () => {
           layout="vertical"
           initialValues={{ remember: true }}
         >
-          {/* Ant Design Input for email */}
+
           <Form.Item
             label="Email"
             name="email"
@@ -61,7 +74,7 @@ const LoginPage = () => {
               style={{ height: "60px", fontSize: "16px" }}
             />
           </Form.Item>
-          {/* Ant Design Input for password */}
+
           <Form.Item
             label="Password"
             name="password"
@@ -79,7 +92,7 @@ const LoginPage = () => {
               style={{ height: "60px", fontSize: "16px" }}
             />
           </Form.Item>
-          {/* Ant Design Button with overridden styles */}
+
           <Form.Item>
             <Button
               type="primary"

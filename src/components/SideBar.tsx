@@ -1,5 +1,5 @@
 "use client";
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { Avatar, Layout, Menu } from 'antd';
 import {
   ProjectOutlined,
@@ -7,7 +7,8 @@ import {
   PullRequestOutlined,
   GroupOutlined,
   BugOutlined,
-  IssuesCloseOutlined
+  IssuesCloseOutlined,
+  TableOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
@@ -41,24 +42,39 @@ const Sidebar = () => {
    const router = useRouter();
    const pathname = usePathname();
    const projectId: number = parseInt(pathname.split('/')[3]);
+   const [selectedKeys, setSelectedKeys] = useState<string[]>(['1']);
+   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
 
-    const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
-
-
+  useEffect(() => {
+    if (pathname.includes('backlog')) {
+      setSelectedKeys(['3']);
+    } else if (pathname.includes('pull-requests')) {
+      setSelectedKeys(['4']);
+    } else if (pathname.includes('issues')) {
+      setSelectedKeys(['5']);
+    } else if (pathname.includes('bug-tracking')) {
+      setSelectedKeys(['6']);
+    } else if (pathname.includes('setting')) {
+      setSelectedKeys(['7']);
+    } else {
+      setSelectedKeys(['1']); // Default key
+    }
+  }, [pathname]);
    
    
 const items: MenuItem[] = [
   getItem('Planning','grp-1',null,[
-  getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id)),
+  getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/board')),
   getItem('Timeline', '2', <GroupOutlined />, undefined, () => router.push('/timeline')),
+  getItem('Backlog', '3', <TableOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/backlog')),
   ]),
   getItem('Development','grp-2',null,[
-  getItem('Pull requests', '3', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
-  getItem('Issues', '4', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
-  getItem('Bug tracking', '5', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
+  getItem('Pull requests', '4', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
+  getItem('Issues', '5', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
+  getItem('Bug tracking', '6', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
   ]),
   {type: 'divider'},
-  getItem('Project setting', '6', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
+  getItem('Project setting', '7', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
 ];
 
   return (
@@ -79,7 +95,7 @@ const items: MenuItem[] = [
 
       <Menu
         mode="inline"
-        defaultSelectedKeys={['1']}
+        selectedKeys={selectedKeys}
         defaultOpenKeys={['grp-1', 'grp-2']}
         style={{ height: '100%' }}
         items={items}
