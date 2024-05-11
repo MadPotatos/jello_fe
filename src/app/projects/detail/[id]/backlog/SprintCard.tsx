@@ -127,7 +127,7 @@ const SprintCard: React.FC<SprintProps> = ({
         return;
       }
 
-      if (filteredIssues[sprint.id]?.length === 0) {
+      if (filteredIssues?.length === 0) {
         notification.warning({
           message: "Cannot start sprint",
           description: "There are no issues in the sprint",
@@ -137,7 +137,7 @@ const SprintCard: React.FC<SprintProps> = ({
 
       const res = await updateSprint(
         sprint.id,
-        { status: SprintStatus.IN_PROGRESS },
+        { status: SprintStatus.IN_PROGRESS, projectId: projectId },
         session?.backendTokens.accessToken
       );
       if (res.statusCode === 409) {
@@ -404,7 +404,7 @@ const SprintCard: React.FC<SprintProps> = ({
         onComplete={handleComplete}
         sprint={sprint}
         projectId={projectId}
-        sprintLength={filteredIssues[sprint.id]?.length}
+        sprintLength={(filteredIssues && filteredIssues?.length) ?? 0}
       />
 
       {selectedIssue && (
