@@ -36,3 +36,21 @@ export const markAsRead = async (
     throw error;
   }
 };
+
+export const markAllAsRead = async (
+  userId: number | undefined,
+  accessToken: string | undefined
+) => {
+  try {
+    await fetch(`${Backend_URL}/notification/mark-all-as-read/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    throw error;
+  }
+};

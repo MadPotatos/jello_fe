@@ -9,7 +9,11 @@ import { BellTwoTone, DeleteOutlined } from "@ant-design/icons";
 import { fetchUser } from "@/app/api/userApi";
 import useSWR, { mutate } from "swr";
 import { User } from "@/lib/types";
-import { fetchNotifications, markAsRead } from "@/app/api/notificationApi";
+import {
+  fetchNotifications,
+  markAllAsRead,
+  markAsRead,
+} from "@/app/api/notificationApi";
 import dayjs from "dayjs";
 
 import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
@@ -83,6 +87,15 @@ const SignInButton: React.FC = () => {
     }
   };
 
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead(userId, session?.backendTokens.accessToken);
+      mutate(`notifications-${userId}`);
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
   const items: MenuProps["items"] = [
     {
       key: "profile",
@@ -117,8 +130,24 @@ const SignInButton: React.FC = () => {
     },
   ];
 
-  const notificationItems: MenuProps["items"] =
-    notifications?.notifications?.map((notification: any) => ({
+  const notificationItemsWithHeader: MenuProps["items"] = [
+    {
+      key: "notification-header",
+      label: (
+        <div className="flex justify-between w-full items-center pb-4">
+          <div className="text-lg font-bold">Notifications</div>
+          <Button
+            type="link"
+            onClick={() => handleMarkAllAsRead()}
+            disabled={!notifications?.unreadNotificationsCount}
+          >
+            Mark All as Read
+          </Button>
+        </div>
+      ),
+      disabled: true,
+    },
+    ...(notifications?.notifications?.map((notification: any) => ({
       key: "notification-" + notification.id,
       label: (
         <div>
@@ -157,15 +186,16 @@ const SignInButton: React.FC = () => {
           notification.isRead,
           session?.backendTokens.accessToken
         ),
-    }));
+    })) ?? []),
+  ];
 
   if (session?.user)
     return (
       <div className="flex gap-6 ml-auto items-center">
         <Dropdown
           menu={{
-            items: notificationItems,
-            style: { maxHeight: 300, overflowY: "auto" },
+            items: notificationItemsWithHeader,
+            style: { maxHeight: 450, overflowY: "auto" },
           }}
           trigger={["click"]}
           placement="bottom"
