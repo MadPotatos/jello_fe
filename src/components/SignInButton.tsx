@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Space, Badge } from "antd";
+import { Avatar, Button, Dropdown, Space, Badge, Divider } from "antd";
 import type { MenuProps } from "antd";
 import { useSession, signOut } from "next-auth/react";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
@@ -12,10 +12,14 @@ import { User } from "@/lib/types";
 import { fetchNotifications, markAsRead } from "@/app/api/notificationApi";
 import dayjs from "dayjs";
 
+import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
+
 const SignInButton: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const userId = session?.user?.id;
+  const [isLoading, setIsLoading] = useState(false);
+  const [socket, setSocket] = useState<any>();
 
   const { data: user } = useSWR<User>(
     userId ? `user-profile-${userId}` : null,
@@ -27,7 +31,18 @@ const SignInButton: React.FC = () => {
     () => fetchNotifications(userId, session?.backendTokens.accessToken)
   );
 
+  useEffect(() => {
+    if (userId) {
+      connectSocket(userId);
+
+      return () => {
+        disconnectSocket();
+      };
+    }
+  }, [userId]);
+
   const handleSignOut = () => {
+    disconnectSocket();
     signOut();
   };
 
@@ -106,30 +121,33 @@ const SignInButton: React.FC = () => {
     notifications?.notifications?.map((notification: any) => ({
       key: "notification-" + notification.id,
       label: (
-        <div className="flex justify-between w-full items-center ">
-          <div className="flex items-center gap-3">
-            <Avatar
-              size="large"
-              src={notification.Project.image ?? ""}
-              alt={notification.Project.name}
-            />
-            <div className="grow-0 w-80">
-              <div className="text-sky-600 text-lg">
-                {notification.Project.name}
-              </div>
-              <div className="text-gray-500">{notification.message}</div>
-              <div className="text-gray-400">
-                {formatNotificationTime(notification.createdAt)}
+        <div>
+          <div className="flex justify-between w-full items-center ">
+            <div className="flex items-center gap-3">
+              <Avatar
+                size="large"
+                src={notification.Project.image ?? ""}
+                alt={notification.Project.name}
+              />
+              <div className="grow-0 w-80">
+                <div className="text-sky-600 text-lg">
+                  {notification.Project.name}
+                </div>
+                <div className="text-gray-500">{notification.message}</div>
+                <div className="text-gray-400">
+                  {formatNotificationTime(notification.createdAt)}
+                </div>
               </div>
             </div>
+            <div>
+              {!notification.isRead ? (
+                <div className="h-3 w-3 bg-blue-400 rounded-full"></div>
+              ) : (
+                <div></div>
+              )}
+            </div>
           </div>
-          <div>
-            {!notification.isRead ? (
-              <div className="h-3 w-3 bg-blue-400 rounded-full"></div>
-            ) : (
-              <div></div>
-            )}
-          </div>
+          <Divider className="m-2" />
         </div>
       ),
       onClick: () =>
@@ -185,3 +203,6 @@ const SignInButton: React.FC = () => {
 };
 
 export default SignInButton;
+function io(arg0: string) {
+  throw new Error("Function not implemented.");
+}
