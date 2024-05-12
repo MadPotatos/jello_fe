@@ -7,8 +7,6 @@ import Footer from "@/components/Footer";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 
-
-
 interface Props {
   children: React.ReactNode;
 }
@@ -16,26 +14,22 @@ interface Props {
 export default function RootLayout(props: Props) {
   const routesWithoutAppBar = ["/auth/login", "/auth/signup"];
   const pathName = usePathname();
+
   return (
     <html lang="en">
       <body>
-        <Layout style={{minHeight:'100vh'}}>
-        <Providers>
-          {!routesWithoutAppBar.includes(pathName) ? (
-            <>
-              <AppBar />
-              <Content >
-              {props.children}
-            </Content>
-            <Footer />
-          
-            </>
-          ) : (
-            props.children
-          )}
-          
-      
-        </Providers>
+        <Layout style={{ minHeight: "100vh" }}>
+          <Providers>
+            {!routesWithoutAppBar.includes(pathName) ? (
+              <>
+                <AppBar />
+                <Content>{props.children}</Content>
+                <Footer />
+              </>
+            ) : (
+              props.children
+            )}
+          </Providers>
         </Layout>
       </body>
     </html>

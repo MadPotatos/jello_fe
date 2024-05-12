@@ -48,7 +48,7 @@ export const updateAvatar = async (
   }
 };
 
-export const fetchUser = async (userId: number): Promise<User> => {
+export const fetchUser = async (userId: number | undefined): Promise<User> => {
   try {
     const response = await fetch(`${Backend_URL}/user/profile/${userId}`);
     const data = await response.json();
