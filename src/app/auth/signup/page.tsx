@@ -1,10 +1,9 @@
 "use client";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, notification } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { Backend_URL } from "@/lib/Constants";
-import Link from "next/link";
 
 const SignupPage = () => {
   const router = useRouter();
@@ -28,8 +27,11 @@ const SignupPage = () => {
         throw new Error(response.message || "Registration failed");
       }
 
-      message.success("User Registered!");
-      // Redirect to the login page after successful registration
+      notification.success({
+        message: "Registration successful",
+        description:
+          "You have successfully registered. Please login to continue.",
+      });
       router.push("/auth/login");
     } catch (error) {
       message.error("Registration failed. Please try again.");
@@ -37,7 +39,7 @@ const SignupPage = () => {
   };
 
   return (
-     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
+    <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
       <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-6 items-center">
         <img
           src="/images/logo.png"
@@ -107,7 +109,12 @@ const SignupPage = () => {
               type="primary"
               htmlType="submit"
               block
-              style={{ height: "50px", backgroundColor: "#1890ff", borderColor: "#1890ff", fontSize: "16px" }}
+              style={{
+                height: "50px",
+                backgroundColor: "#1890ff",
+                borderColor: "#1890ff",
+                fontSize: "16px",
+              }}
             >
               Submit
             </Button>
@@ -115,7 +122,11 @@ const SignupPage = () => {
         </Form>
 
         <p style={{ marginTop: "10px", fontSize: "16px", color: "#333" }}>
-          Already have an account? <a href="/auth/login" style={{ color: "#1890ff" }}>Sign in here</a>.
+          Already have an account?{" "}
+          <a href="/auth/login" style={{ color: "#1890ff" }}>
+            Sign in here
+          </a>
+          .
         </p>
       </div>
     </div>
