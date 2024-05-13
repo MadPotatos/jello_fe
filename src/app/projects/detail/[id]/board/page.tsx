@@ -99,7 +99,7 @@ const ProjectDetailPage = () => {
               <Button
                 type="primary"
                 size="large"
-                style={{ backgroundColor: "#0064f2", fontWeight: 600 }}
+                shape="round"
                 onClick={() => setIsCompleteModalVisible(true)}
                 disabled={!isAdmin}
               >
@@ -113,6 +113,7 @@ const ProjectDetailPage = () => {
       <Filter members={members} onSearch={handleSearch} />
       <Board
         lists={lists}
+        sprintId={sprint?.id}
         issues={
           Object.keys(filteredIssues).length > 0 ? filteredIssues : issues
         }

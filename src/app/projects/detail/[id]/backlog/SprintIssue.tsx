@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, List, Button } from "antd";
+import { Avatar, List, Button, Tag } from "antd";
 import { Draggable } from "@hello-pangea/dnd";
 import {
   getColoredIconByIssueType,
@@ -42,9 +42,12 @@ const SprintIssues: React.FC<SprintIssuesProps> = ({
             <div className="flex items-center gap-8 text-lg">
               <div className="text-center" style={{ minWidth: "200px" }}>
                 {issue.List && (
-                  <Button type="primary" ghost>
+                  <Tag
+                    color="blue"
+                    className="text-sm pb-1 pt-0.5 rounded-full"
+                  >
                     {issue.List.name}
-                  </Button>
+                  </Tag>
                 )}
               </div>
               <div>{getColoredIconByPriority(issue.priority)}</div>

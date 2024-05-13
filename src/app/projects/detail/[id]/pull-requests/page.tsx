@@ -1,65 +1,83 @@
 "use client";
 import { fetchPullRequests, fetchRepoDetail } from "@/app/api/repoApi";
 import { PullRequest, Repo } from "@/lib/types";
-import { GithubOutlined, StarOutlined, ForkOutlined ,SearchOutlined} from "@ant-design/icons"; 
-import { Button, Card, Empty, Space, Spin, Table } from "antd";
+import {
+  GithubOutlined,
+  StarOutlined,
+  ForkOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Button, Card, Empty, Space, Spin, Table, Tag } from "antd";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
+import dayjs from "dayjs";
 
 const PullRequestsManagementPage = () => {
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[3]);
 
-  const { data: repo } = useSWR<Repo>(`repo-${projectId}`, () => fetchRepoDetail(projectId));
-  const { data: pullRequests, error: pullRequestsError  } = useSWR<PullRequest[]>(`pull-requests-${projectId}`, () => fetchPullRequests(projectId));
+  const { data: repo } = useSWR<Repo>(`repo-${projectId}`, () =>
+    fetchRepoDetail(projectId)
+  );
+  const { data: pullRequests, error: pullRequestsError } = useSWR<
+    PullRequest[]
+  >(`pull-requests-${projectId}`, () => fetchPullRequests(projectId));
 
-  const columns :any[] = [
+  const columns: any[] = [
     {
-      title: 'Date',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: string) => new Date(date).toLocaleDateString(),
-      sorter: (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(), 
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
+      sorter: (a: any, b: any) =>
+        dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
     },
     {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-      width : '30%'
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      width: "30%",
     },
     {
-      title: 'State',
-      dataIndex: 'state',
-      key: 'state',
-      render :(state: string) => (
-        <span className={`text-xs font-semibold text-white px-2 py-1 rounded-full bg-green-500`}>
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+      render: (state: string) => (
+        <Tag
+          color={state === "open" ? "#87d068" : "red"}
+          className="text-base pb-0.5 rounded-full"
+        >
           {state}
-        </span>
-      )
+        </Tag>
+      ),
     },
     {
-      title: 'User',
-      dataIndex: 'user',
-      key: 'user',
+      title: "User",
+      dataIndex: "user",
+      key: "user",
     },
     {
-      title: 'Head',
-      dataIndex: 'head',
-      key: 'head',
+      title: "Head",
+      dataIndex: "head",
+      key: "head",
     },
     {
-      title: 'Base',
-      dataIndex: 'base',
-      key: 'base',
+      title: "Base",
+      dataIndex: "base",
+      key: "base",
     },
     {
-      title: 'Detail',
-      key: 'url',
+      title: "Detail",
+      key: "url",
       render: (record: any) => (
         <Space size="middle">
-          <Button type="primary" style={{ backgroundColor: '#1890ff', fontSize: '16px' }} >
+          <Button
+            type="primary"
+            shape="round"
+            style={{ backgroundColor: "#1890ff", fontSize: "16px" }}
+          >
             <Link href={record.url} target="_blank">
               <SearchOutlined />
             </Link>
@@ -67,10 +85,9 @@ const PullRequestsManagementPage = () => {
         </Space>
       ),
     },
-
   ];
 
-     return (
+  return (
     <div className="site-layout-content">
       <h1 className="mb-4 text-xl font-semibold text-c-text">Repository</h1>
       {repo && "message" in repo ? (
@@ -78,7 +95,11 @@ const PullRequestsManagementPage = () => {
       ) : repo ? (
         <Card
           title={
-            <Link href={repo.url} target="_blank" className="text-xl cursor-pointer hover:text-blue-600">
+            <Link
+              href={repo.url}
+              target="_blank"
+              className="text-xl cursor-pointer hover:text-blue-600"
+            >
               {repo?.owner}/{repo?.name} <GithubOutlined className="ml-2" />
             </Link>
           }
@@ -91,24 +112,32 @@ const PullRequestsManagementPage = () => {
             )}
             <div className="flex mt-4 items-center">
               {repo?.language && (
-                <span className="mr-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-white bg-blue-600">
+                <Tag color="blue" className="text-base pb-0.5 rounded-full">
                   {repo?.language}
-                </span>
+                </Tag>
               )}
             </div>
             <div className="mt-4 flex gap-2">
-              <Button type="primary" ghost icon={<StarOutlined />} >
+              <Tag
+                color="blue"
+                icon={<StarOutlined />}
+                className="text-base pb-1 pt-0.5 rounded-full"
+              >
                 Star
-                <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
+                <Tag color="geekblue" className="ml-2 rounded-full">
                   {repo?.stars || 0}
-                </span>
-              </Button>
-              <Button type="primary" ghost icon={<ForkOutlined />} >
+                </Tag>
+              </Tag>
+              <Tag
+                color="blue"
+                icon={<ForkOutlined />}
+                className="text-base pb-1 pt-0.5 rounded-full"
+              >
                 Fork
-                <span className="items-center ml-2 px-2 py-1 rounded-full text-xs font-medium text-gray-500 bg-gray-200">
+                <Tag color="geekblue" className="ml-2 rounded-full">
                   {repo?.forks || 0}
-                </span>
-              </Button>
+                </Tag>
+              </Tag>
             </div>
           </div>
         </Card>
@@ -118,10 +147,12 @@ const PullRequestsManagementPage = () => {
 
       <h1 className="mb-4 text-xl font-semibold text-c-text">Pull requests</h1>
       <Table
-         columns={columns}
-          dataSource={pullRequests && Array.isArray(pullRequests) ? pullRequests : []}
-          loading={!pullRequests && !pullRequestsError}
-          rowKey="id"
+        columns={columns}
+        dataSource={
+          pullRequests && Array.isArray(pullRequests) ? pullRequests : []
+        }
+        loading={!pullRequests && !pullRequestsError}
+        rowKey="id"
       />
     </div>
   );

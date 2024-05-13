@@ -10,3 +10,12 @@
   font-size: 16px;
   font-weight: bold;
 }
+
+
+.ant-btn-primary {
+  background-color: #0064f2 !important;
+}
+.ant-btn-primary:hover {
+  background-color: #4991fd !important;
+}
+

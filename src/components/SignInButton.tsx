@@ -222,7 +222,8 @@ const SignInButton: React.FC = () => {
     <div className="flex gap-4 ml-auto items-center">
       <Button
         type="primary"
-        style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
+        size="large"
+        shape="round"
         onClick={() => handleNavigate("/api/auth/signin")}
         className="text-l font-bold"
       >
