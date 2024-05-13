@@ -1,6 +1,6 @@
 "use client";
-import React, {  useEffect, useState } from 'react';
-import { Avatar, Layout, Menu } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Avatar, Layout, Menu } from "antd";
 import {
   ProjectOutlined,
   ToolOutlined,
@@ -8,24 +8,21 @@ import {
   GroupOutlined,
   BugOutlined,
   IssuesCloseOutlined,
-  TableOutlined
-} from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { usePathname, useRouter } from 'next/navigation';
-import useSWR from 'swr';
-import { ProjectDetail } from '@/lib/types';
-import { fetchProjectById } from '@/app/api/projectApi';
-
+  TableOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { usePathname, useRouter } from "next/navigation";
+import { ProjectDetail } from "@/lib/types";
 
 const { Sider } = Layout;
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
   children?: MenuItem[],
-  onClick?: () => void,
+  onClick?: () => void
 ): MenuItem {
   return {
     key,
@@ -35,69 +32,94 @@ function getItem(
     onClick,
   } as MenuItem;
 }
+interface SidebarProps {
+  project?: ProjectDetail;
+}
 
+const Sidebar: React.FC<SidebarProps> = ({ project }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
 
-const Sidebar = () => {
-   const [collapsed, setCollapsed] = useState(false);
-   const router = useRouter();
-   const pathname = usePathname();
-   const projectId: number = parseInt(pathname.split('/')[3]);
-   const [selectedKeys, setSelectedKeys] = useState<string[]>(['1']);
-   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () => fetchProjectById(projectId));
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(["1"]);
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname.includes('backlog')) {
-      setSelectedKeys(['3']);
-    } else if (pathname.includes('pull-requests')) {
-      setSelectedKeys(['4']);
-    } else if (pathname.includes('issues')) {
-      setSelectedKeys(['5']);
-    } else if (pathname.includes('bug-tracking')) {
-      setSelectedKeys(['6']);
-    } else if (pathname.includes('setting')) {
-      setSelectedKeys(['7']);
+    if (pathname.includes("backlog")) {
+      setSelectedKeys(["3"]);
+    } else if (pathname.includes("pull-requests")) {
+      setSelectedKeys(["4"]);
+    } else if (pathname.includes("issues")) {
+      setSelectedKeys(["5"]);
+    } else if (pathname.includes("bug-tracking")) {
+      setSelectedKeys(["6"]);
+    } else if (pathname.includes("setting")) {
+      setSelectedKeys(["7"]);
     } else {
-      setSelectedKeys(['1']); // Default key
+      setSelectedKeys(["1"]); // Default key
     }
   }, [pathname]);
-   
-   
-const items: MenuItem[] = [
-  getItem('Planning','grp-1',null,[
-  getItem('Board', '1', <ProjectOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/board')),
-  getItem('Timeline', '2', <GroupOutlined />, undefined, () => router.push('/timeline')),
-  getItem('Backlog', '3', <TableOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/backlog')),
-  ]),
-  getItem('Development','grp-2',null,[
-  getItem('Pull requests', '4', <PullRequestOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/pull-requests')),
-  getItem('Issues', '5', <IssuesCloseOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/issues')),
-  getItem('Bug tracking', '6', <BugOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/bug-tracking')),
-  ]),
-  {type: 'divider'},
-  getItem('Project setting', '7', <ToolOutlined />, undefined, () => router.push('/projects/detail/'+project?.id+'/setting')),
-];
+
+  const items: MenuItem[] = [
+    getItem("Planning", "grp-1", null, [
+      getItem("Board", "1", <ProjectOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/board")
+      ),
+      getItem("Timeline", "2", <GroupOutlined />, undefined, () =>
+        router.push("/timeline")
+      ),
+      getItem("Backlog", "3", <TableOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/backlog")
+      ),
+    ]),
+    getItem("Development", "grp-2", null, [
+      getItem("Pull requests", "4", <PullRequestOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/pull-requests")
+      ),
+      getItem("Issues", "5", <IssuesCloseOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/issues")
+      ),
+      getItem("Bug tracking", "6", <BugOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/bug-tracking")
+      ),
+    ]),
+    { type: "divider" },
+    getItem("Project setting", "7", <ToolOutlined />, undefined, () =>
+      router.push("/projects/detail/" + project?.id + "/setting")
+    ),
+  ];
 
   return (
-    <Sider theme='light' 
-    collapsible collapsed={collapsed} 
-    onCollapse={(value) => setCollapsed(value)}
-     width={250} >
-          
-        <div className="flex items-center p-4 mb-4">
-            {!collapsed && (
-          <><Avatar src={project &&project.image} size={40} shape="square" className="mr-2" /><div>
-                      <h3 className="m-0 text-black text-lg">{project &&project.name}</h3>
-                      <p className="m-0 text-gray-600 text-sm">Software Project</p>
-                  </div></>
-          )}
-        </div>
-      
+    <Sider
+      theme="light"
+      collapsible
+      collapsed={collapsed}
+      onCollapse={(value) => setCollapsed(value)}
+      width={250}
+    >
+      <div className="flex items-center p-4 mb-4">
+        {!collapsed && (
+          <>
+            <Avatar
+              src={project && project.image}
+              size={40}
+              shape="square"
+              className="mr-2"
+            />
+            <div>
+              <h3 className="m-0 text-black text-lg">
+                {project && project.name}
+              </h3>
+              <p className="m-0 text-gray-600 text-sm">Software Project</p>
+            </div>
+          </>
+        )}
+      </div>
 
       <Menu
         mode="inline"
         selectedKeys={selectedKeys}
-        defaultOpenKeys={['grp-1', 'grp-2']}
-        style={{ height: '100%' }}
+        defaultOpenKeys={["grp-1", "grp-2"]}
+        style={{ height: "100%" }}
         items={items}
         className="h-full text-base"
       />

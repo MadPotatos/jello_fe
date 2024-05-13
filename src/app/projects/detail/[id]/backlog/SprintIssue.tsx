@@ -61,7 +61,10 @@ const SprintIssues: React.FC<SprintIssuesProps> = ({
               >
                 {issue.assignees && issue.assignees.length > 0 ? (
                   issue.assignees.map((assignee: any) => (
-                    <Avatar key={assignee.userId} src={assignee.User.avatar} />
+                    <Avatar
+                      key={assignee.userId}
+                      src={assignee.User.avatar || "/images/default_avatar.jpg"}
+                    />
                   ))
                 ) : (
                   <span></span>

@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { deleteProject, fetchProjects } from "@/app/api/projectApi";
+import UserPopover from "@/components/UserPopover";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -87,34 +88,8 @@ const ProjectList: React.FC = () => {
       title: "Leader",
       dataIndex: "leader",
       key: "leader",
-      render: (leader: Leader, record: Project) => (
-        <Popover
-          content={
-            <div className="max-w-xs py-3 rounded-lg">
-              <div className="flex photo-wrapper p-2 justify-center">
-                <Avatar src={leader.avatar || "/images/logo.png"} size={64} />
-              </div>
-              <div className="p-2">
-                <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
-                  {leader.name}
-                </h3>
-                <div className="text-center text-gray-400 text-xs font-semibold">
-                  <p>{leader.email}</p>
-                </div>
-                <div className="text-center my-3">
-                  <a
-                    className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
-                    href={`/user/${leader.userId}`}
-                  >
-                    View Profile
-                  </a>
-                </div>
-              </div>
-            </div>
-          }
-          title=""
-          trigger="hover"
-        >
+      render: (leader: Leader) => (
+        <UserPopover user={leader}>
           <div
             style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
           >
@@ -125,7 +100,7 @@ const ProjectList: React.FC = () => {
             />
             <span>{leader.name}</span>
           </div>
-        </Popover>
+        </UserPopover>
       ),
     },
     {

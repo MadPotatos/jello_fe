@@ -101,7 +101,11 @@ const SignInButton: React.FC = () => {
       key: "profile",
       label: (
         <div className="flex items-center">
-          <Avatar size="large" src={user?.avatar ?? ""} alt={user?.name} />
+          <Avatar
+            size="large"
+            src={user?.avatar || "/images/default_avatar.jpg"}
+            alt={user?.name}
+          />
           <div>
             <div className="pl-2 text-sky-600">{user?.name}</div>
             <div className="pl-2 text-gray-500">{user?.email}</div>
@@ -210,7 +214,11 @@ const SignInButton: React.FC = () => {
         <Dropdown menu={{ items }} trigger={["click"]}>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              <Avatar size="large" src={user?.avatar} alt={user?.name} />
+              <Avatar
+                size="large"
+                src={user?.avatar || "/images/default_avatar.jpg"}
+                alt={user?.name}
+              />
               <DownOutlined />
             </Space>
           </a>

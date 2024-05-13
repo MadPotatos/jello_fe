@@ -16,6 +16,7 @@ import { mutate } from "swr";
 import { useSession } from "next-auth/react";
 import { addMember } from "@/app/api/memberApi";
 import { searchUsers } from "@/app/api/userApi";
+import UserPopover from "@/components/UserPopover";
 
 interface FilterProps {
   members: Member[];
@@ -93,12 +94,14 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
             maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
           >
             {members.map((member: Member) => (
-              <Avatar
-                key={member.userId}
-                src={member.avatar}
-                alt={member.name}
-                size="large"
-              />
+              <UserPopover user={member}>
+                <Avatar
+                  key={member.userId}
+                  src={member.avatar || "/images/default_avatar.jpg"}
+                  alt={member.name}
+                  size="large"
+                />
+              </UserPopover>
             ))}
           </Avatar.Group>
         </div>
