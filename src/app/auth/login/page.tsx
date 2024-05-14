@@ -1,5 +1,5 @@
 "use client";
-import { Input, Button, Form, message, notification } from "antd";
+import { Input, Button, Form, message, notification, Image } from "antd";
 import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
@@ -30,7 +30,6 @@ const LoginPage = () => {
         description: "You have been logged in",
       });
       router.push("/home");
-
     } catch (error) {
       message.error("Login failed. Please try again.");
     }
@@ -38,9 +37,10 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
-      <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-6 items-center">
-        <img
+      <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
+        <Image
           src="/images/logo.png"
+          preview={false}
           alt="logo"
           style={{ width: "100px", height: "auto", marginBottom: "20px" }}
         />
@@ -52,7 +52,6 @@ const LoginPage = () => {
           layout="vertical"
           initialValues={{ remember: true }}
         >
-
           <Form.Item
             label="Email"
             name="email"
@@ -98,14 +97,22 @@ const LoginPage = () => {
               type="primary"
               htmlType="submit"
               block
-              style={{ height: "60px", backgroundColor: "#1890ff", borderColor: "#1890ff", fontSize: "16px" }}
+              style={{
+                minHeight: "60px",
+                fontSize: "16px",
+                fontWeight: "bold",
+              }}
             >
               Login
             </Button>
           </Form.Item>
         </Form>
-        <p style={{ marginTop: "10px", fontSize: "16px", color: "#333" }}>
-          Don't have an account? <a href="/auth/signup" style={{ color: "#1890ff" }}>Sign up here</a>.
+        <p className="mt-4 text-base text-gray-700">
+          Don&apos;t have an account?{" "}
+          <a href="/auth/signup" className="text-blue-500">
+            Sign up here
+          </a>
+          .
         </p>
       </div>
     </div>

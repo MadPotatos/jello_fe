@@ -102,7 +102,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     };
 
     fetchData();
-  }, [projectId, issue]);
+  }, [projectId, issue, members, form, defaultAssigneeIds]);
 
   const handleAddComment = async (commentText: string) => {
     try {
@@ -173,7 +173,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       onCancel={onClose}
       width={800}
       footer={[
-        <Button type="text" danger onClick={handleDeteleIssue}>
+        <Button type="text" danger onClick={handleDeteleIssue} key="1">
           Delete Issue
         </Button>,
       ]}

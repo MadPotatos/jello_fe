@@ -26,3 +26,14 @@ export const addMember = async (
     throw new Error("Failed to add member");
   }
 };
+
+export const checkMembership = async (projectId: number, userId: number) => {
+  const response = await fetch(
+    `${Backend_URL}/member/check/${projectId}/${userId}`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to check membership");
+  }
+  const data = await response.json();
+  return data;
+};

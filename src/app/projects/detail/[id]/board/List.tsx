@@ -28,10 +28,10 @@ interface ListProps {
   list: any;
   lists: ListType[];
   issues: any;
-  index: number;
+  sprintId: number | undefined;
 }
 
-const List: React.FC<ListProps> = ({ list, issues, lists, index }) => {
+const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
@@ -100,6 +100,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, index }) => {
   const handleSubmitIssue = async (values: any) => {
     try {
       values.listId = list.id;
+      values.sprintId = sprintId;
       values.reporterId = session?.user.id;
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`issues-${projectId}`);
@@ -164,77 +165,83 @@ const List: React.FC<ListProps> = ({ list, issues, lists, index }) => {
           </div>
         )}
       </Droppable>
-      {isCreatingIssue ? (
-        <Form
-          onFinish={handleSubmitIssue}
-          className="flex flex-col mt-4 bg-white shadow-md"
-          layout="vertical"
-          initialValues={{
-            summary: "",
-            type: 1,
-            priority: 1,
-          }}
-        >
-          <div className="p-3">
-            <Form.Item
-              name="summary"
-              rules={[
-                { required: true, message: "Please enter issue summary" },
-              ]}
+      {sprintId !== undefined && (
+        <>
+          {isCreatingIssue ? (
+            <Form
+              onFinish={handleSubmitIssue}
+              className="flex flex-col mt-4 bg-white shadow-md"
+              layout="vertical"
+              initialValues={{
+                summary: "",
+                type: 1,
+                priority: 1,
+              }}
             >
-              <Input placeholder="What needs to be done?" bordered={false} />
-            </Form.Item>
+              <div className="p-3">
+                <Form.Item
+                  name="summary"
+                  rules={[
+                    { required: true, message: "Please enter issue summary" },
+                  ]}
+                >
+                  <Input
+                    placeholder="What needs to be done?"
+                    variant="borderless"
+                  />
+                </Form.Item>
 
-            <div className="flex items-center">
-              <Form.Item name="type">
-                <Select placeholder="Select issue type">
-                  <Select.Option value={1}>
-                    {getColoredIconByIssueType(1)} Task
-                  </Select.Option>
-                  <Select.Option value={2}>
-                    {getColoredIconByIssueType(2)} Bug
-                  </Select.Option>
-                  <Select.Option value={3}>
-                    {getColoredIconByIssueType(3)} Review
-                  </Select.Option>
-                </Select>
-              </Form.Item>
+                <div className="flex items-center">
+                  <Form.Item name="type">
+                    <Select placeholder="Select issue type">
+                      <Select.Option value={1}>
+                        {getColoredIconByIssueType(1)} Task
+                      </Select.Option>
+                      <Select.Option value={2}>
+                        {getColoredIconByIssueType(2)} Bug
+                      </Select.Option>
+                      <Select.Option value={3}>
+                        {getColoredIconByIssueType(3)} Review
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
 
-              <Form.Item name="priority" style={{ marginLeft: "10px" }}>
-                <Select placeholder="Select priority">
-                  <Select.Option value={1}>
-                    {getColoredIconByPriority(1)} High
-                  </Select.Option>
-                  <Select.Option value={2}>
-                    {getColoredIconByPriority(2)} Medium
-                  </Select.Option>
-                  <Select.Option value={3}>
-                    {getColoredIconByPriority(3)} Low
-                  </Select.Option>
-                </Select>
-              </Form.Item>
-            </div>
+                  <Form.Item name="priority" style={{ marginLeft: "10px" }}>
+                    <Select placeholder="Select priority">
+                      <Select.Option value={1}>
+                        {getColoredIconByPriority(1)} High
+                      </Select.Option>
+                      <Select.Option value={2}>
+                        {getColoredIconByPriority(2)} Medium
+                      </Select.Option>
+                      <Select.Option value={3}>
+                        {getColoredIconByPriority(3)} Low
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </div>
 
-            <div className="flex justify-between">
-              <Button type="default" onClick={handleCloseIssueForm}>
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ backgroundColor: "#1890ff" }}
-              >
-                Create Issue
-              </Button>
-            </div>
-          </div>
-        </Form>
-      ) : (
-        <Button type="text" size="large" onClick={handleCreateIssueClick}>
-          + Add Issue
-        </Button>
+                <div className="flex justify-between">
+                  <Button type="default" onClick={handleCloseIssueForm}>
+                    Cancel
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ backgroundColor: "#1890ff" }}
+                  >
+                    Create Issue
+                  </Button>
+                </div>
+              </div>
+            </Form>
+          ) : (
+            <Button type="text" size="large" onClick={handleCreateIssueClick}>
+              + Add Issue
+            </Button>
+          )}
+        </>
       )}
-
       {selectedIssue && (
         <IssueDetailModal
           issue={selectedIssue}

@@ -47,7 +47,9 @@ const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
                     {issue.assignees?.map((assignee: any) => (
                       <Avatar
                         key={assignee.userId}
-                        src={assignee.User.avatar}
+                        src={
+                          assignee.User.avatar || "/images/default_avatar.jpg"
+                        }
                       />
                     ))}
                   </Avatar.Group>

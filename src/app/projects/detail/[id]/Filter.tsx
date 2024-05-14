@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { Input, Avatar, Button, Modal, Select, message, Typography } from 'antd';
-import { UserAddOutlined } from '@ant-design/icons';
-import { debounce } from 'lodash';
-import { usePathname } from 'next/navigation';
-import { Member, User } from '@/lib/types';
-import { mutate } from 'swr';
-import { useSession } from 'next-auth/react';
-import { addMember } from '@/app/api/memberApi';
-import { searchUsers } from '@/app/api/userApi';
+import React, { useState } from "react";
+import {
+  Input,
+  Avatar,
+  Button,
+  Modal,
+  Select,
+  message,
+  Typography,
+} from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
+import { usePathname } from "next/navigation";
+import { Member, User } from "@/lib/types";
+import { mutate } from "swr";
+import { useSession } from "next-auth/react";
+import { addMember } from "@/app/api/memberApi";
+import { searchUsers } from "@/app/api/userApi";
+import UserPopover from "@/components/UserPopover";
 
 interface FilterProps {
   members: Member[];
@@ -19,7 +28,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
   const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const pathname = usePathname();
-  const projectId = Number(pathname.split('/')[3]);
+  const projectId = Number(pathname.split("/")[3]);
   const { data: session } = useSession();
 
   const debouncedSearch = debounce(async (value: string) => {
@@ -27,35 +36,40 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
       const data = await searchUsers(value);
       setSearchedUsers(data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
-  }, 300); 
+  }, 300);
 
   const handleUserSearch = (value: string) => {
-    debouncedSearch(value); 
+    debouncedSearch(value);
   };
 
   const handleAddMember = async () => {
-  if (selectedUserId) {
-    try {
-      const isAlreadyMember = members.some(member => member.userId === selectedUserId);      
-      if (isAlreadyMember) {
-        message.error('User is already a member');
-        return; 
+    if (selectedUserId) {
+      try {
+        const isAlreadyMember = members.some(
+          (member) => member.userId === selectedUserId
+        );
+        if (isAlreadyMember) {
+          message.error("User is already a member");
+          return;
+        }
+        await addMember(
+          projectId,
+          selectedUserId,
+          session?.backendTokens.accessToken
+        );
+        message.success("Member added successfully");
+        mutate(`members-${projectId}`);
+        setSelectedUserId(null);
+        handleCancel();
+      } catch (error) {
+        message.error("Failed to add member");
       }
-      await addMember(projectId, selectedUserId, session?.backendTokens.accessToken);
-      message.success('Member added successfully');
-      mutate  (`members-${projectId}`);
-      setSelectedUserId(null);
-      handleCancel();
-    } catch (error) {
-      message.error('Failed to add member');
+    } else {
+      message.error("Please select a user");
     }
-  } else {
-    message.error('Please select a user');
-  }
-};
-
+  };
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -70,25 +84,37 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
       <div className="flex items-center">
         <Input.Search
           placeholder="Search issues"
+          size="large"
           onSearch={onSearch}
         />
         <div className="ml-4">
-          <Avatar.Group maxCount={5}>
+          <Avatar.Group
+            maxCount={5}
+            size="large"
+            maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
+          >
             {members.map((member: Member) => (
-              <Avatar key={member.userId} src={member.avatar} alt={member.name} size={40} />
+              <UserPopover user={member} key={member.id}>
+                <Avatar
+                  key={member.userId}
+                  src={member.avatar || "/images/default_avatar.jpg"}
+                  alt={member.name}
+                  size="large"
+                />
+              </UserPopover>
             ))}
           </Avatar.Group>
         </div>
         <Button
-        type="text"
-        shape="circle"
-        icon={<UserAddOutlined />}
-        size="large"
-        style={{ marginLeft: '10px', backgroundColor: '#d8d9dc' }}
-        onClick={showModal}
-      />
+          type="text"
+          shape="circle"
+          icon={<UserAddOutlined />}
+          size="large"
+          style={{ marginLeft: "10px", backgroundColor: "#d8d9dc" }}
+          onClick={showModal}
+        />
       </div>
-      
+
       <Modal
         title="Add Member"
         open={isModalVisible}
@@ -97,7 +123,12 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
           <Button key="cancel" onClick={handleCancel}>
             Cancel
           </Button>,
-          <Button key="add" type="primary" onClick={handleAddMember} style={{ backgroundColor: '#1890ff' }}>
+          <Button
+            key="add"
+            type="primary"
+            onClick={handleAddMember}
+            style={{ backgroundColor: "#1890ff" }}
+          >
             Add Member
           </Button>,
         ]}
@@ -108,7 +139,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
           placeholder="Search user"
           showSearch
           onSearch={handleUserSearch}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           filterOption={false}
           onChange={(value: number) => setSelectedUserId(value)}
         >
@@ -124,13 +155,13 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
           ))}
         </Select>
         <div className="prose mt-4">
-      <Typography.Text strong>Member Capabilities:</Typography.Text>
-      <ul className="list-disc pl-6">
-        <li>Access project resources and features</li>
-        <li>Contribute to tasks and discussions</li>
-        <li>Invite other members</li>
-      </ul>
-    </div>
+          <Typography.Text strong>Member Capabilities:</Typography.Text>
+          <ul className="list-disc pl-6">
+            <li>Access project resources and features</li>
+            <li>Contribute to tasks and discussions</li>
+            <li>Invite other members</li>
+          </ul>
+        </div>
       </Modal>
     </div>
   );

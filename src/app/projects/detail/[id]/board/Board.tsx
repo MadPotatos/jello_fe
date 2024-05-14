@@ -15,9 +15,10 @@ import { reorderIssues, updateIssueDate } from "@/app/api/issuesApi";
 interface BoardProps {
   lists: any[];
   issues: any;
+  sprintId: number | undefined;
 }
 
-const Board: React.FC<BoardProps> = ({ lists, issues }) => {
+const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[3]);
 
@@ -60,13 +61,17 @@ const Board: React.FC<BoardProps> = ({ lists, issues }) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex space-x-4 py-4 overflow-x-auto">
-        {lists.map((list, index) => (
-          <div className="flex-none" style={{ minWidth: "320px" }}>
+        {lists.map((list) => (
+          <div
+            className="flex-none"
+            style={{ minWidth: "320px" }}
+            key={list.index}
+          >
             <List
               list={list}
               lists={lists}
               issues={issues[list.id]}
-              index={index + 1}
+              sprintId={sprintId}
             />
           </div>
         ))}
