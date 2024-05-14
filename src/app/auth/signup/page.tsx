@@ -1,5 +1,5 @@
 "use client";
-import { Button, Form, Input, message, notification } from "antd";
+import { Button, Form, Image, Input, message, notification } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -41,8 +41,9 @@ const SignupPage = () => {
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
       <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
-        <img
+        <Image
           src="/images/logo.png"
+          preview={false}
           alt="logo"
           style={{ width: "100px", height: "auto", marginBottom: "20px" }}
         />

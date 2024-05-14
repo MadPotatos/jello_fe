@@ -1,5 +1,5 @@
 "use client";
-import { Input, Button, Form, message, notification } from "antd";
+import { Input, Button, Form, message, notification, Image } from "antd";
 import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
@@ -38,8 +38,9 @@ const LoginPage = () => {
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
       <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
-        <img
+        <Image
           src="/images/logo.png"
+          preview={false}
           alt="logo"
           style={{ width: "100px", height: "auto", marginBottom: "20px" }}
         />
@@ -107,7 +108,7 @@ const LoginPage = () => {
           </Form.Item>
         </Form>
         <p className="mt-4 text-base text-gray-700">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a href="/auth/signup" className="text-blue-500">
             Sign up here
           </a>

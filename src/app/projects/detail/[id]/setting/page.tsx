@@ -149,7 +149,7 @@ const ProjectSettingPage = () => {
             >
               {members && members.length > 0 ? (
                 members.map((member: any) => (
-                  <UserPopover user={member}>
+                  <UserPopover user={member} key={member.id}>
                     <Avatar
                       key={member.userId}
                       src={member.avatar || "/images/default_avatar.jpg"}

@@ -62,7 +62,11 @@ const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex space-x-4 py-4 overflow-x-auto">
         {lists.map((list) => (
-          <div className="flex-none" style={{ minWidth: "320px" }}>
+          <div
+            className="flex-none"
+            style={{ minWidth: "320px" }}
+            key={list.index}
+          >
             <List
               list={list}
               lists={lists}

@@ -9,6 +9,7 @@ import {
   notification,
   Modal,
   Card,
+  Image,
 } from "antd";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -107,8 +108,9 @@ const Profile = () => {
       <Card
         className="w-full"
         cover={
-          <img
+          <Image
             alt="Profile Background"
+            preview={false}
             src="/images/profile-background.jpg"
             className="rounded-tl-lg rounded-tr-lg"
           />
@@ -213,7 +215,7 @@ const Profile = () => {
 
         {/* Project List */}
         <Card className="flex-1 mt-4" title="PROJECTS">
-          <div className="overflow-x-scroll max-w-3xl flex flex-row h-96 space-x-4">
+          <div className="overflow-x-scroll max-w-3xl flex flex-row  space-x-4">
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
                 <div key={project.id} className="mb-4">
@@ -222,9 +224,9 @@ const Profile = () => {
                       <Title level={4} className="mb-2">
                         {project.name}
                       </Title>
-                      <img
+                      <Image
                         alt={project.name}
-                        src={project.image}
+                        src={project.image || "/images/logo.png"}
                         className="h-40 w-full object-cover mb-4"
                       />
                       <Text className="mb-4">{project.description}</Text>

@@ -94,7 +94,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
             maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
           >
             {members.map((member: Member) => (
-              <UserPopover user={member}>
+              <UserPopover user={member} key={member.id}>
                 <Avatar
                   key={member.userId}
                   src={member.avatar || "/images/default_avatar.jpg"}
