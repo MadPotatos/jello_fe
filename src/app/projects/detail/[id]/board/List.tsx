@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Droppable } from "@hello-pangea/dnd";
-import { Button, Form, Input, Modal, Select, message } from "antd";
+import { Button, Input, Modal, Select, message, Form } from "antd";
 import {
   EditOutlined,
   CheckOutlined,
@@ -19,8 +19,12 @@ import { mutate } from "swr";
 import { usePathname } from "next/navigation";
 import { deleteList, updateList } from "@/app/api/listApi";
 import { createIssue } from "@/app/api/issuesApi";
-import IssueDetailModal from "@/components/IssueDetail";
 import { List as ListType } from "@/lib/types";
+import dynamic from "next/dynamic";
+
+const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
+  ssr: false,
+});
 
 const { confirm } = Modal;
 

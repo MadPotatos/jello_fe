@@ -10,7 +10,6 @@ import {
   MenuProps,
   Modal,
   Select,
-  Tooltip,
   message,
   notification,
 } from "antd";
@@ -27,11 +26,27 @@ import {
   getColoredIconByPriority,
 } from "@/lib/utils";
 import dayjs from "dayjs";
-import EditSprintModel from "./EditSprintModel";
 import { fetchLists } from "@/app/api/listApi";
 import { useRouter } from "next/navigation";
-import CompleteSprintModel from "../../../../../components/CompleteSprintModel";
-import IssueDetailModal from "@/components/IssueDetail";
+import dynamic from "next/dynamic";
+
+const CompleteSprintModel = dynamic(
+  () => import("@/components/CompleteSprintModel"),
+  {
+    ssr: false,
+  }
+);
+
+const EditSprintModel = dynamic(() => import("./EditSprintModel"), {
+  ssr: false,
+});
+const Tooltip = dynamic(() => import("antd").then((mod) => mod.Tooltip), {
+  ssr: false,
+});
+
+const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
+  ssr: false,
+});
 
 const { confirm } = Modal;
 

@@ -7,19 +7,26 @@ import {
   Avatar,
   message,
   notification,
-  Modal,
   Card,
   Image,
 } from "antd";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import UploadImage from "@/components/UploadImage";
 import { EditOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { Project, User } from "@/lib/types";
 import { Typography } from "antd";
 import useSWR, { mutate } from "swr";
 import { fetchProjects } from "@/app/api/projectApi";
 import { fetchUser, updateAvatar, updateUser } from "@/app/api/userApi";
+import dynamic from "next/dynamic";
+
+const UploadImage = dynamic(() => import("@/components/UploadImage"), {
+  ssr: false,
+});
+
+const Modal = dynamic(() => import("antd").then((mod) => mod.Modal), {
+  ssr: false,
+});
 
 const { Title, Text } = Typography;
 

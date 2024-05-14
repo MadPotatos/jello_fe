@@ -16,7 +16,11 @@ import { mutate } from "swr";
 import { useSession } from "next-auth/react";
 import { addMember } from "@/app/api/memberApi";
 import { searchUsers } from "@/app/api/userApi";
-import UserPopover from "@/components/UserPopover";
+import dynamic from "next/dynamic";
+
+const UserPopover = dynamic(() => import("@/components/UserPopover"), {
+  ssr: false,
+});
 
 interface FilterProps {
   members: Member[];

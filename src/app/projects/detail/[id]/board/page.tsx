@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { Button, Divider, Spin, Tooltip } from "antd";
+import { Button, Divider, Spin } from "antd";
 import Board from "./Board";
 import Filter from "../Filter";
 import { List, Member, Sprint } from "@/lib/types";
@@ -12,8 +12,18 @@ import { fetchIssues } from "@/app/api/issuesApi";
 import { fetchCurrentSprint } from "@/app/api/sprintApi";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import CompleteSprintModel from "@/components/CompleteSprintModel";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
+
+const CompleteSprintModel = dynamic(
+  () => import("@/components/CompleteSprintModel"),
+  {
+    ssr: false,
+  }
+);
+const Tooltip = dynamic(() => import("antd").then((mod) => mod.Tooltip), {
+  ssr: false,
+});
 
 const ProjectDetailPage = () => {
   const pathname = usePathname();

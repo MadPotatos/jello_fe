@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { Avatar, List, Button, Tag } from "antd";
+import React from "react";
+import { Avatar, Tag } from "antd";
 import { Draggable } from "@hello-pangea/dnd";
 import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
 } from "@/lib/utils";
-import IssueDetailModal from "@/components/IssueDetail";
 
 interface SprintIssuesProps {
   issue: any;
