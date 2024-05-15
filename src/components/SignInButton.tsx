@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Space, Badge, Divider } from "antd";
+import { Avatar, Button, Space, Badge, Divider } from "antd";
 import type { MenuProps } from "antd";
 import { useSession, signOut } from "next-auth/react";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
@@ -17,6 +17,11 @@ import {
 import dayjs from "dayjs";
 
 import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
+import dynamic from "next/dynamic";
+
+const Dropdown = dynamic(() => import("antd").then((mod) => mod.Dropdown), {
+  ssr: false,
+});
 
 const SignInButton: React.FC = () => {
   const { data: session } = useSession();

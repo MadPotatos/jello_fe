@@ -2,9 +2,8 @@
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Input, Button, Form, message, Modal, Avatar, Popover } from "antd";
+import { Input, Button, Form, message, Avatar } from "antd";
 import { Member, ProjectDetail } from "@/lib/types";
-import UploadImage from "@/components/UploadImage";
 import useSWR, { mutate } from "swr";
 import {
   fetchProjectById,
@@ -13,7 +12,19 @@ import {
 } from "@/app/api/projectApi";
 import { fetchMembers } from "@/app/api/memberApi";
 import { validateRepository } from "@/lib/utils";
-import UserPopover from "@/components/UserPopover";
+import dynamic from "next/dynamic";
+
+const UserPopover = dynamic(() => import("@/components/UserPopover"), {
+  ssr: false,
+});
+
+const UploadImage = dynamic(() => import("@/components/UploadImage"), {
+  ssr: false,
+});
+
+const Modal = dynamic(() => import("antd").then((mod) => mod.Modal), {
+  ssr: false,
+});
 
 const ProjectSettingPage = () => {
   const { data: session } = useSession();

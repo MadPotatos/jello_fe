@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
         const isMember = await checkMembership(projectId, userId);
 
         if (!isMember) {
-          return NextResponse.redirect(new URL("/unauthorized", request.url));
+          return NextResponse.redirect(new URL("/not-member", request.url));
         }
       } catch (error) {
         console.error("Error checking membership:", error);

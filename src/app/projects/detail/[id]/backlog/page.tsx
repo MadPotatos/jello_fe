@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Spin } from "antd";
 import { Member, Sprint } from "@/lib/types";
 import useSWR, { mutate } from "swr";
@@ -11,12 +11,10 @@ import {
 } from "@/app/api/issuesApi";
 import { fetchSprints } from "@/app/api/sprintApi";
 import Filter from "../Filter";
-import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { usePathname } from "next/navigation";
 import SprintCard from "./SprintCard";
 import { useSession } from "next-auth/react";
-import { set } from "lodash";
-import { Backend_URL } from "@/lib/Constants";
 
 const ProjectBacklogPage: React.FC = () => {
   const pathname = usePathname();

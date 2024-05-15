@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Empty, Space, Spin, Table, Tag } from "antd";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
 import dayjs from "dayjs";

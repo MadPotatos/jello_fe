@@ -1,24 +1,21 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import {
-  Button,
-  Table,
-  Input,
-  Breadcrumb,
-  Popover,
-  Avatar,
-  message,
-  Modal,
-} from "antd";
+import { Button, Table, Input, Breadcrumb, Avatar, message, Modal } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Leader, Project } from "@/lib/types";
-import CreateProjectModel from "./CreateProjectModel";
 import { useSession } from "next-auth/react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { deleteProject, fetchProjects } from "@/app/api/projectApi";
-import UserPopover from "@/components/UserPopover";
+import dynamic from "next/dynamic";
+
+const CreateProjectModel = dynamic(() => import("./CreateProjectModel"), {
+  ssr: false,
+});
+const UserPopover = dynamic(() => import("@/components/UserPopover"), {
+  ssr: false,
+});
 
 const { Search } = Input;
 const { confirm } = Modal;

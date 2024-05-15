@@ -1,6 +1,8 @@
 "use client";
 import { Button, Form, Image, Input, message, notification } from "antd";
-import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import LockOutlined from "@ant-design/icons/LockOutlined";
+import MailOutlined from "@ant-design/icons/MailOutlined";
+import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { Backend_URL } from "@/lib/Constants";

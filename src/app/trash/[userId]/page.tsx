@@ -1,17 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import {
-  Button,
-  Table,
-  Input,
-  Breadcrumb,
-  Popover,
-  Avatar,
-  message,
-  Modal,
-} from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Button, Table, Input, Avatar, message, Modal } from "antd";
 import { Leader, Project } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -72,47 +62,16 @@ const DeletedProjectList = () => {
       dataIndex: "leader",
       key: "leader",
       render: (leader: Leader, record: Project) => (
-        <Popover
-          content={
-            <div className="max-w-xs py-3 rounded-lg">
-              <div className="flex photo-wrapper p-2 justify-center">
-                <Avatar
-                  src={leader.avatar || "/images/default_avatar.jpg"}
-                  size={64}
-                />
-              </div>
-              <div className="p-2">
-                <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
-                  {leader.name}
-                </h3>
-                <div className="text-center text-gray-400 text-xs font-semibold">
-                  <p>{leader.email}</p>
-                </div>
-                <div className="text-center my-3">
-                  <a
-                    className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
-                    href={`/user/${leader.userId}`}
-                  >
-                    View Profile
-                  </a>
-                </div>
-              </div>
-            </div>
-          }
-          title=""
-          trigger="hover"
+        <div
+          style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
         >
-          <div
-            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-          >
-            <Avatar
-              src={leader.avatar || "/images/default_avatar.jpg"}
-              size={48}
-              style={{ marginRight: "10px" }}
-            />
-            <span>{leader.name}</span>
-          </div>
-        </Popover>
+          <Avatar
+            src={leader.avatar || "/images/default_avatar.jpg"}
+            size={48}
+            style={{ marginRight: "10px" }}
+          />
+          <span>{leader.name}</span>
+        </div>
       ),
     },
     {
