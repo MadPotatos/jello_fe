@@ -32,6 +32,7 @@ const AllIssuesListPage = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
+  const [selectedRowKey, setSelectedRowKey] = useState<number | null>(null);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -47,6 +48,7 @@ const AllIssuesListPage = () => {
   const handleIssueClick = (issue: any) => {
     setSelectedIssue(issue);
     setDetailModalVisible(true);
+    setSelectedRowKey(issue.id);
   };
 
   useEffect(() => {
@@ -75,6 +77,7 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <div>{getColoredIconByIssueType(record.type)}</div>
       ),
+      sorter: (a: any, b: any) => a.type - b.type,
     },
     {
       title: "Summary",
@@ -90,6 +93,7 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <div>{getColoredIconByPriority(record.priority)}</div>
       ),
+      sorter: (a: any, b: any) => a.priority - b.priority,
     },
     {
       title: "Status",
@@ -162,6 +166,8 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <span>{dayjs(record.createdAt).format("DD/MM/YYYY")}</span>
       ),
+      sorter: (a: any, b: any) =>
+        dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
     },
     {
       title: (
@@ -175,6 +181,8 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <span>{dayjs(record.updatedAt).format("DD/MM/YYYY")}</span>
       ),
+      sorter: (a: any, b: any) =>
+        dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
     },
     {
       title: (
@@ -212,27 +220,35 @@ const AllIssuesListPage = () => {
     <div className="site-layout-content">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
       <Filter members={members} onSearch={handleSearch} />
-      <Table
-        columns={columns}
-        dataSource={filteredIssues}
-        rowKey="id"
-        pagination={{ pageSize: 10 }}
-        bordered
-        onRow={(record) => {
-          return {
-            onClick: () => handleIssueClick(record),
-            className: "hover:bg-gray-100 cursor-pointer",
-          };
-        }}
-      />
-      {selectedIssue && (
-        <IssueDetailModal
-          issue={selectedIssue}
-          lists={lists}
-          visible={true}
-          onClose={() => setSelectedIssue(null)}
+      <div className="py-4">
+        <Table
+          columns={columns}
+          dataSource={filteredIssues}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+          bordered
+          rowClassName={(record) =>
+            record.id === selectedRowKey ? "bg-blue-100" : ""
+          }
+          onRow={(record) => {
+            return {
+              onClick: () => handleIssueClick(record),
+              className: "hover:bg-gray-100 cursor-pointer",
+            };
+          }}
         />
-      )}
+        {selectedIssue && (
+          <IssueDetailModal
+            issue={selectedIssue}
+            lists={lists}
+            visible={true}
+            onClose={() => {
+              setSelectedIssue(null);
+              setSelectedRowKey(null);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };

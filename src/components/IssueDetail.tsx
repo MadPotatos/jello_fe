@@ -141,6 +141,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       message.success("Issue updated successfully");
       mutate(`issues-${projectId}`);
       mutate(`sprint-issues-${projectId}`);
+      mutate(`all-issues-${projectId}`);
     } catch (error) {
       console.error("Error updating issue:", error);
     }
