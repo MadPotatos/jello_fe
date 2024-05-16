@@ -38,7 +38,7 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
       <Layout className="bg-white">
         <Breadcrumb
           items={breadcrumbItems}
-          className="px-4 py-2 text-base hover:text-blue-500"
+          className="px-4 py-2 text-base hover:text-blue-500 text-2xl"
         />
         <Content className="p-6 m-5 min-h-280">{children}</Content>
       </Layout>

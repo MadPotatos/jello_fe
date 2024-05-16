@@ -1,8 +1,19 @@
 import { Backend_URL } from "@/lib/Constants";
 
-export const fetchIssues = async (projectId: number) => {
+export const fetchAllIssues = async (projectId: number) => {
   try {
-    const response = await fetch(`${Backend_URL}/issues/${projectId}`);
+    const response = await fetch(`${Backend_URL}/issues/all/${projectId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching issues:", error);
+    throw error;
+  }
+};
+
+export const fetchIssuesInList = async (projectId: number) => {
+  try {
+    const response = await fetch(`${Backend_URL}/issues/list/${projectId}`);
     const data = await response.json();
     return data;
   } catch (error) {

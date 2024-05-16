@@ -7,7 +7,7 @@ import {
   PullRequestOutlined,
   GroupOutlined,
   BugOutlined,
-  IssuesCloseOutlined,
+  UnorderedListOutlined,
   TableOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -46,9 +46,9 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
   useEffect(() => {
     if (pathname.includes("backlog")) {
       setSelectedKeys(["3"]);
-    } else if (pathname.includes("pull-requests")) {
+    } else if (pathname.includes("all-issues")) {
       setSelectedKeys(["4"]);
-    } else if (pathname.includes("issues")) {
+    } else if (pathname.includes("pull-requests")) {
       setSelectedKeys(["5"]);
     } else if (pathname.includes("bug-tracking")) {
       setSelectedKeys(["6"]);
@@ -70,13 +70,13 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       getItem("Backlog", "3", <TableOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/backlog")
       ),
+      getItem("Issues", "4", <UnorderedListOutlined />, undefined, () =>
+        router.push("/projects/detail/" + project?.id + "/all-issues")
+      ),
     ]),
     getItem("Development", "grp-2", null, [
-      getItem("Pull requests", "4", <PullRequestOutlined />, undefined, () =>
+      getItem("Pull requests", "5", <PullRequestOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/pull-requests")
-      ),
-      getItem("Issues", "5", <IssuesCloseOutlined />, undefined, () =>
-        router.push("/projects/detail/" + project?.id + "/issues")
       ),
       getItem("Bug tracking", "6", <BugOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/bug-tracking")

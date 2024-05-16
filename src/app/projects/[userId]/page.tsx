@@ -67,9 +67,7 @@ const ProjectList: React.FC = () => {
             size={50}
             shape="square"
           />
-          <span
-            style={{ marginLeft: "20px", fontWeight: "bold", color: "#1890ff" }}
-          >
+          <span className="text-lg font-semibold ml-4 cursor-pointer text-blue-500">
             {record.name}
           </span>
         </div>
