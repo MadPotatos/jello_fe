@@ -135,6 +135,7 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <Avatar.Group
           maxCount={2}
+          size="large"
           maxStyle={{
             color: "#f56a00",
             backgroundColor: "#fde3cf",
@@ -197,7 +198,7 @@ const AllIssuesListPage = () => {
         <div className="flex items-center">
           <Avatar
             src={record.User.avatar || "/images/default_avatar.jpg"}
-            size={48}
+            size="large"
             style={{ marginRight: "10px" }}
           />
           <span>{record.User.name}</span>
@@ -218,7 +219,7 @@ const AllIssuesListPage = () => {
 
   return (
     <div className="site-layout-content">
-      <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
+      <h1 className="text-xl font-semibold text-gray-800 mb-4">Issues</h1>
       <Filter members={members} onSearch={handleSearch} />
       <div className="py-4">
         <Table
