@@ -3,19 +3,23 @@ import { DownOutlined } from "@ant-design/icons";
 import { Avatar, Button, Space, Badge, Divider } from "antd";
 import type { MenuProps } from "antd";
 import { useSession, signOut } from "next-auth/react";
-import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  LogoutOutlined,
+  BellTwoTone,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { BellTwoTone, DeleteOutlined } from "@ant-design/icons";
 import { fetchUser } from "@/app/api/userApi";
 import useSWR, { mutate } from "swr";
 import { User } from "@/lib/types";
 import {
+  deleteNotification,
   fetchNotifications,
   markAllAsRead,
   markAsRead,
 } from "@/app/api/notificationApi";
 import dayjs from "dayjs";
-
 import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
 import dynamic from "next/dynamic";
 
@@ -27,8 +31,6 @@ const SignInButton: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const userId = session?.user?.id;
-  const [isLoading, setIsLoading] = useState(false);
-  const [socket, setSocket] = useState<any>();
 
   const { data: user } = useSWR<User>(
     userId ? `user-profile-${userId}` : null,
@@ -101,6 +103,18 @@ const SignInButton: React.FC = () => {
     }
   };
 
+  const handleDeleteNotification = async (
+    notificationId: number,
+    accessToken: string | undefined
+  ) => {
+    try {
+      await deleteNotification(notificationId, accessToken);
+      mutate(`notifications-${userId}`);
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
+  };
+
   const items: MenuProps["items"] = [
     {
       key: "profile",
@@ -159,8 +173,8 @@ const SignInButton: React.FC = () => {
     ...(notifications?.notifications?.map((notification: any) => ({
       key: "notification-" + notification.id,
       label: (
-        <div>
-          <div className="flex justify-between w-full items-center ">
+        <div className="group relative">
+          <div className="flex justify-between w-full items-center group-hover:bg-gray-100 p-2 rounded-md">
             <div className="flex items-center gap-3">
               <Avatar
                 size="large"
@@ -177,11 +191,34 @@ const SignInButton: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="flex gap-4 items-center">
+              <div className="group-hover:block hidden">
+                <Button
+                  shape="circle"
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteNotification(
+                      notification.id,
+                      session?.backendTokens.accessToken
+                    );
+                  }}
+                />
+              </div>
+              <div className="group-hover:hidden block">
+                <Button
+                  shape="circle"
+                  size="small"
+                  className="opacity-0 pointer-events-none"
+                />
+              </div>
+
               {!notification.isRead ? (
                 <div className="h-3 w-3 bg-blue-400 rounded-full"></div>
               ) : (
-                <div></div>
+                <span className="h-3 w-3"></span>
               )}
             </div>
           </div>
@@ -247,6 +284,3 @@ const SignInButton: React.FC = () => {
 };
 
 export default SignInButton;
-function io(arg0: string) {
-  throw new Error("Function not implemented.");
-}

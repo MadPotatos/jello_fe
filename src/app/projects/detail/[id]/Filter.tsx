@@ -23,7 +23,7 @@ const UserPopover = dynamic(() => import("@/components/UserPopover"), {
 });
 
 interface FilterProps {
-  members: Member[];
+  members: Member[] | undefined;
   onSearch: (query: string) => void;
 }
 
@@ -51,7 +51,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
   const handleAddMember = async () => {
     if (selectedUserId) {
       try {
-        const isAlreadyMember = members.some(
+        const isAlreadyMember = members?.some(
           (member) => member.userId === selectedUserId
         );
         if (isAlreadyMember) {
@@ -97,7 +97,7 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
             size="large"
             maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
           >
-            {members.map((member: Member) => (
+            {members?.map((member: Member) => (
               <UserPopover user={member} key={member.id}>
                 <Avatar
                   key={member.userId}

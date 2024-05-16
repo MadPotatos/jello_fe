@@ -94,6 +94,7 @@ const SprintCard: React.FC<SprintProps> = ({
     try {
       values.sprintId = sprint.id;
       values.reporterId = session?.user.id;
+      values.projectId = projectId;
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`sprint-issues-${projectId}`);
       setIsCreatingIssue(false);
@@ -386,7 +387,7 @@ const SprintCard: React.FC<SprintProps> = ({
               <CheckOutlined />
             </Button>
             <Button
-              type="primary"
+              type="default"
               danger
               onClick={() => setIsCreatingIssue(false)}
             >

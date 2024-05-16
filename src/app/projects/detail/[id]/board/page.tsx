@@ -8,7 +8,7 @@ import { List, Member, Sprint } from "@/lib/types";
 import useSWR, { mutate } from "swr";
 import { fetchMembers } from "@/app/api/memberApi";
 import { fetchLists } from "@/app/api/listApi";
-import { fetchIssues } from "@/app/api/issuesApi";
+import { fetchIssuesInList } from "@/app/api/issuesApi";
 import { fetchCurrentSprint } from "@/app/api/sprintApi";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -40,7 +40,7 @@ const ProjectDetailPage = () => {
     fetchLists(projectId)
   );
   const { data: issues } = useSWR(`issues-${projectId}`, () =>
-    fetchIssues(projectId)
+    fetchIssuesInList(projectId)
   );
 
   const { data: sprint } = useSWR<Sprint>(`current-sprint-${projectId}`, () =>

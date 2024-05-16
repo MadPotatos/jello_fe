@@ -54,3 +54,21 @@ export const markAllAsRead = async (
     throw error;
   }
 };
+
+export const deleteNotification = async (
+  notificationId: number,
+  accessToken: string | undefined
+) => {
+  try {
+    await fetch(`${Backend_URL}/notification/${notificationId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    throw error;
+  }
+};

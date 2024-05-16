@@ -105,6 +105,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
     try {
       values.listId = list.id;
       values.sprintId = sprintId;
+      values.projectId = projectId;
       values.reporterId = session?.user.id;
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`issues-${projectId}`);

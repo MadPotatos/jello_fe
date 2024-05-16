@@ -95,7 +95,7 @@ const ProjectBacklogPage: React.FC = () => {
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
       <Filter members={members} onSearch={handleSearch} />
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col py-4 gap-4">
           {sprints
             .slice(1)
             .concat(sprints.slice(0, 1))
