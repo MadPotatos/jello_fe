@@ -44,7 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname.includes("backlog")) {
+    if (pathname.includes("timeline")) {
+      setSelectedKeys(["2"]);
+    } else if (pathname.includes("backlog")) {
       setSelectedKeys(["3"]);
     } else if (pathname.includes("all-issues")) {
       setSelectedKeys(["4"]);
@@ -65,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
         router.push("/projects/detail/" + project?.id + "/board")
       ),
       getItem("Timeline", "2", <GroupOutlined />, undefined, () =>
-        router.push("/timeline")
+        router.push("/projects/detail/" + project?.id + "/timeline")
       ),
       getItem("Backlog", "3", <TableOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/backlog")
