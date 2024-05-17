@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -30,7 +30,7 @@ import {
   deleteComment,
   fetchComments,
 } from "@/app/api/commentApi";
-import { deleteIssue, updateIssue } from "@/app/api/issuesApi";
+import { deleteIssue, fetchSubIssues, updateIssue } from "@/app/api/issuesApi";
 import dayjs from "dayjs";
 
 const { confirm } = Modal;
@@ -52,6 +52,18 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const { data: session } = useSession();
   const projectId = Number(pathname.split("/")[3]);
   const [form] = Form.useForm();
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [descriptionValue, setDescriptionValue] = useState("");
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescriptionValue(e.target.value);
+  };
+
+  const handleEditDescription = () => {
+    setIsEditingDescription(true);
+  };
 
   const formattedUpdatedAt = dayjs(issue.updatedAt).format("DD-MM-YYYY HH:mm");
   const formattedCreatedAt = dayjs(issue.createdAt).format("DD-MM-YYYY HH:mm");
@@ -62,6 +74,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const { data: comments } = useSWR<IssueComment[]>(
     `comments-${issue.id}`,
     () => fetchComments(issue.id)
+  );
+  const { data: subIssues } = useSWR(`sub-issues-${issue.id}`, () =>
+    fetchSubIssues(issue.id)
   );
 
   const typeOptions = [
@@ -146,6 +161,14 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     }
   };
 
+  const handleDescriptionSubmit = async () => {
+    const newDescr = form.getFieldValue("descr");
+    if (newDescr !== issue.descr) {
+      await handleUpdateIssue("descr", newDescr);
+    }
+    setIsEditingDescription(false);
+  };
+
   const handleDeteleIssue = async () => {
     try {
       confirm({
@@ -214,15 +237,23 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     border: "none",
                     outline: "none",
                     borderBottom: "1px solid #ccc",
+                    height: "200px",
                   }}
-                  onPressEnter={(e) => {
-                    handleUpdateIssue(
-                      "descr",
-                      (e.target as HTMLInputElement).value
-                    );
-                  }}
-                ></Input.TextArea>
+                  value={descriptionValue}
+                  onChange={handleDescriptionChange}
+                  onFocus={handleEditDescription}
+                  onBlur={() => setIsEditingDescription(false)}
+                />
               </Form.Item>
+              {isEditingDescription ? (
+                <Form.Item>
+                  <Button type="primary" onClick={handleDescriptionSubmit}>
+                    Submit
+                  </Button>
+                </Form.Item>
+              ) : (
+                <div></div>
+              )}
             </Form>
             <List
               className="comment-list max-h-[450px] overflow-y-auto"
@@ -298,19 +329,21 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           <Form form={form} layout="vertical">
             <div className="p-4">
               <Space direction="vertical" size={8}>
-                <Form.Item
-                  label="Type"
-                  name="type"
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Select
-                    style={{ width: "100%" }}
-                    options={typeOptions}
-                    placeholder="Select Type"
-                    onChange={(value) => handleUpdateIssue("type", value)}
-                  />
-                </Form.Item>
+                {issue.type !== 4 && (
+                  <Form.Item
+                    label="Type"
+                    name="type"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                  >
+                    <Select
+                      style={{ width: "100%" }}
+                      options={typeOptions}
+                      placeholder="Select Type"
+                      onChange={(value) => handleUpdateIssue("type", value)}
+                    />
+                  </Form.Item>
+                )}
                 <Form.Item
                   label="Priority"
                   name="priority"
