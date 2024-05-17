@@ -1,6 +1,7 @@
 import React from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { Avatar, Button } from "antd";
+import { Avatar, Badge } from "antd";
+import { ApartmentOutlined } from "@ant-design/icons";
 import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
@@ -25,17 +26,18 @@ const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
         >
           <div className="p-3">
             <div className="flex flex-col ">
-              <span className="font-medium text-base text-gray-900">
-                {issue.summary}
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-base text-gray-900">
+                  {issue.summary}
+                </span>
+                {issue.children > 0 ? <ApartmentOutlined /> : <div> </div>}
+              </div>
               <div className="mt-3 flex items-center justify-between">
                 <div className="mb-1 flex items-center text-lg gap-2">
                   {getColoredIconByIssueType(issue.type)}
                   {getColoredIconByPriority(issue.priority)}
                   {issue.comments > 0 && (
-                    <Button type="primary" shape="circle" size="small" ghost>
-                      {issue.comments}
-                    </Button>
+                    <Badge count={issue.comments} color="#0064f2" />
                   )}
                 </div>
 

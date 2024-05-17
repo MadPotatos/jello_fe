@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use, useEffect } from "react";
 import {
   Button,
   Col,
@@ -82,6 +82,26 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const defaultAssigneeIds = issue.assignees.map(
     (assignee: { userId: string }) => Number(assignee.userId)
   );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (issue && members) {
+          form.setFieldsValue({
+            type: issue.type,
+            priority: issue.priority,
+            listId: issue.listId,
+            assignees: defaultAssigneeIds,
+            descr: issue.descr,
+            summary: issue.summary,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [issue, members]);
 
   const handleAddComment = async (commentText: string) => {
     try {
@@ -161,17 +181,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       <Row>
         <Col span={16}>
           <div className="p-4">
-            <Form
-              form={form}
-              initialValues={{
-                type: issue.type,
-                priority: issue.priority,
-                listId: issue.listId,
-                assignees: defaultAssigneeIds,
-                descr: issue.descr,
-                summary: issue.summary,
-              }}
-            >
+            <Form form={form}>
               <Form.Item
                 name="summary"
                 labelCol={{ span: 24 }}

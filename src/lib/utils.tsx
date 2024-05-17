@@ -2,6 +2,7 @@ import {
   CheckSquareFilled,
   BugFilled,
   ThunderboltFilled,
+  SubnodeOutlined,
 } from "@ant-design/icons";
 import { UpOutlined, MinusOutlined, DownOutlined } from "@ant-design/icons";
 
@@ -13,6 +14,8 @@ export const getColoredIconByIssueType = (issueType: number) => {
       return <BugFilled style={{ color: "red" }} />;
     case 3:
       return <ThunderboltFilled style={{ color: "orange" }} />;
+    case 4:
+      return <SubnodeOutlined style={{ color: "#0064f2" }} />;
     default:
       return null;
   }
