@@ -59,12 +59,21 @@ const AllIssuesListPage = () => {
     setSearchQuery(query);
     filterIssues(query);
   };
+  const handleUserClick = (userId: number) => {
+    filterIssues(searchQuery, userId);
+  };
 
-  const filterIssues = (query: string) => {
+  const filterIssues = (query: string, userId?: number) => {
     if (!issues) return;
-    const filtered = issues?.filter((issue: any) =>
-      issue.summary.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = issues?.filter((issue: any) => {
+      const matchesSearchQuery = issue.summary
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesUserId = userId
+        ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+        : true;
+      return matchesSearchQuery && matchesUserId;
+    });
     setFilteredIssues(filtered);
   };
 
@@ -220,7 +229,11 @@ const AllIssuesListPage = () => {
   return (
     <div className="site-layout-content">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Issues</h1>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+      />
       <div className="py-4">
         <Table
           columns={columns}

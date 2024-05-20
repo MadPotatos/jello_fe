@@ -67,14 +67,24 @@ const ProjectBacklogPage: React.FC = () => {
     filterIssues(query);
   };
 
-  const filterIssues = (query: string) => {
+  const handleUserClick = (userId: number) => {
+    filterIssues(searchQuery, userId);
+  };
+
+  const filterIssues = (query: string, userId?: number) => {
     if (!issues) return;
 
     const filtered = {} as any;
-    Object.keys(issues).forEach((listId: string) => {
-      filtered[listId] = issues[listId].filter((issue: any) =>
-        issue.summary.toLowerCase().includes(query.toLowerCase())
-      );
+    Object.keys(issues).forEach((sprintId: string) => {
+      filtered[sprintId] = issues[sprintId].filter((issue: any) => {
+        const matchesSearchQuery = issue.summary
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesUserId = userId
+          ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+          : true;
+        return matchesSearchQuery && matchesUserId;
+      });
     });
     setFilteredIssues(filtered);
   };
@@ -93,7 +103,11 @@ const ProjectBacklogPage: React.FC = () => {
   return (
     <div className="site-layout-content">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+      />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex flex-col py-4 gap-4">
           {sprints

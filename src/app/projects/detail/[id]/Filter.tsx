@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { addMember } from "@/app/api/memberApi";
 import { searchUsers } from "@/app/api/userApi";
 import dynamic from "next/dynamic";
+import { on } from "events";
 
 const UserPopover = dynamic(() => import("@/components/UserPopover"), {
   ssr: false,
@@ -25,12 +26,15 @@ const UserPopover = dynamic(() => import("@/components/UserPopover"), {
 interface FilterProps {
   members: Member[] | undefined;
   onSearch: (query: string) => void;
+  onUserClick: (userId: number) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
+const Filter: React.FC<FilterProps> = ({ members, onSearch, onUserClick }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
+  const [filtering, setFiltering] = useState(false);
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[3]);
   const { data: session } = useSession();
@@ -83,13 +87,31 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
     setIsModalVisible(false);
   };
 
+  const handleUserClick = (userId: number) => {
+    setSelectedAvatar(userId);
+    onUserClick(userId);
+    setFiltering(true);
+  };
+
+  const handleSearchIssue = (query: string) => {
+    onSearch(query);
+    setFiltering(true);
+  };
+
+  const clearFilter = () => {
+    setSelectedAvatar(null);
+    onUserClick(0);
+    setFiltering(false);
+    onSearch("");
+  };
+
   return (
     <div className="flex justify-between items-center mb-4 pr-8">
       <div className="flex items-center">
         <Input.Search
           placeholder="Search issues"
           size="large"
-          onSearch={onSearch}
+          onSearch={handleSearchIssue}
         />
         <div className="ml-4">
           <Avatar.Group
@@ -104,6 +126,13 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
                   src={member.avatar || "/images/default_avatar.jpg"}
                   alt={member.name}
                   size="large"
+                  style={{
+                    border:
+                      selectedAvatar === member.userId
+                        ? "3px solid #0064f2"
+                        : "none",
+                  }}
+                  onClick={() => handleUserClick(member.userId)}
                 />
               </UserPopover>
             ))}
@@ -117,6 +146,16 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch }) => {
           style={{ marginLeft: "10px", backgroundColor: "#d8d9dc" }}
           onClick={showModal}
         />
+        {filtering && (
+          <Button
+            type="text"
+            size="large"
+            onClick={clearFilter}
+            style={{ marginLeft: "10px", color: "#f5222d" }}
+          >
+            Clear Filter
+          </Button>
+        )}
       </div>
 
       <Modal

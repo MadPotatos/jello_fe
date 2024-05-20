@@ -56,6 +56,10 @@ const ProjectDetailPage = () => {
     filterIssues(query);
   };
 
+  const handleUserClick = (userId: number) => {
+    filterIssues(searchQuery, userId);
+  };
+
   const handleComplete = () => {
     setIsCompleteModalVisible(false);
     mutate(`sprints-${projectId}`);
@@ -64,18 +68,23 @@ const ProjectDetailPage = () => {
     mutate(`issues-${projectId}`);
   };
 
-  const filterIssues = (query: string) => {
+  const filterIssues = (query: string, userId?: number) => {
     if (!issues) return;
 
     const filtered = {} as any;
     Object.keys(issues).forEach((listId: string) => {
-      filtered[listId] = issues[listId].filter((issue: any) =>
-        issue.summary.toLowerCase().includes(query.toLowerCase())
-      );
+      filtered[listId] = issues[listId].filter((issue: any) => {
+        const matchesSearchQuery = issue.summary
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesUserId = userId
+          ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+          : true;
+        return matchesSearchQuery && matchesUserId;
+      });
     });
     setFilteredIssues(filtered);
   };
-
   if (!lists || !members || !issues) {
     return (
       <div className="site-layout-content">
@@ -120,7 +129,11 @@ const ProjectDetailPage = () => {
         </div>
       )}
       <h2 className="mb-4 text-xl text-c-text">Kanban Board</h2>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+      />
       <Board
         lists={lists}
         sprintId={sprint?.id}
