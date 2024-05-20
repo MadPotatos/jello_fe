@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -11,6 +11,7 @@ import {
   Space,
   List,
   message,
+  DatePicker,
 } from "antd";
 import { Avatar, Typography } from "antd";
 import { Comment } from "@ant-design/compatible";
@@ -22,7 +23,13 @@ import {
 } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { Popconfirm } from "antd";
-import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { fetchMembers } from "@/app/api/memberApi";
 import {
@@ -30,7 +37,12 @@ import {
   deleteComment,
   fetchComments,
 } from "@/app/api/commentApi";
-import { deleteIssue, updateIssue } from "@/app/api/issuesApi";
+import {
+  createIssue,
+  deleteIssue,
+  fetchSubIssues,
+  updateIssue,
+} from "@/app/api/issuesApi";
 import dayjs from "dayjs";
 
 const { confirm } = Modal;
@@ -52,6 +64,21 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const { data: session } = useSession();
   const projectId = Number(pathname.split("/")[3]);
   const [form] = Form.useForm();
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [descriptionValue, setDescriptionValue] = useState("");
+  const [showAddSubIssueInput, setShowAddSubIssueInput] = useState(false);
+  const [selectedSubIssue, setSelectedSubIssue] = useState<any | null>(null);
+  const [isSubIssueModalVisible, setIsSubIssueModalVisible] = useState(false);
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescriptionValue(e.target.value);
+  };
+
+  const handleEditDescription = () => {
+    setIsEditingDescription(true);
+  };
 
   const formattedUpdatedAt = dayjs(issue.updatedAt).format("DD-MM-YYYY HH:mm");
   const formattedCreatedAt = dayjs(issue.createdAt).format("DD-MM-YYYY HH:mm");
@@ -62,6 +89,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const { data: comments } = useSWR<IssueComment[]>(
     `comments-${issue.id}`,
     () => fetchComments(issue.id)
+  );
+  const { data: subIssues } = useSWR(`sub-issues-${issue.id}`, () =>
+    fetchSubIssues(issue.id)
   );
 
   const typeOptions = [
@@ -82,6 +112,28 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const defaultAssigneeIds = issue.assignees.map(
     (assignee: { userId: string }) => Number(assignee.userId)
   );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (issue && members) {
+          form.setFieldsValue({
+            type: issue.type,
+            priority: issue.priority,
+            listId: issue.listId,
+            progress: issue.progress,
+            dueDate: issue.dueDate ? dayjs(issue.dueDate) : "",
+            assignees: defaultAssigneeIds,
+            descr: issue.descr,
+            summary: issue.summary,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [issue, members, form]);
 
   const handleAddComment = async (commentText: string) => {
     try {
@@ -117,12 +169,39 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
         projectId,
         session?.backendTokens.accessToken
       );
-      message.success("Issue updated successfully");
       mutate(`issues-${projectId}`);
       mutate(`sprint-issues-${projectId}`);
       mutate(`all-issues-${projectId}`);
     } catch (error) {
       console.error("Error updating issue:", error);
+    }
+  };
+
+  const handleDescriptionSubmit = async () => {
+    const newDescr = form.getFieldValue("descr");
+    if (newDescr !== issue.descr) {
+      await handleUpdateIssue("descr", newDescr);
+    }
+    setIsEditingDescription(false);
+  };
+
+  const handleSubmitSubIssue = async (values: any) => {
+    try {
+      values.listId = issue.listId;
+      values.sprintId = issue.sprintId;
+      values.projectId = projectId;
+      values.reporterId = session?.user.id;
+      values.type = 4;
+      values.parentId = issue.id;
+      await createIssue(values, session?.backendTokens.accessToken);
+      mutate(`sub-issues-${issue.id}`);
+      mutate(`sprint-issues-${projectId}`);
+      mutate(`all-issues-${projectId}`);
+      mutate(`issues-${projectId}`);
+      setShowAddSubIssueInput(false);
+      message.success("Issue created successfully!");
+    } catch (error) {
+      console.error("Error adding sub issue:", error);
     }
   };
 
@@ -147,11 +226,22 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     }
   };
 
+  const handleCloseModal = () => {
+    setShowAddSubIssueInput(false);
+    setIsEditingDescription(false);
+    onClose();
+  };
+
+  const handleSubIssueClick = (subIssue: any) => {
+    setSelectedSubIssue(subIssue);
+    setIsSubIssueModalVisible(true);
+  };
+
   return (
     <Modal
       open={visible}
-      onCancel={onClose}
-      width={800}
+      onCancel={handleCloseModal}
+      width={1000}
       footer={[
         <Button type="text" danger onClick={handleDeteleIssue} key="1">
           Delete Issue
@@ -161,17 +251,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       <Row>
         <Col span={16}>
           <div className="p-4">
-            <Form
-              form={form}
-              initialValues={{
-                type: issue.type,
-                priority: issue.priority,
-                listId: issue.listId,
-                assignees: defaultAssigneeIds,
-                descr: issue.descr,
-                summary: issue.summary,
-              }}
-            >
+            <Form form={form}>
               <Form.Item
                 name="summary"
                 labelCol={{ span: 24 }}
@@ -204,55 +284,195 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     border: "none",
                     outline: "none",
                     borderBottom: "1px solid #ccc",
+                    height: "200px",
                   }}
-                  onPressEnter={(e) => {
-                    handleUpdateIssue(
-                      "descr",
-                      (e.target as HTMLInputElement).value
-                    );
-                  }}
-                ></Input.TextArea>
+                  value={descriptionValue}
+                  onChange={handleDescriptionChange}
+                  onFocus={handleEditDescription}
+                  onBlur={() => setIsEditingDescription(false)}
+                />
               </Form.Item>
-            </Form>
-            <List
-              className="comment-list max-h-[450px] overflow-y-auto"
-              header={`${comments?.length} comments`}
-              itemLayout="horizontal"
-              dataSource={comments}
-              renderItem={(comment: any) => (
-                <li>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Comment
-                        author={
-                          <Typography.Text style={{ fontSize: "16px" }}>
-                            {comment.name}
-                          </Typography.Text>
-                        }
-                        avatar={
-                          <Avatar src={comment.avatar} alt={comment.name} />
-                        }
-                        content={comment.descr}
-                        datetime={new Date(comment.createdAt).toLocaleString()}
-                      />
-                    </div>
-                    {session?.user.id === comment.userId && (
-                      <Popconfirm
-                        title="Are you sure you want to delete this comment?"
-                        onConfirm={() => handleDeleteComment(comment.id)}
-                        okText="Yes"
-                        okButtonProps={{
-                          style: { backgroundColor: "#1890ff" },
-                        }}
-                        cancelText="No"
-                      >
-                        <Button type="text" danger icon={<DeleteOutlined />} />
-                      </Popconfirm>
-                    )}
-                  </div>
-                </li>
+              {isEditingDescription ? (
+                <Form.Item>
+                  <Button type="primary" onClick={handleDescriptionSubmit}>
+                    Submit
+                  </Button>
+                </Form.Item>
+              ) : (
+                <div></div>
               )}
-            />
+            </Form>
+            {issue.type !== 4 && (
+              <Form.Item>
+                <div className="flex items-center justify-between">
+                  <div className="font-base font-bold mb-3">
+                    Sub Issues: {subIssues?.length}
+                  </div>
+                  <Button
+                    type="text"
+                    icon={<PlusOutlined />}
+                    onClick={() => setShowAddSubIssueInput(true)}
+                  ></Button>
+                </div>
+
+                <List
+                  className="max-h-[170px] overflow-y-auto"
+                  locale={{
+                    emptyText: <div></div>,
+                  }}
+                  dataSource={subIssues}
+                  renderItem={(issue: any, issueIndex: number) => (
+                    <div
+                      className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center"
+                      onClick={() => handleSubIssueClick(issue)}
+                    >
+                      <div className="flex items-center justify-between gap-6 text-lg">
+                        <div>{getColoredIconByIssueType(issue.type)}</div>
+                        <p>{issue.summary}</p>
+                      </div>
+
+                      <div className="flex items-center gap-8 text-lg">
+                        <div>{getColoredIconByPriority(issue.priority)}</div>
+                        <Avatar.Group
+                          maxCount={2}
+                          maxStyle={{
+                            color: "#f56a00",
+                            backgroundColor: "#fde3cf",
+                          }}
+                          style={{ minWidth: "80px" }}
+                        >
+                          {issue.assignees && issue.assignees.length > 0 ? (
+                            issue.assignees.map((assignee: any) => (
+                              <Avatar
+                                key={assignee.userId}
+                                src={
+                                  assignee.User.avatar ||
+                                  "/images/default_avatar.jpg"
+                                }
+                              />
+                            ))
+                          ) : (
+                            <span></span>
+                          )}
+                        </Avatar.Group>
+                      </div>
+                    </div>
+                  )}
+                ></List>
+                {showAddSubIssueInput && (
+                  <Form
+                    onFinish={handleSubmitSubIssue}
+                    layout="horizontal"
+                    initialValues={{
+                      summary: "",
+                      priority: 1,
+                    }}
+                    className="border border-gray-200 p-3 flex justify-between bg-white"
+                  >
+                    <Form.Item
+                      name="summary"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter issue summary",
+                        },
+                        {
+                          max: 100,
+                          message: "Summary must be at most 100 characters",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="What needs to be done?"
+                        variant="borderless"
+                        autoFocus
+                      />
+                    </Form.Item>
+
+                    <div className="flex gap-2">
+                      <Form.Item name="priority">
+                        <Select
+                          placeholder="Select priority"
+                          style={{ minWidth: "100px" }}
+                        >
+                          <Select.Option value={1}>
+                            {getColoredIconByPriority(1)} High
+                          </Select.Option>
+                          <Select.Option value={2}>
+                            {getColoredIconByPriority(2)} Medium
+                          </Select.Option>
+                          <Select.Option value={3}>
+                            {getColoredIconByPriority(3)} Low
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+
+                      <Button type="primary" htmlType="submit">
+                        <CheckOutlined />
+                      </Button>
+                      <Button
+                        type="default"
+                        danger
+                        onClick={() => setShowAddSubIssueInput(false)}
+                      >
+                        <CloseOutlined />
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Form.Item>
+            )}
+            <Form.Item
+              label={`Comments: ${comments?.length}`}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <List
+                className="comment-list max-h-[250px] overflow-y-auto"
+                itemLayout="horizontal"
+                dataSource={comments}
+                renderItem={(comment: any) => (
+                  <li key={comment.id}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <Comment
+                          author={
+                            <Typography.Text className="text-base">
+                              {comment.name}
+                            </Typography.Text>
+                          }
+                          avatar={
+                            <Avatar src={comment.avatar} alt={comment.name} />
+                          }
+                          content={comment.descr}
+                          datetime={dayjs(comment.createdAt).format(
+                            "DD-MM-YYYY HH:mm"
+                          )}
+                        />
+                      </div>
+
+                      {session?.user.id === comment.userId && (
+                        <Popconfirm
+                          title="Are you sure you want to delete this comment?"
+                          onConfirm={() => handleDeleteComment(comment.id)}
+                          okText="Yes"
+                          okButtonProps={{
+                            style: { backgroundColor: "#1890ff" },
+                          }}
+                          cancelText="No"
+                        >
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                          />
+                        </Popconfirm>
+                      )}
+                    </div>
+                  </li>
+                )}
+              />
+            </Form.Item>
             <Form
               layout="vertical"
               onFinish={(values) => handleAddComment(values.comment)}
@@ -272,11 +492,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               </Row>
               <Row>
                 <Col span={24} className="text-right">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ backgroundColor: "#1890ff" }}
-                  >
+                  <Button type="primary" htmlType="submit">
                     Add Comment
                   </Button>
                 </Col>
@@ -288,19 +504,21 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           <Form form={form} layout="vertical">
             <div className="p-4">
               <Space direction="vertical" size={8}>
-                <Form.Item
-                  label="Type"
-                  name="type"
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Select
-                    style={{ width: "100%" }}
-                    options={typeOptions}
-                    placeholder="Select Type"
-                    onChange={(value) => handleUpdateIssue("type", value)}
-                  />
-                </Form.Item>
+                {issue.type !== 4 && (
+                  <Form.Item
+                    label="Type"
+                    name="type"
+                    labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                  >
+                    <Select
+                      style={{ width: "100%" }}
+                      options={typeOptions}
+                      placeholder="Select Type"
+                      onChange={(value) => handleUpdateIssue("type", value)}
+                    />
+                  </Form.Item>
+                )}
                 <Form.Item
                   label="Priority"
                   name="priority"
@@ -331,6 +549,41 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="Progress"
+                  name="progress"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Select progress"
+                    onChange={(value) => handleUpdateIssue("progress", value)}
+                  >
+                    <Select.Option value={0}>0%</Select.Option>
+                    <Select.Option value={25}>25%</Select.Option>
+                    <Select.Option value={50}>50%</Select.Option>
+                    <Select.Option value={75}>75%</Select.Option>
+                    <Select.Option value={100}>100%</Select.Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="Due Date"
+                  name="dueDate"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <DatePicker
+                    disabledDate={(current) =>
+                      current && current < dayjs().startOf("day")
+                    }
+                    format="DD-MM-YYYY"
+                    style={{ width: "100%" }}
+                    onChange={(date) => handleUpdateIssue("dueDate", date)}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -366,6 +619,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                           key={member.userId}
                           value={member.userId}
                         >
+                          <Avatar src={member.avatar} className="mr-2" />
                           {member.name}
                         </Select.Option>
                       ))}
@@ -383,6 +637,14 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           </Form>
         </Col>
       </Row>
+      {selectedSubIssue && (
+        <IssueDetailModal
+          issue={selectedSubIssue}
+          lists={lists}
+          visible={isSubIssueModalVisible}
+          onClose={() => setIsSubIssueModalVisible(false)}
+        />
+      )}
     </Modal>
   );
 };
