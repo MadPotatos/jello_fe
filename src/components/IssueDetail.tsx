@@ -11,6 +11,7 @@ import {
   Space,
   List,
   message,
+  DatePicker,
 } from "antd";
 import { Avatar, Typography } from "antd";
 import { Comment } from "@ant-design/compatible";
@@ -66,6 +67,8 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [showAddSubIssueInput, setShowAddSubIssueInput] = useState(false);
+  const [selectedSubIssue, setSelectedSubIssue] = useState<any | null>(null);
+  const [isSubIssueModalVisible, setIsSubIssueModalVisible] = useState(false);
 
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -117,6 +120,8 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
             type: issue.type,
             priority: issue.priority,
             listId: issue.listId,
+            progress: issue.progress,
+            dueDate: issue.dueDate ? dayjs(issue.dueDate) : "",
             assignees: defaultAssigneeIds,
             descr: issue.descr,
             summary: issue.summary,
@@ -164,7 +169,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
         projectId,
         session?.backendTokens.accessToken
       );
-      message.success("Issue updated successfully");
       mutate(`issues-${projectId}`);
       mutate(`sprint-issues-${projectId}`);
       mutate(`all-issues-${projectId}`);
@@ -226,6 +230,11 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     setShowAddSubIssueInput(false);
     setIsEditingDescription(false);
     onClose();
+  };
+
+  const handleSubIssueClick = (subIssue: any) => {
+    setSelectedSubIssue(subIssue);
+    setIsSubIssueModalVisible(true);
   };
 
   return (
@@ -313,7 +322,10 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                   }}
                   dataSource={subIssues}
                   renderItem={(issue: any, issueIndex: number) => (
-                    <div className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center">
+                    <div
+                      className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center"
+                      onClick={() => handleSubIssueClick(issue)}
+                    >
                       <div className="flex items-center justify-between gap-6 text-lg">
                         <div>{getColoredIconByIssueType(issue.type)}</div>
                         <p>{issue.summary}</p>
@@ -540,6 +552,41 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Form.Item
+                  label="Progress"
+                  name="progress"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Select progress"
+                    onChange={(value) => handleUpdateIssue("progress", value)}
+                  >
+                    <Select.Option value={0}>0%</Select.Option>
+                    <Select.Option value={25}>25%</Select.Option>
+                    <Select.Option value={50}>50%</Select.Option>
+                    <Select.Option value={75}>75%</Select.Option>
+                    <Select.Option value={100}>100%</Select.Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="Due Date"
+                  name="dueDate"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <DatePicker
+                    disabledDate={(current) =>
+                      current && current < dayjs().startOf("day")
+                    }
+                    format="DD-MM-YYYY"
+                    style={{ width: "100%" }}
+                    onChange={(date) => handleUpdateIssue("dueDate", date)}
+                  />
+                </Form.Item>
+
+                <Form.Item
                   label="Reporter"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
@@ -590,6 +637,14 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           </Form>
         </Col>
       </Row>
+      {selectedSubIssue && (
+        <IssueDetailModal
+          issue={selectedSubIssue}
+          lists={lists}
+          visible={isSubIssueModalVisible}
+          onClose={() => setIsSubIssueModalVisible(false)}
+        />
+      )}
     </Modal>
   );
 };
