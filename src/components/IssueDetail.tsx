@@ -22,7 +22,13 @@ import {
 } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { Popconfirm } from "antd";
-import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { fetchMembers } from "@/app/api/memberApi";
 import {
@@ -30,7 +36,12 @@ import {
   deleteComment,
   fetchComments,
 } from "@/app/api/commentApi";
-import { deleteIssue, fetchSubIssues, updateIssue } from "@/app/api/issuesApi";
+import {
+  createIssue,
+  deleteIssue,
+  fetchSubIssues,
+  updateIssue,
+} from "@/app/api/issuesApi";
 import dayjs from "dayjs";
 
 const { confirm } = Modal;
@@ -54,6 +65,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [form] = Form.useForm();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
+  const [showAddSubIssueInput, setShowAddSubIssueInput] = useState(false);
 
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -169,6 +181,26 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     setIsEditingDescription(false);
   };
 
+  const handleSubmitSubIssue = async (values: any) => {
+    try {
+      values.listId = issue.listId;
+      values.sprintId = issue.sprintId;
+      values.projectId = projectId;
+      values.reporterId = session?.user.id;
+      values.type = 4;
+      values.parentId = issue.id;
+      await createIssue(values, session?.backendTokens.accessToken);
+      mutate(`sub-issues-${issue.id}`);
+      mutate(`sprint-issues-${projectId}`);
+      mutate(`all-issues-${projectId}`);
+      mutate(`issues-${projectId}`);
+      setShowAddSubIssueInput(false);
+      message.success("Issue created successfully!");
+    } catch (error) {
+      console.error("Error adding sub issue:", error);
+    }
+  };
+
   const handleDeteleIssue = async () => {
     try {
       confirm({
@@ -190,10 +222,16 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     }
   };
 
+  const handleCloseModal = () => {
+    setShowAddSubIssueInput(false);
+    setIsEditingDescription(false);
+    onClose();
+  };
+
   return (
     <Modal
       open={visible}
-      onCancel={onClose}
+      onCancel={handleCloseModal}
       width={1000}
       footer={[
         <Button type="text" danger onClick={handleDeteleIssue} key="1">
@@ -256,13 +294,23 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               )}
             </Form>
             {issue.type !== 4 && (
-              <Form.Item
-                label={`Sub Issues: ${subIssues?.length}`}
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-              >
+              <Form.Item>
+                <div className="flex items-center justify-between">
+                  <div className="font-base font-bold mb-3">
+                    Sub Issues: {subIssues?.length}
+                  </div>
+                  <Button
+                    type="text"
+                    icon={<PlusOutlined />}
+                    onClick={() => setShowAddSubIssueInput(true)}
+                  ></Button>
+                </div>
+
                 <List
-                  className="max-h-[160px] overflow-y-auto"
+                  className="max-h-[170px] overflow-y-auto"
+                  locale={{
+                    emptyText: <div></div>,
+                  }}
                   dataSource={subIssues}
                   renderItem={(issue: any, issueIndex: number) => (
                     <div className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center">
@@ -299,6 +347,67 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     </div>
                   )}
                 ></List>
+                {showAddSubIssueInput && (
+                  <Form
+                    onFinish={handleSubmitSubIssue}
+                    layout="horizontal"
+                    initialValues={{
+                      summary: "",
+                      priority: 1,
+                    }}
+                    className="border border-gray-200 p-3 flex justify-between bg-white"
+                  >
+                    <Form.Item
+                      name="summary"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter issue summary",
+                        },
+                        {
+                          max: 100,
+                          message: "Summary must be at most 100 characters",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="What needs to be done?"
+                        variant="borderless"
+                        autoFocus
+                      />
+                    </Form.Item>
+
+                    <div className="flex gap-2">
+                      <Form.Item name="priority">
+                        <Select
+                          placeholder="Select priority"
+                          style={{ minWidth: "100px" }}
+                        >
+                          <Select.Option value={1}>
+                            {getColoredIconByPriority(1)} High
+                          </Select.Option>
+                          <Select.Option value={2}>
+                            {getColoredIconByPriority(2)} Medium
+                          </Select.Option>
+                          <Select.Option value={3}>
+                            {getColoredIconByPriority(3)} Low
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+
+                      <Button type="primary" htmlType="submit">
+                        <CheckOutlined />
+                      </Button>
+                      <Button
+                        type="default"
+                        danger
+                        onClick={() => setShowAddSubIssueInput(false)}
+                      >
+                        <CloseOutlined />
+                      </Button>
+                    </div>
+                  </Form>
+                )}
               </Form.Item>
             )}
             <Form.Item
@@ -324,9 +433,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                             <Avatar src={comment.avatar} alt={comment.name} />
                           }
                           content={comment.descr}
-                          datetime={new Date(
-                            comment.createdAt
-                          ).toLocaleString()}
+                          datetime={dayjs(comment.createdAt).format(
+                            "DD-MM-YYYY HH:mm"
+                          )}
                         />
                       </div>
 
