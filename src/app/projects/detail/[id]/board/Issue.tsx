@@ -32,7 +32,7 @@ const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
                 </span>
                 {issue.children > 0 ? <ApartmentOutlined /> : <div> </div>}
               </div>
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-5 flex items-center justify-between">
                 <div className="mb-1 flex items-center text-lg gap-2">
                   {getColoredIconByIssueType(issue.type)}
                   {getColoredIconByPriority(issue.priority)}

@@ -5,6 +5,7 @@ import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
 } from "@/lib/utils";
+import { ApartmentOutlined } from "@ant-design/icons";
 
 interface SprintIssuesProps {
   issue: any;
@@ -39,6 +40,7 @@ const SprintIssues: React.FC<SprintIssuesProps> = ({
             </div>
 
             <div className="flex items-center gap-8 text-lg">
+              {issue.children > 0 ? <ApartmentOutlined /> : <div> </div>}
               <div className="text-center" style={{ minWidth: "200px" }}>
                 {issue.List && (
                   <Tag

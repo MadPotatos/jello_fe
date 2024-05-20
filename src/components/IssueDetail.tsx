@@ -116,7 +116,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     };
 
     fetchData();
-  }, [issue, members]);
+  }, [issue, members, form]);
 
   const handleAddComment = async (commentText: string) => {
     try {
@@ -194,7 +194,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     <Modal
       open={visible}
       onCancel={onClose}
-      width={800}
+      width={1000}
       footer={[
         <Button type="text" danger onClick={handleDeteleIssue} key="1">
           Delete Issue
@@ -255,45 +255,103 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 <div></div>
               )}
             </Form>
-            <List
-              className="comment-list max-h-[450px] overflow-y-auto"
-              header={`${comments?.length} comments`}
-              itemLayout="horizontal"
-              dataSource={comments}
-              renderItem={(comment: any) => (
-                <li>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Comment
-                        author={
-                          <Typography.Text style={{ fontSize: "16px" }}>
-                            {comment.name}
-                          </Typography.Text>
-                        }
-                        avatar={
-                          <Avatar src={comment.avatar} alt={comment.name} />
-                        }
-                        content={comment.descr}
-                        datetime={new Date(comment.createdAt).toLocaleString()}
-                      />
+            {issue.type !== 4 && (
+              <Form.Item
+                label={`Sub Issues: ${subIssues?.length}`}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <List
+                  className="max-h-[160px] overflow-y-auto"
+                  dataSource={subIssues}
+                  renderItem={(issue: any, issueIndex: number) => (
+                    <div className="border border-gray-200 py-3 px-6 bg-white hover:bg-gray-200 flex justify-between items-center">
+                      <div className="flex items-center justify-between gap-6 text-lg">
+                        <div>{getColoredIconByIssueType(issue.type)}</div>
+                        <p>{issue.summary}</p>
+                      </div>
+
+                      <div className="flex items-center gap-8 text-lg">
+                        <div>{getColoredIconByPriority(issue.priority)}</div>
+                        <Avatar.Group
+                          maxCount={2}
+                          maxStyle={{
+                            color: "#f56a00",
+                            backgroundColor: "#fde3cf",
+                          }}
+                          style={{ minWidth: "80px" }}
+                        >
+                          {issue.assignees && issue.assignees.length > 0 ? (
+                            issue.assignees.map((assignee: any) => (
+                              <Avatar
+                                key={assignee.userId}
+                                src={
+                                  assignee.User.avatar ||
+                                  "/images/default_avatar.jpg"
+                                }
+                              />
+                            ))
+                          ) : (
+                            <span></span>
+                          )}
+                        </Avatar.Group>
+                      </div>
                     </div>
-                    {session?.user.id === comment.userId && (
-                      <Popconfirm
-                        title="Are you sure you want to delete this comment?"
-                        onConfirm={() => handleDeleteComment(comment.id)}
-                        okText="Yes"
-                        okButtonProps={{
-                          style: { backgroundColor: "#1890ff" },
-                        }}
-                        cancelText="No"
-                      >
-                        <Button type="text" danger icon={<DeleteOutlined />} />
-                      </Popconfirm>
-                    )}
-                  </div>
-                </li>
-              )}
-            />
+                  )}
+                ></List>
+              </Form.Item>
+            )}
+            <Form.Item
+              label={`Comments: ${comments?.length}`}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <List
+                className="comment-list max-h-[250px] overflow-y-auto"
+                itemLayout="horizontal"
+                dataSource={comments}
+                renderItem={(comment: any) => (
+                  <li key={comment.id}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <Comment
+                          author={
+                            <Typography.Text className="text-base">
+                              {comment.name}
+                            </Typography.Text>
+                          }
+                          avatar={
+                            <Avatar src={comment.avatar} alt={comment.name} />
+                          }
+                          content={comment.descr}
+                          datetime={new Date(
+                            comment.createdAt
+                          ).toLocaleString()}
+                        />
+                      </div>
+
+                      {session?.user.id === comment.userId && (
+                        <Popconfirm
+                          title="Are you sure you want to delete this comment?"
+                          onConfirm={() => handleDeleteComment(comment.id)}
+                          okText="Yes"
+                          okButtonProps={{
+                            style: { backgroundColor: "#1890ff" },
+                          }}
+                          cancelText="No"
+                        >
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                          />
+                        </Popconfirm>
+                      )}
+                    </div>
+                  </li>
+                )}
+              />
+            </Form.Item>
             <Form
               layout="vertical"
               onFinish={(values) => handleAddComment(values.comment)}
@@ -313,11 +371,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               </Row>
               <Row>
                 <Col span={24} className="text-right">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ backgroundColor: "#1890ff" }}
-                  >
+                  <Button type="primary" htmlType="submit">
                     Add Comment
                   </Button>
                 </Col>
@@ -409,6 +463,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                           key={member.userId}
                           value={member.userId}
                         >
+                          <Avatar src={member.avatar} className="mr-2" />
                           {member.name}
                         </Select.Option>
                       ))}
