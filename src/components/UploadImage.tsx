@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload } from "antd";
+import React from "react";
+import { InboxOutlined } from "@ant-design/icons";
+import { Upload, Button, message, Image } from "antd";
 import { RcFile, UploadProps } from "antd/es/upload";
-import type { UploadFile } from "antd/es/upload/interface";
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, message } from "antd";
 import { Backend_URL } from "@/lib/Constants";
-
+const { Dragger } = Upload;
 type Props = {
   image: string;
   setImage: React.Dispatch<React.SetStateAction<string>>;
@@ -24,9 +21,6 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
   const props: UploadProps = {
     name: "file",
     onChange(info) {
-      if (info.file.status !== "uploading") {
-        // console.log(info.file, info.fileList);
-      }
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === "error") {
@@ -41,7 +35,7 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        message.error("Image must smaller than 2MB!");
+        message.error("Image must be smaller than 2MB!");
       }
       return isJpgOrPng && isLt2M;
     },
@@ -50,7 +44,7 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
         const image = await uploadImageAPI(file);
         //@ts-ignore
         onSuccess(null, file);
-        setImage(image.url); 
+        setImage(image.url);
       } catch (error) {
         console.log(error);
         //@ts-ignore
@@ -63,21 +57,26 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
   async function uploadImageAPI(file: any) {
     const data = new FormData();
     data.append("file", file);
-    const res = await fetch(
-      Backend_URL + "/upload-cloudinary/image",
-      {
-        method: "POST",
-        body: data,
-      }
-    );
+    const res = await fetch(Backend_URL + "/upload-cloudinary/image", {
+      method: "POST",
+      body: data,
+    });
     const image = await res.json();
     return image;
   }
 
   return (
-    <Upload {...props}>
-      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-    </Upload>
+    <Dragger {...props}>
+      <p className="ant-upload-drag-icon">
+        <InboxOutlined />
+      </p>
+      <p className="ant-upload-text">
+        Click or drag file to this area to upload
+      </p>
+      <p className="ant-upload-hint">
+        Only JPG/PNG file with size smaller than 2MB
+      </p>
+    </Dragger>
   );
 };
 
