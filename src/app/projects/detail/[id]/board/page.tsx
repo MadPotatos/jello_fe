@@ -32,6 +32,9 @@ const ProjectDetailPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
+  const [filterUseId, setFilterUserId] = useState<number>();
+  const [filterTypes, setFilterTypes] = useState<number[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -53,11 +56,27 @@ const ProjectDetailPage = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterIssues(query);
+    filterIssues(query, filterUseId, filterTypes, filterPriorities);
   };
 
   const handleUserClick = (userId: number) => {
-    filterIssues(searchQuery, userId);
+    setFilterUserId(userId);
+    filterIssues(searchQuery, userId, filterTypes, filterPriorities);
+  };
+
+  const handleFilterChange = (filter: {
+    types: number[];
+    priorities: number[];
+  }) => {
+    setFilterTypes(filter.types);
+    setFilterPriorities(filter.priorities);
+    filterIssues(searchQuery, filterUseId, filter.types, filter.priorities);
+  };
+  const handleClearFilter = () => {
+    setFilterTypes([]);
+    setFilterPriorities([]);
+    setFilterUserId(undefined);
+    filterIssues(searchQuery);
   };
 
   const handleComplete = () => {
@@ -68,7 +87,12 @@ const ProjectDetailPage = () => {
     mutate(`issues-${projectId}`);
   };
 
-  const filterIssues = (query: string, userId?: number) => {
+  const filterIssues = (
+    query: string,
+    userId?: number,
+    types: number[] = [],
+    priorities: number[] = []
+  ) => {
     if (!issues) return;
 
     const filtered = {} as any;
@@ -80,11 +104,18 @@ const ProjectDetailPage = () => {
         const matchesUserId = userId
           ? issue.assignees.some((assignee: any) => assignee.userId === userId)
           : true;
-        return matchesSearchQuery && matchesUserId;
+        const matchesType =
+          types.length > 0 ? types.includes(issue.type) : true;
+        const matchesPriority =
+          priorities.length > 0 ? priorities.includes(issue.priority) : true;
+        return (
+          matchesSearchQuery && matchesUserId && matchesType && matchesPriority
+        );
       });
     });
     setFilteredIssues(filtered);
   };
+
   if (!lists || !members || !issues) {
     return (
       <div className="site-layout-content">
@@ -133,6 +164,8 @@ const ProjectDetailPage = () => {
         members={members}
         onSearch={handleSearch}
         onUserClick={handleUserClick}
+        onFilterChange={handleFilterChange}
+        onClearFilter={handleClearFilter}
       />
       <Board
         lists={lists}

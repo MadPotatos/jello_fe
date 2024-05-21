@@ -1,25 +1,20 @@
 import React, { useState } from "react";
-import {
-  Input,
-  Avatar,
-  Button,
-  Modal,
-  Select,
-  message,
-  Typography,
-} from "antd";
-import { UserAddOutlined } from "@ant-design/icons";
-import { debounce } from "lodash";
+import { Input, Avatar, Button, Checkbox, MenuProps } from "antd";
+import { UserAddOutlined, FilterOutlined } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
-import { Member, User } from "@/lib/types";
-import { mutate } from "swr";
-import { useSession } from "next-auth/react";
-import { addMember } from "@/app/api/memberApi";
-import { searchUsers } from "@/app/api/userApi";
+import { Member } from "@/lib/types";
 import dynamic from "next/dynamic";
-import { on } from "events";
+import { priorityOptions, typeOptions } from "@/lib/utils";
+
+const AddMemberModal = dynamic(() => import("@/components/AddMemberModal"), {
+  ssr: false,
+});
 
 const UserPopover = dynamic(() => import("@/components/UserPopover"), {
+  ssr: false,
+});
+
+const Dropdown = dynamic(() => import("antd").then((mod) => mod.Dropdown), {
   ssr: false,
 });
 
@@ -27,57 +22,24 @@ interface FilterProps {
   members: Member[] | undefined;
   onSearch: (query: string) => void;
   onUserClick: (userId: number) => void;
+  onFilterChange: (filter: { types: number[]; priorities: number[] }) => void;
+  onClearFilter: () => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ members, onSearch, onUserClick }) => {
+const Filter: React.FC<FilterProps> = ({
+  members,
+  onSearch,
+  onUserClick,
+  onFilterChange,
+  onClearFilter,
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [filtering, setFiltering] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
+  const [selectedPriorities, setSelectedPriorities] = useState<number[]>([]);
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[3]);
-  const { data: session } = useSession();
-
-  const debouncedSearch = debounce(async (value: string) => {
-    try {
-      const data = await searchUsers(value);
-      setSearchedUsers(data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  }, 300);
-
-  const handleUserSearch = (value: string) => {
-    debouncedSearch(value);
-  };
-
-  const handleAddMember = async () => {
-    if (selectedUserId) {
-      try {
-        const isAlreadyMember = members?.some(
-          (member) => member.userId === selectedUserId
-        );
-        if (isAlreadyMember) {
-          message.error("User is already a member");
-          return;
-        }
-        await addMember(
-          projectId,
-          selectedUserId,
-          session?.backendTokens.accessToken
-        );
-        message.success("Member added successfully");
-        mutate(`members-${projectId}`);
-        setSelectedUserId(null);
-        handleCancel();
-      } catch (error) {
-        message.error("Failed to add member");
-      }
-    } else {
-      message.error("Please select a user");
-    }
-  };
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -98,12 +60,53 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch, onUserClick }) => {
     setFiltering(true);
   };
 
+  const handleTypeChange = (checkedValues: number[]) => {
+    setSelectedTypes(checkedValues);
+    onFilterChange({ types: checkedValues, priorities: selectedPriorities });
+    setFiltering(true);
+  };
+
+  const handlePriorityChange = (checkedValues: number[]) => {
+    setSelectedPriorities(checkedValues);
+    onFilterChange({ types: selectedTypes, priorities: checkedValues });
+    setFiltering(true);
+  };
+
   const clearFilter = () => {
     setSelectedAvatar(null);
     onUserClick(0);
     setFiltering(false);
     onSearch("");
+    setSelectedTypes([]);
+    setSelectedPriorities([]);
+    onClearFilter();
   };
+
+  const typeMenuItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <Checkbox.Group
+          options={typeOptions}
+          value={selectedTypes}
+          onChange={handleTypeChange}
+        />
+      ),
+    },
+  ];
+
+  const priorityMenuItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <Checkbox.Group
+          options={priorityOptions}
+          value={selectedPriorities}
+          onChange={handlePriorityChange}
+        />
+      ),
+    },
+  ];
 
   return (
     <div className="flex justify-between items-center mb-4 pr-8">
@@ -158,54 +161,34 @@ const Filter: React.FC<FilterProps> = ({ members, onSearch, onUserClick }) => {
         )}
       </div>
 
-      <Modal
-        title="Add Member"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="add"
-            type="primary"
-            onClick={handleAddMember}
-            style={{ backgroundColor: "#1890ff" }}
-          >
-            Add Member
-          </Button>,
-        ]}
-        className="rounded-lg shadow-md"
-      >
-        <Select
-          value={selectedUserId}
-          placeholder="Search user"
-          showSearch
-          onSearch={handleUserSearch}
-          style={{ width: "100%" }}
-          filterOption={false}
-          onChange={(value: number) => setSelectedUserId(value)}
+      <div className="flex items-center gap-2">
+        <Dropdown
+          menu={{
+            items: typeMenuItems,
+          }}
+          trigger={["click"]}
         >
-          {searchedUsers.map((user: User) => (
-            <Select.Option key={user.id} value={user.id}>
-              <div className="flex items-center">
-                <Avatar src={user.avatar} alt={user.name} size={24} />
-                <div className="ml-2">
-                  <strong>{user.name}</strong> ({user.email})
-                </div>
-              </div>
-            </Select.Option>
-          ))}
-        </Select>
-        <div className="prose mt-4">
-          <Typography.Text strong>Member Capabilities:</Typography.Text>
-          <ul className="list-disc pl-6">
-            <li>Access project resources and features</li>
-            <li>Contribute to tasks and discussions</li>
-            <li>Invite other members</li>
-          </ul>
-        </div>
-      </Modal>
+          <Button type="text" icon={<FilterOutlined />}>
+            Type
+          </Button>
+        </Dropdown>
+        <Dropdown
+          menu={{
+            items: priorityMenuItems,
+          }}
+          trigger={["click"]}
+        >
+          <Button type="text" icon={<FilterOutlined />}>
+            Priority
+          </Button>
+        </Dropdown>
+      </div>
+      <AddMemberModal
+        isVisible={isModalVisible}
+        onCancel={handleCancel}
+        projectId={projectId}
+        members={members}
+      />
     </div>
   );
 };

@@ -24,6 +24,8 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
+  priorityOptions,
+  typeOptions,
 } from "@/lib/utils";
 import dayjs from "dayjs";
 import { fetchLists } from "@/app/api/listApi";
@@ -317,17 +319,10 @@ const SprintCard: React.FC<SprintProps> = ({
         >
           <div className="flex  gap-6 text-lg">
             <Form.Item name="type">
-              <Select placeholder="Select issue type">
-                <Select.Option value={1}>
-                  {getColoredIconByIssueType(1)} Task
-                </Select.Option>
-                <Select.Option value={2}>
-                  {getColoredIconByIssueType(2)} Bug
-                </Select.Option>
-                <Select.Option value={3}>
-                  {getColoredIconByIssueType(3)} Review
-                </Select.Option>
-              </Select>
+              <Select
+                placeholder="Select issue type"
+                options={typeOptions}
+              ></Select>
             </Form.Item>
 
             <Form.Item
@@ -353,30 +348,21 @@ const SprintCard: React.FC<SprintProps> = ({
               name="listId"
               initialValue={lists && lists.length > 0 ? lists[0].id : undefined}
             >
-              <Select style={{ minWidth: "120px" }}>
-                {(lists ?? []).map((list: any) => (
-                  <Select.Option key={list.id} value={list.id}>
-                    {list.name}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Select
+                style={{ minWidth: "120px" }}
+                options={lists?.map((list: any) => ({
+                  label: list.name,
+                  value: list.id,
+                }))}
+              ></Select>
             </Form.Item>
 
             <Form.Item name="priority">
               <Select
                 placeholder="Select priority"
                 style={{ minWidth: "100px" }}
-              >
-                <Select.Option value={1}>
-                  {getColoredIconByPriority(1)} High
-                </Select.Option>
-                <Select.Option value={2}>
-                  {getColoredIconByPriority(2)} Medium
-                </Select.Option>
-                <Select.Option value={3}>
-                  {getColoredIconByPriority(3)} Low
-                </Select.Option>
-              </Select>
+                options={priorityOptions}
+              ></Select>
             </Form.Item>
 
             <Button

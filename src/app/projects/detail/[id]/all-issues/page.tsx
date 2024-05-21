@@ -33,6 +33,9 @@ const AllIssuesListPage = () => {
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const [selectedRowKey, setSelectedRowKey] = useState<number | null>(null);
+  const [filterUseId, setFilterUserId] = useState<number>();
+  const [filterTypes, setFilterTypes] = useState<number[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -57,13 +60,35 @@ const AllIssuesListPage = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterIssues(query);
-  };
-  const handleUserClick = (userId: number) => {
-    filterIssues(searchQuery, userId);
+    filterIssues(query, filterUseId, filterTypes, filterPriorities);
   };
 
-  const filterIssues = (query: string, userId?: number) => {
+  const handleUserClick = (userId: number) => {
+    setFilterUserId(userId);
+    filterIssues(searchQuery, userId, filterTypes, filterPriorities);
+  };
+
+  const handleFilterChange = (filter: {
+    types: number[];
+    priorities: number[];
+  }) => {
+    setFilterTypes(filter.types);
+    setFilterPriorities(filter.priorities);
+    filterIssues(searchQuery, filterUseId, filter.types, filter.priorities);
+  };
+  const handleClearFilter = () => {
+    setFilterTypes([]);
+    setFilterPriorities([]);
+    setFilterUserId(undefined);
+    filterIssues(searchQuery);
+  };
+
+  const filterIssues = (
+    query: string,
+    userId?: number,
+    types: number[] = [],
+    priorities: number[] = []
+  ) => {
     if (!issues) return;
     const filtered = issues?.filter((issue: any) => {
       const matchesSearchQuery = issue.summary
@@ -72,7 +97,12 @@ const AllIssuesListPage = () => {
       const matchesUserId = userId
         ? issue.assignees.some((assignee: any) => assignee.userId === userId)
         : true;
-      return matchesSearchQuery && matchesUserId;
+      const matchesType = types.length > 0 ? types.includes(issue.type) : true;
+      const matchesPriority =
+        priorities.length > 0 ? priorities.includes(issue.priority) : true;
+      return (
+        matchesSearchQuery && matchesUserId && matchesType && matchesPriority
+      );
     });
     setFilteredIssues(filtered);
   };
@@ -233,6 +263,8 @@ const AllIssuesListPage = () => {
         members={members}
         onSearch={handleSearch}
         onUserClick={handleUserClick}
+        onFilterChange={handleFilterChange}
+        onClearFilter={handleClearFilter}
       />
       <div className="py-4">
         <Table

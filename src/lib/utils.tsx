@@ -33,6 +33,17 @@ export const getColoredIconByPriority = (priority: number) => {
       return null;
   }
 };
+export const typeOptions = [
+  { label: <span>{getColoredIconByIssueType(1)} Task</span>, value: 1 },
+  { label: <span>{getColoredIconByIssueType(2)} Bug</span>, value: 2 },
+  { label: <span>{getColoredIconByIssueType(3)} Review</span>, value: 3 },
+];
+
+export const priorityOptions = [
+  { label: <span>{getColoredIconByPriority(1)} High</span>, value: 1 },
+  { label: <span>{getColoredIconByPriority(2)} Medium</span>, value: 2 },
+  { label: <span>{getColoredIconByPriority(3)} Low</span>, value: 3 },
+];
 
 export const fetcher = (url: string) => fetch(url).then((r) => r.json());
 

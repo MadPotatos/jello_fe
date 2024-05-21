@@ -20,6 +20,8 @@ import { IssueComment, List as ListType, Member } from "@/lib/types";
 import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
+  priorityOptions,
+  typeOptions,
 } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { Popconfirm } from "antd";
@@ -93,18 +95,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const { data: subIssues } = useSWR(`sub-issues-${issue.id}`, () =>
     fetchSubIssues(issue.id)
   );
-
-  const typeOptions = [
-    { label: <span>{getColoredIconByIssueType(1)} Task</span>, value: 1 },
-    { label: <span>{getColoredIconByIssueType(2)} Bug</span>, value: 2 },
-    { label: <span>{getColoredIconByIssueType(3)} Review</span>, value: 3 },
-  ];
-
-  const priorityOptions = [
-    { label: <span>{getColoredIconByPriority(1)} High</span>, value: 1 },
-    { label: <span>{getColoredIconByPriority(2)} Medium</span>, value: 2 },
-    { label: <span>{getColoredIconByPriority(3)} Low</span>, value: 3 },
-  ];
 
   const reporter = members?.find(
     (member) => member.userId === issue.reporterId
@@ -394,17 +384,8 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                         <Select
                           placeholder="Select priority"
                           style={{ minWidth: "100px" }}
-                        >
-                          <Select.Option value={1}>
-                            {getColoredIconByPriority(1)} High
-                          </Select.Option>
-                          <Select.Option value={2}>
-                            {getColoredIconByPriority(2)} Medium
-                          </Select.Option>
-                          <Select.Option value={3}>
-                            {getColoredIconByPriority(3)} Low
-                          </Select.Option>
-                        </Select>
+                          options={priorityOptions}
+                        ></Select>
                       </Form.Item>
 
                       <Button type="primary" htmlType="submit">
@@ -542,13 +523,11 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     style={{ width: "100%" }}
                     placeholder="Select List"
                     onChange={(value) => handleUpdateIssue("listId", value)}
-                  >
-                    {lists?.map((list: any) => (
-                      <Select.Option key={list.id} value={list.id}>
-                        {list.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    options={lists?.map((list: ListType) => ({
+                      label: list.name,
+                      value: list.id,
+                    }))}
+                  ></Select>
                 </Form.Item>
 
                 <Form.Item
@@ -561,13 +540,14 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     style={{ width: "100%" }}
                     placeholder="Select progress"
                     onChange={(value) => handleUpdateIssue("progress", value)}
-                  >
-                    <Select.Option value={0}>0%</Select.Option>
-                    <Select.Option value={25}>25%</Select.Option>
-                    <Select.Option value={50}>50%</Select.Option>
-                    <Select.Option value={75}>75%</Select.Option>
-                    <Select.Option value={100}>100%</Select.Option>
-                  </Select>
+                    options={[
+                      { label: "0%", value: 0 },
+                      { label: "25%", value: 25 },
+                      { label: "50%", value: 50 },
+                      { label: "75%", value: 75 },
+                      { label: "100%", value: 100 },
+                    ]}
+                  ></Select>
                 </Form.Item>
 
                 <Form.Item
@@ -612,18 +592,16 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     onChange={(value) =>
                       handleUpdateIssue("addAssignee", value)
                     }
-                  >
-                    {members &&
-                      members.map((member: Member) => (
-                        <Select.Option
-                          key={member.userId}
-                          value={member.userId}
-                        >
-                          <Avatar src={member.avatar} className="mr-2" />
+                    options={members?.map((member) => ({
+                      label: (
+                        <div className="flex items-center gap-2">
+                          <Avatar src={member.avatar} />
                           {member.name}
-                        </Select.Option>
-                      ))}
-                  </Select>
+                        </div>
+                      ),
+                      value: member.userId,
+                    }))}
+                  ></Select>
                 </Form.Item>
 
                 <Typography.Text type="secondary">
