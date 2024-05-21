@@ -48,16 +48,9 @@ const AppBar = () => {
 
   return (
     <Header className="bg-white border-b shadow">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center">
-          <Image
-            src="/images/logo.png"
-            alt="Jello Logo"
-            width={40}
-            height={40}
-          />
-          <span className="ml-2 text-xl font-bold">Jello</span>
-        </div>
+      <div className="flex items-center">
+        <Image src="/images/logo.png" alt="logo" width={100} height={60} />
+
         <Menu
           mode="horizontal"
           theme="light"

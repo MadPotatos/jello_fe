@@ -44,10 +44,10 @@ const SignupPage = () => {
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
       <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
         <Image
-          src="/images/logo.png"
+          src="/images/logo2.jpeg"
           preview={false}
           alt="logo"
-          style={{ width: "100px", height: "auto", marginBottom: "20px" }}
+          style={{ width: "200px", height: "auto", marginBottom: "20px" }}
         />
         <h2 className="text-2xl font-bold mb-4">Sign up</h2>
         <Form
