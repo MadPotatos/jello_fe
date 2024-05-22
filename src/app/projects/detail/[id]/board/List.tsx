@@ -13,6 +13,8 @@ import { useSession } from "next-auth/react";
 import {
   getColoredIconByIssueType,
   getColoredIconByPriority,
+  priorityOptions,
+  typeOptions,
 } from "@/lib/utils";
 
 import { mutate } from "swr";
@@ -198,31 +200,17 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
 
                 <div className="flex items-center">
                   <Form.Item name="type">
-                    <Select placeholder="Select issue type">
-                      <Select.Option value={1}>
-                        {getColoredIconByIssueType(1)} Task
-                      </Select.Option>
-                      <Select.Option value={2}>
-                        {getColoredIconByIssueType(2)} Bug
-                      </Select.Option>
-                      <Select.Option value={3}>
-                        {getColoredIconByIssueType(3)} Review
-                      </Select.Option>
-                    </Select>
+                    <Select
+                      placeholder="Select issue type"
+                      options={typeOptions}
+                    ></Select>
                   </Form.Item>
 
                   <Form.Item name="priority" style={{ marginLeft: "10px" }}>
-                    <Select placeholder="Select priority">
-                      <Select.Option value={1}>
-                        {getColoredIconByPriority(1)} High
-                      </Select.Option>
-                      <Select.Option value={2}>
-                        {getColoredIconByPriority(2)} Medium
-                      </Select.Option>
-                      <Select.Option value={3}>
-                        {getColoredIconByPriority(3)} Low
-                      </Select.Option>
-                    </Select>
+                    <Select
+                      placeholder="Select priority"
+                      options={priorityOptions}
+                    ></Select>
                   </Form.Item>
                 </div>
 

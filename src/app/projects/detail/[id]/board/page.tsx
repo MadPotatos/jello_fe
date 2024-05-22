@@ -32,6 +32,9 @@ const ProjectDetailPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
+  const [filterUseId, setFilterUserId] = useState<number>();
+  const [filterTypes, setFilterTypes] = useState<number[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -53,7 +56,27 @@ const ProjectDetailPage = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterIssues(query);
+    filterIssues(query, filterUseId, filterTypes, filterPriorities);
+  };
+
+  const handleUserClick = (userId: number) => {
+    setFilterUserId(userId);
+    filterIssues(searchQuery, userId, filterTypes, filterPriorities);
+  };
+
+  const handleFilterChange = (filter: {
+    types: number[];
+    priorities: number[];
+  }) => {
+    setFilterTypes(filter.types);
+    setFilterPriorities(filter.priorities);
+    filterIssues(searchQuery, filterUseId, filter.types, filter.priorities);
+  };
+  const handleClearFilter = () => {
+    setFilterTypes([]);
+    setFilterPriorities([]);
+    setFilterUserId(undefined);
+    filterIssues(searchQuery);
   };
 
   const handleComplete = () => {
@@ -64,14 +87,31 @@ const ProjectDetailPage = () => {
     mutate(`issues-${projectId}`);
   };
 
-  const filterIssues = (query: string) => {
+  const filterIssues = (
+    query: string,
+    userId?: number,
+    types: number[] = [],
+    priorities: number[] = []
+  ) => {
     if (!issues) return;
 
     const filtered = {} as any;
     Object.keys(issues).forEach((listId: string) => {
-      filtered[listId] = issues[listId].filter((issue: any) =>
-        issue.summary.toLowerCase().includes(query.toLowerCase())
-      );
+      filtered[listId] = issues[listId].filter((issue: any) => {
+        const matchesSearchQuery = issue.summary
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesUserId = userId
+          ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+          : true;
+        const matchesType =
+          types.length > 0 ? types.includes(issue.type) : true;
+        const matchesPriority =
+          priorities.length > 0 ? priorities.includes(issue.priority) : true;
+        return (
+          matchesSearchQuery && matchesUserId && matchesType && matchesPriority
+        );
+      });
     });
     setFilteredIssues(filtered);
   };
@@ -120,7 +160,13 @@ const ProjectDetailPage = () => {
         </div>
       )}
       <h2 className="mb-4 text-xl text-c-text">Kanban Board</h2>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+        onFilterChange={handleFilterChange}
+        onClearFilter={handleClearFilter}
+      />
       <Board
         lists={lists}
         sprintId={sprint?.id}

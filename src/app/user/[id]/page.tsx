@@ -83,7 +83,6 @@ const Profile = () => {
 
   const handleUpdateAvatar = async () => {
     try {
-      // Check if the user has uploaded a new image
       if (image !== null) {
         await updateAvatar(user?.id, image, session?.backendTokens.accessToken);
         handleCancel();
@@ -104,6 +103,7 @@ const Profile = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setImage("");
   };
 
   const handleEditCancel = () => {
@@ -134,7 +134,6 @@ const Profile = () => {
           />
           <div className="flex items-center space-x-2 mt-2">
             <p className="text-2xl">{user?.name}</p>
-            <CheckCircleOutlined style={{ color: "#1890ff" }} />
           </div>
           <p className="text-gray-700">{user?.job}</p>
           <p className="text-sm text-gray-500">{user?.organization}</p>
@@ -221,7 +220,8 @@ const Profile = () => {
         </Card>
 
         {/* Project List */}
-        <Card className="flex-1 mt-4" title="PROJECTS">
+        <Card className="flex-1 mt-4">
+          <h4 className="text-xl text-gray-900 font-bold mb-3">Projects</h4>
           <div className="overflow-x-scroll max-w-3xl flex flex-row  space-x-4">
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
@@ -233,7 +233,7 @@ const Profile = () => {
                       </Title>
                       <Image
                         alt={project.name}
-                        src={project.image || "/images/logo.png"}
+                        src={project.image || "/images/logo2.jpeg"}
                         className="h-40 w-full object-cover mb-4"
                       />
                       <Text className="mb-4">{project.description}</Text>
@@ -264,7 +264,6 @@ const Profile = () => {
         open={isModalVisible}
         onOk={handleUpdateAvatar}
         onCancel={handleCancel}
-        okButtonProps={{ style: { backgroundColor: "#1890ff" } }}
       >
         <UploadImage image={image} setImage={setImage} />
       </Modal>

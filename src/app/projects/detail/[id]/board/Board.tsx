@@ -65,9 +65,10 @@ const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
           <div
             className="flex-none"
             style={{ minWidth: "320px" }}
-            key={list.index}
+            key={list.id}
           >
             <List
+              key={list.id}
               list={list}
               lists={lists}
               issues={issues[list.id]}

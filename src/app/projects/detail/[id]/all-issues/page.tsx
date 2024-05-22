@@ -33,6 +33,9 @@ const AllIssuesListPage = () => {
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const [selectedRowKey, setSelectedRowKey] = useState<number | null>(null);
+  const [filterUseId, setFilterUserId] = useState<number>();
+  const [filterTypes, setFilterTypes] = useState<number[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -57,14 +60,50 @@ const AllIssuesListPage = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterIssues(query);
+    filterIssues(query, filterUseId, filterTypes, filterPriorities);
   };
 
-  const filterIssues = (query: string) => {
+  const handleUserClick = (userId: number) => {
+    setFilterUserId(userId);
+    filterIssues(searchQuery, userId, filterTypes, filterPriorities);
+  };
+
+  const handleFilterChange = (filter: {
+    types: number[];
+    priorities: number[];
+  }) => {
+    setFilterTypes(filter.types);
+    setFilterPriorities(filter.priorities);
+    filterIssues(searchQuery, filterUseId, filter.types, filter.priorities);
+  };
+  const handleClearFilter = () => {
+    setFilterTypes([]);
+    setFilterPriorities([]);
+    setFilterUserId(undefined);
+    filterIssues(searchQuery);
+  };
+
+  const filterIssues = (
+    query: string,
+    userId?: number,
+    types: number[] = [],
+    priorities: number[] = []
+  ) => {
     if (!issues) return;
-    const filtered = issues?.filter((issue: any) =>
-      issue.summary.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = issues?.filter((issue: any) => {
+      const matchesSearchQuery = issue.summary
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesUserId = userId
+        ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+        : true;
+      const matchesType = types.length > 0 ? types.includes(issue.type) : true;
+      const matchesPriority =
+        priorities.length > 0 ? priorities.includes(issue.priority) : true;
+      return (
+        matchesSearchQuery && matchesUserId && matchesType && matchesPriority
+      );
+    });
     setFilteredIssues(filtered);
   };
 
@@ -220,7 +259,13 @@ const AllIssuesListPage = () => {
   return (
     <div className="site-layout-content">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Issues</h1>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+        onFilterChange={handleFilterChange}
+        onClearFilter={handleClearFilter}
+      />
       <div className="py-4">
         <Table
           columns={columns}

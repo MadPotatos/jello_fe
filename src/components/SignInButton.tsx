@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import { Avatar, Button, Space, Badge, Divider } from "antd";
 import type { MenuProps } from "antd";
@@ -9,7 +9,7 @@ import {
   BellTwoTone,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { fetchUser } from "@/app/api/userApi";
 import useSWR, { mutate } from "swr";
 import { User } from "@/lib/types";
@@ -271,13 +271,22 @@ const SignInButton: React.FC = () => {
   return (
     <div className="flex gap-4 ml-auto items-center">
       <Button
-        type="primary"
+        type="default"
         size="large"
         shape="round"
-        onClick={() => handleNavigate("/api/auth/signin")}
+        onClick={() => handleNavigate("api/auth/signin")}
         className="text-l font-bold"
       >
         Sign In
+      </Button>
+      <Button
+        type="primary"
+        size="large"
+        shape="round"
+        onClick={() => handleNavigate("/auth/signup")}
+        className="text-l font-bold"
+      >
+        Sign Up
       </Button>
     </div>
   );

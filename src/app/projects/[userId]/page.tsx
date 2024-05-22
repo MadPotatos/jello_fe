@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { Button, Table, Input, Breadcrumb, Avatar, message, Modal } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Leader, Project } from "@/lib/types";
@@ -63,7 +64,7 @@ const ProjectList: React.FC = () => {
       render: (text: string, record: Project) => (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar
-            src={record.image || "/images/default_avatar.jpg"}
+            src={record.image || "/images/logo2.jpeg"}
             size={50}
             shape="square"
           />

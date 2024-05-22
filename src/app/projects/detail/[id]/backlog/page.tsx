@@ -22,6 +22,9 @@ const ProjectBacklogPage: React.FC = () => {
   const projectId = Number(pathname.split("/")[3]);
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filterTypes, setFilterTypes] = useState<number[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
+  const [filterUseId, setFilterUserId] = useState<number>();
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -64,17 +67,54 @@ const ProjectBacklogPage: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterIssues(query);
+    filterIssues(query, filterUseId, filterTypes, filterPriorities);
   };
 
-  const filterIssues = (query: string) => {
+  const handleUserClick = (userId: number) => {
+    setFilterUserId(userId);
+    filterIssues(searchQuery, userId, filterTypes, filterPriorities);
+  };
+
+  const handleFilterChange = (filter: {
+    types: number[];
+    priorities: number[];
+  }) => {
+    setFilterTypes(filter.types);
+    setFilterPriorities(filter.priorities);
+    filterIssues(searchQuery, filterUseId, filter.types, filter.priorities);
+  };
+  const handleClearFilter = () => {
+    setFilterTypes([]);
+    setFilterPriorities([]);
+    setFilterUserId(undefined);
+    filterIssues(searchQuery);
+  };
+
+  const filterIssues = (
+    query: string,
+    userId?: number,
+    types: number[] = [],
+    priorities: number[] = []
+  ) => {
     if (!issues) return;
 
     const filtered = {} as any;
     Object.keys(issues).forEach((listId: string) => {
-      filtered[listId] = issues[listId].filter((issue: any) =>
-        issue.summary.toLowerCase().includes(query.toLowerCase())
-      );
+      filtered[listId] = issues[listId].filter((issue: any) => {
+        const matchesSearchQuery = issue.summary
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesUserId = userId
+          ? issue.assignees.some((assignee: any) => assignee.userId === userId)
+          : true;
+        const matchesType =
+          types.length > 0 ? types.includes(issue.type) : true;
+        const matchesPriority =
+          priorities.length > 0 ? priorities.includes(issue.priority) : true;
+        return (
+          matchesSearchQuery && matchesUserId && matchesType && matchesPriority
+        );
+      });
     });
     setFilteredIssues(filtered);
   };
@@ -93,7 +133,13 @@ const ProjectBacklogPage: React.FC = () => {
   return (
     <div className="site-layout-content">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Backlog</h1>
-      <Filter members={members} onSearch={handleSearch} />
+      <Filter
+        members={members}
+        onSearch={handleSearch}
+        onUserClick={handleUserClick}
+        onFilterChange={handleFilterChange}
+        onClearFilter={handleClearFilter}
+      />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex flex-col py-4 gap-4">
           {sprints

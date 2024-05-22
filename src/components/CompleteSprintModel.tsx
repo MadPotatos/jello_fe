@@ -72,13 +72,12 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
           label="Move open issues to sprint"
           rules={[{ required: true, message: "Please select a sprint" }]}
         >
-          <Select>
-            {sprints?.map((sprint: any) => (
-              <Select.Option key={sprint.id} value={sprint.id}>
-                {sprint.name}
-              </Select.Option>
-            ))}
-          </Select>
+          <Select
+            options={sprints?.map((sprint: Sprint) => ({
+              label: sprint.name,
+              value: sprint.id,
+            }))}
+          ></Select>
         </Form.Item>
       </Form>
     </Modal>

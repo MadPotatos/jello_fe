@@ -3,7 +3,7 @@ import { Input, Button, Form, message, notification, Image } from "antd";
 import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -39,10 +39,10 @@ const LoginPage = () => {
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
       <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
         <Image
-          src="/images/logo.png"
+          src="/images/logo2.jpeg"
           preview={false}
           alt="logo"
-          style={{ width: "100px", height: "auto", marginBottom: "20px" }}
+          style={{ width: "200px", height: "auto", marginBottom: "20px" }}
         />
         <h2 className="text-2xl font-bold mb-4">Welcome back</h2>
         <Form

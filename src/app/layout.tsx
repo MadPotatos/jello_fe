@@ -1,35 +1,26 @@
-"use client";
-import AppBar from "@/components/Header";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import { usePathname } from "next/navigation";
-import Footer from "@/components/Footer";
 import { Layout } from "antd";
-import { Content } from "antd/es/layout/layout";
+import { Metadata } from "next";
 
 interface Props {
   children: React.ReactNode;
 }
 
-export default function RootLayout(props: Props) {
-  const routesWithoutAppBar = ["/auth/login", "/auth/signup"];
-  const pathName = usePathname();
+export const metadata: Metadata = {
+  title: "Jello",
+  description: "Jello: Project management tool for teams.",
+  icons: {
+    icon: "/images/small-icon.png",
+  },
+};
 
+export default function RootLayout(props: Props) {
   return (
     <html lang="en">
       <body>
         <Layout style={{ minHeight: "100vh" }}>
-          <Providers>
-            {!routesWithoutAppBar.includes(pathName) ? (
-              <>
-                <AppBar />
-                <Content>{props.children}</Content>
-                <Footer />
-              </>
-            ) : (
-              props.children
-            )}
-          </Providers>
+          <Providers>{props.children}</Providers>
         </Layout>
       </body>
     </html>
