@@ -3,7 +3,7 @@ import { Input, Button, Form, message, notification, Image } from "antd";
 import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 const LoginPage = () => {
   const router = useRouter();

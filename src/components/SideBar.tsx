@@ -11,7 +11,8 @@ import {
   TableOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { ProjectDetail } from "@/lib/types";
 
 const { Sider } = Layout;

@@ -3,7 +3,7 @@ import { Button, Form, Image, Input, message, notification } from "antd";
 import LockOutlined from "@ant-design/icons/LockOutlined";
 import MailOutlined from "@ant-design/icons/MailOutlined";
 import UserOutlined from "@ant-design/icons/UserOutlined";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import React from "react";
 import { Backend_URL } from "@/lib/Constants";
 

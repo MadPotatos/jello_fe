@@ -233,7 +233,7 @@ const Profile = () => {
                       </Title>
                       <Image
                         alt={project.name}
-                        src={project.image || "/images/logo.png"}
+                        src={project.image || "/images/logo2.jpeg"}
                         className="h-40 w-full object-cover mb-4"
                       />
                       <Text className="mb-4">{project.description}</Text>

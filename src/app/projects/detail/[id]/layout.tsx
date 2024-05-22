@@ -2,7 +2,8 @@
 import React from "react";
 import { Breadcrumb, Layout } from "antd";
 import Sidebar from "@/components/SideBar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { ProjectDetail } from "@/lib/types";

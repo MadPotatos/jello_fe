@@ -29,7 +29,7 @@ import {
 } from "@/lib/utils";
 import dayjs from "dayjs";
 import { fetchLists } from "@/app/api/listApi";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import dynamic from "next/dynamic";
 
 const CompleteSprintModel = dynamic(

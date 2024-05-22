@@ -2,7 +2,7 @@
 import { Button } from "antd";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import React from "react";
 
 const HomePage: React.FC = () => {

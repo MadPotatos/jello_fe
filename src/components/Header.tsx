@@ -9,7 +9,7 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { useSession } from "next-auth/react";
 import { MenuProps } from "antd/lib";
 
