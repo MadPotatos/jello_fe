@@ -141,9 +141,9 @@ const ProjectList: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col justify-start px-16 py-4 bg-gradient-to-b from-white to-purple-200 min-h-screen">
+    <div className="w-full flex flex-col justify-start px-16 py-4 bg-gradient-to-b from-white to-blue-200 min-h-screen">
       <Breadcrumb
-        style={{ margin: "16px 0", fontSize: "18px" }}
+        className="mb-8 text-lg"
         items={[
           { title: "Home", key: "home", href: "/" },
           { title: "Projects", key: "projects" },

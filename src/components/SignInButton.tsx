@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import {
   UserOutlined,
   LogoutOutlined,
-  BellTwoTone,
+  BellOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next-nprogress-bar";
@@ -250,7 +250,14 @@ const SignInButton: React.FC = () => {
             count={notifications?.unreadNotificationsCount}
             offset={[-8, 3]}
           >
-            <BellTwoTone className="text-2xl px-2" />
+            <Button
+              type="default"
+              icon={<BellOutlined />}
+              color="blue-500"
+              shape="circle"
+              size="large"
+              className="text-2xl"
+            />
           </Badge>
         </Dropdown>
         <Dropdown menu={{ items }} trigger={["click"]}>

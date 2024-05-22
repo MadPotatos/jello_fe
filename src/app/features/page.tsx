@@ -15,7 +15,7 @@ const FeaturesPage: React.FC = () => {
   return (
     <section
       id="features"
-      className="p-20 bg-gradient-to-b from-white to-purple-200"
+      className="p-20 bg-gradient-to-b from-white to-blue-200"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">

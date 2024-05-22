@@ -18,10 +18,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <section
-      id="hero"
-      className="p-20 bg-gradient-to-b from-white to-purple-200"
-    >
+    <section id="hero" className="p-20 bg-gradient-to-b from-white to-blue-200">
       <div className="max-w-7xl mx-auto flex items-center">
         <div className="w-1/2 mr-10">
           <h1 className="text-6xl font-bold mb-4">

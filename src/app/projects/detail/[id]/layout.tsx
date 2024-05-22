@@ -26,10 +26,15 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
   );
 
   const breadcrumbItems = [
-    { title: "Home", onClick: () => router.push("/") },
+    {
+      title: "Home",
+      onClick: () => router.push("/"),
+      className: "cursor-pointer hover:text-blue-500",
+    },
     {
       title: "Projects",
       onClick: () => router.push(`/projects/${session?.user.id}`),
+      className: "cursor-pointer hover:text-blue-500",
     },
     { title: project ? project.name : "Project" },
   ];
@@ -37,10 +42,7 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar project={project} />
       <Layout className="bg-white">
-        <Breadcrumb
-          items={breadcrumbItems}
-          className="px-4 py-2 text-base hover:text-blue-500 text-2xl"
-        />
+        <Breadcrumb items={breadcrumbItems} className="p-2 text-base" />
         <Content className="p-6 m-5 min-h-280">{children}</Content>
       </Layout>
     </Layout>

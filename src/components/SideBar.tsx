@@ -53,10 +53,8 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       setSelectedKeys(["4"]);
     } else if (pathname.includes("pull-requests")) {
       setSelectedKeys(["5"]);
-    } else if (pathname.includes("bug-tracking")) {
-      setSelectedKeys(["6"]);
     } else if (pathname.includes("setting")) {
-      setSelectedKeys(["7"]);
+      setSelectedKeys(["6"]);
     } else {
       setSelectedKeys(["1"]); // Default key
     }
@@ -81,12 +79,9 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       getItem("Pull requests", "5", <PullRequestOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/pull-requests")
       ),
-      getItem("Bug tracking", "6", <BugOutlined />, undefined, () =>
-        router.push("/projects/detail/" + project?.id + "/bug-tracking")
-      ),
     ]),
     { type: "divider" },
-    getItem("Project setting", "7", <ToolOutlined />, undefined, () =>
+    getItem("Project setting", "6", <ToolOutlined />, undefined, () =>
       router.push("/projects/detail/" + project?.id + "/setting")
     ),
   ];
