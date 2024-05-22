@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 const ProjectBacklogPage: React.FC = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterTypes, setFilterTypes] = useState<number[]>([]);

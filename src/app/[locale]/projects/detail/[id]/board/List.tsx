@@ -45,7 +45,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const [visible, setVisible] = useState(false);
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
 
   const handleCreateIssueClick = () => {
     setIsCreatingIssue(true);

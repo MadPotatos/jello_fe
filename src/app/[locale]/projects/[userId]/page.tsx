@@ -28,7 +28,7 @@ const ProjectList: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const userId: number = parseInt(pathname.split("/")[2]);
+  const userId: number = parseInt(pathname.split("/")[3]);
 
   const { data: projects, error: projectsError } = useSWR<Project[]>(
     `project-all-${userId}`,

@@ -10,7 +10,7 @@ import { Spin } from "antd";
 
 const IndexPage: React.FC = () => {
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
   const { data: sprints } = useSWR<Sprint[]>(`sprints-${projectId}`, () =>
     fetchSprints(projectId)
   );

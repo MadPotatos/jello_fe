@@ -38,7 +38,7 @@ const Profile = () => {
   const pathname = usePathname();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const userId: number = parseInt(pathname.split("/")[2]);
+  const userId: number = parseInt(pathname.split("/")[3]);
 
   const { data: projects } = useSWR<Project[]>(`project-all-${userId}`, () =>
     fetchProjects(userId)

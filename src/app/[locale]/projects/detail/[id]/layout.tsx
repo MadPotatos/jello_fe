@@ -20,7 +20,7 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  const projectId: number = parseInt(pathname.split("/")[3]);
+  const projectId: number = parseInt(pathname.split("/")[4]);
   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () =>
     fetchProjectById(projectId)
   );

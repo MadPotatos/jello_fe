@@ -17,7 +17,8 @@ const Providers = ({ children }: Props) => {
   return (
     <SessionProvider>
       {" "}
-      {!routesWithoutAppBar.includes(pathName) ? (
+      {!pathName.includes(routesWithoutAppBar[0]) &&
+      !pathName.includes(routesWithoutAppBar[1]) ? (
         <>
           <ProgressBar
             height="4px"

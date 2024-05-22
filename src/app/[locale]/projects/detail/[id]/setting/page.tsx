@@ -31,7 +31,7 @@ const ProjectSettingPage = () => {
   const pathname = usePathname();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const projectId: number = parseInt(pathname.split("/")[3]);
+  const projectId: number = parseInt(pathname.split("/")[4]);
   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () =>
     fetchProjectById(projectId)
   );

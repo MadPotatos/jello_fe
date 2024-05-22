@@ -57,7 +57,6 @@ const Filter: React.FC<FilterProps> = ({
 
   const handleSearchIssue = (query: string) => {
     onSearch(query);
-    setFiltering(true);
   };
 
   const handleTypeChange = (checkedValues: number[]) => {

@@ -27,7 +27,7 @@ const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
 
 const AllIssuesListPage = () => {
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
   const [filteredIssues, setFilteredIssues] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);

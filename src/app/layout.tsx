@@ -5,6 +5,7 @@ import { Metadata } from "next";
 
 interface Props {
   children: React.ReactNode;
+  params: { locale: string };
 }
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout(props: Props) {
   return (
-    <html lang="en">
+    <html lang={props.params.locale}>
       <body>
         <Layout style={{ minHeight: "100vh" }}>
           <Providers>{props.children}</Providers>

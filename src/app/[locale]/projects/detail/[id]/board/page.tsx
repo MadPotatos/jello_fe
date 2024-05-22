@@ -27,7 +27,7 @@ const Tooltip = dynamic(() => import("antd").then((mod) => mod.Tooltip), {
 
 const ProjectDetailPage = () => {
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
   const { data: session } = useSession();
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");

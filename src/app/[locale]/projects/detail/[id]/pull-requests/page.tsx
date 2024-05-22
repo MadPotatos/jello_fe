@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 
 const PullRequestsManagementPage = () => {
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
 
   const { data: repo } = useSWR<Repo>(`repo-${projectId}`, () =>
     fetchRepoDetail(projectId)

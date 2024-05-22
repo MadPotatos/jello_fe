@@ -281,7 +281,7 @@ const SignInButton: React.FC = () => {
         type="default"
         size="large"
         shape="round"
-        onClick={() => handleNavigate("api/auth/signin")}
+        onClick={() => handleNavigate("/auth/login")}
         className="text-l font-bold"
       >
         Sign In
