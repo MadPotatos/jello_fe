@@ -22,6 +22,7 @@ import {
 import dayjs from "dayjs";
 import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const Dropdown = dynamic(() => import("antd").then((mod) => mod.Dropdown), {
   ssr: false,
@@ -41,6 +42,7 @@ const SignInButton: React.FC = () => {
     userId ? `notifications-${userId}` : null,
     () => fetchNotifications(userId, session?.backendTokens.accessToken)
   );
+  const t = useTranslations("Header");
 
   useEffect(() => {
     if (userId) {
@@ -284,7 +286,7 @@ const SignInButton: React.FC = () => {
         onClick={() => handleNavigate("/auth/login")}
         className="text-l font-bold"
       >
-        Sign In
+        {t("signin")}
       </Button>
       <Button
         type="primary"
@@ -293,7 +295,7 @@ const SignInButton: React.FC = () => {
         onClick={() => handleNavigate("/auth/signup")}
         className="text-l font-bold"
       >
-        Sign Up
+        {t("signup")}
       </Button>
     </div>
   );

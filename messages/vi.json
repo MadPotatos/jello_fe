@@ -1,5 +1,34 @@
 {
   "Index": {
     "title": "Xin chào, đây là trang chủ"
+  },
+  "Home": {
+    "title": "Jello giúp các team tiến xa hơn",
+    "description": "Jello giúp các team quản lý công việc hiệu quả hơn, tăng cường sự hợp tác và tăng cường hiệu suất làm việc.",
+    "button1": "Bắt đầu ngay!",
+    "button2": "Đăng ký"
+  },
+  "Header": {
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "projects": "Dự án",
+    "contact": "Liên hệ",
+    "signin": "Đăng nhập",
+    "signup": "Đăng ký"
+  },
+  "Footer": {
+    "contacts": "Liên hệ",
+    "phone": "Số điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "addressDetail": "Số 1, Đại Cồ Việt, Hai Bà Trưng",
+    "social": "Mạng xã hội",
+    "description": "Giúp team của bạn xây dựng các dự án tốt nhất với các công cụ tốt nhất",
+    "additionalDescription": "Hợp tác, quản lý dự án và đạt đến đỉnh cao năng suất mới. Từ các tòa nhà cao tầng đến văn phòng tại nhà, Jello giúp các team của bạn làm việc hiệu quả hơn mỗi ngày.",
+    "studentDescription": "Một sinh viên CNTT giúp các team xây dựng các dự án tốt nhất với các công cụ tốt nhất",
+    "copyright": "© Bản quyền 2024 Nguyễn Tiến Việt",
+    "faq": "Câu hỏi thường gặp",
+    "privacyPolicy": "Chính sách bảo mật",
+    "termsConditions": "Điều khoản & Điều kiện"
   }
 }

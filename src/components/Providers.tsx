@@ -7,16 +7,19 @@ import Footer from "@/components/Footer";
 import { Content } from "antd/es/layout/layout";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import AppBar from "./Header";
+import { AbstractIntlMessages } from "next-intl";
+
 interface Props {
   children: ReactNode;
+  messages: AbstractIntlMessages;
 }
 
-const Providers = ({ children }: Props) => {
+const Providers = ({ children, messages }: Props) => {
   const routesWithoutAppBar = ["/auth/login", "/auth/signup"];
   const pathName = usePathname();
+
   return (
     <SessionProvider>
-      {" "}
       {!pathName.includes(routesWithoutAppBar[0]) &&
       !pathName.includes(routesWithoutAppBar[1]) ? (
         <>

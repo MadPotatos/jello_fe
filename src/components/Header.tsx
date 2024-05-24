@@ -12,39 +12,45 @@ import Image from "next/image";
 import { useRouter } from "next-nprogress-bar";
 import { useSession } from "next-auth/react";
 import { MenuProps } from "antd/lib";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLocale, useTranslations } from "next-intl";
+import { Locale } from "@/i18n.config";
 
 const { Header } = Layout;
 
 const AppBar = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations("Header");
 
   const items: MenuProps["items"] = [
     {
-      label: <span className="text-lg">Home Page</span>,
+      label: <span className="text-lg">{t("home")}</span>,
       icon: <HomeOutlined />,
       key: "home",
       onClick: () => router.push("/home"),
     },
     {
-      label: <span className="text-lg">Project</span>,
+      label: <span className="text-lg">{t("projects")}</span>,
       icon: <DashboardOutlined />,
       key: "dashboard",
       onClick: () => router.push(`/projects/${session?.user?.id}`),
     },
     {
-      label: <span className="text-lg">Features</span>,
+      label: <span className="text-lg">{t("features")}</span>,
       icon: <TeamOutlined />,
       key: "about",
       onClick: () => router.push("/features"),
     },
     {
-      label: <span className="text-lg">Contact Us</span>,
+      label: <span className="text-lg">{t("contact")}</span>,
       icon: <PhoneOutlined />,
       key: "contact",
       onClick: () => router.push("/contact"),
     },
   ];
+
+  const locale = useLocale() as Locale;
 
   return (
     <Header className="bg-white border-b shadow">
@@ -57,7 +63,8 @@ const AppBar = () => {
           className="flex gap-4"
           items={items}
         />
-        <div className="ml-auto">
+        <div className="flex gap-2 ml-auto">
+          <LanguageSwitcher locale={locale} />
           <SignInButton />
         </div>
       </div>
