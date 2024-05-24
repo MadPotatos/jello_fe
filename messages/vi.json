@@ -112,8 +112,39 @@
     "recycleBin": "Thùng rác",
     "searchProjects": "Tìm kiếm dự án",
     "cancel": "Hủy"
+},
 
+"Login":{
+  "errorMessage":"Đăng nhập không thành công",
+  "errorDesc" :"Email hoặc mật khẩu không chính xác. Vui lòng thử lại.",
+  "successMessage":"Đăng nhập thành công",
+  "successDesc" :"Chào mừng bạn trở lại!",
+  "welcome" :"Chào mừng trở lại!",
+  "validateEmail" :"Vui lòng nhập email hợp lệ",
+  "password" :"Mật khẩu",
+  "validatePassword" :"Vui lòng nhập mật khẩu",
+  "login" :"Đăng nhập",
+  "dontHaveAccount" :"Chưa có tài khoản?",
+  "signup" :"Đăng ký"
+},
+"Signup" :{
+  "signUp" :"Đăng ký",
+  "alreadyHaveAccount" :"Đã có tài khoản?",
+  "login" :"Đăng nhập",
+  "fullName" :"Họ tên",
+  "validateFullName" :"Vui lòng nhập họ tên",
+  "validateEmail" :"Vui lòng nhập email hợp lệ",
+  "password" :"Mật khẩu",
+  "validatePassword" :"Vui lòng nhập mật khẩu",
+  "confirmPassword" :"Xác nhận mật khẩu",
+  "validateConfirmPassword" :"Vui lòng xác nhận mật khẩu",
+  "passwordNotMatch" :"Mật khẩu không khớp",
+  "signUpSuccess" :"Đăng ký thành công",
+  "signUpSuccessDesc" :"Chúc mừng! Tài khoản của bạn đã được tạo thành công.",
+  "signUpFailed" :"Đăng ký không thành công",
+  "signUpFailedDesc" :"Đăng ký không thành công. Vui lòng thử lại."
 }
+
 
 
  

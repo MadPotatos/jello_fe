@@ -4,12 +4,14 @@ import { signIn } from "next-auth/react";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import React, { useRef } from "react";
 import { useRouter } from "next-nprogress-bar";
+import { useTranslations } from "next-intl";
 
 const LoginPage = () => {
   const router = useRouter();
   const [form] = Form.useForm();
   const email = useRef("");
   const pass = useRef("");
+  const t = useTranslations("Login");
 
   const onFinish = async () => {
     try {
@@ -20,18 +22,18 @@ const LoginPage = () => {
       });
       if (result?.error) {
         notification.error({
-          message: "Login failed",
-          description: "Invalid email or password",
+          message: t("errorMessage"),
+          description: t("errorDesc"),
         });
         return;
       }
       notification.success({
-        message: "Login successful",
-        description: "You have been logged in",
+        message: t("successMessage"),
+        description: t("successDesc"),
       });
       router.push("/home");
     } catch (error) {
-      message.error("Login failed. Please try again.");
+      message.error(t("errorMessage"));
     }
   };
 
@@ -44,7 +46,7 @@ const LoginPage = () => {
           alt="logo"
           style={{ width: "200px", height: "auto", marginBottom: "20px" }}
         />
-        <h2 className="text-2xl font-bold mb-4">Welcome back</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("welcome")}</h2>
         <Form
           form={form}
           onFinish={onFinish}
@@ -58,11 +60,11 @@ const LoginPage = () => {
             rules={[
               {
                 type: "email",
-                message: "Please enter a valid email address!",
+                message: t("validateEmail"),
               },
               {
                 required: true,
-                message: "Please enter your email!",
+                message: t("validateEmail"),
               },
             ]}
           >
@@ -75,18 +77,18 @@ const LoginPage = () => {
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t("password")}
             name="password"
             rules={[
               {
                 required: true,
-                message: "Please enter your password!",
+                message: t("validatePassword"),
               },
             ]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              placeholder="Password"
+              placeholder={t("password")}
               onChange={(e) => (pass.current = e.target.value)}
               style={{ height: "60px", fontSize: "16px" }}
             />
@@ -103,14 +105,17 @@ const LoginPage = () => {
                 fontWeight: "bold",
               }}
             >
-              Login
+              {t("login")}
             </Button>
           </Form.Item>
         </Form>
         <p className="mt-4 text-base text-gray-700">
-          Don&apos;t have an account?{" "}
-          <a href="/auth/signup" className="text-blue-500">
-            Sign up here
+          {t("dontHaveAccount")}
+          <a
+            className="ml-2 text-blue-500"
+            onClick={() => router.push("/auth/signup")}
+          >
+            {t("signup")}
           </a>
           .
         </p>

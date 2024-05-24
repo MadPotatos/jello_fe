@@ -112,6 +112,38 @@
   "recycleBin": "Recycle Bin",
   "searchProjects": "Search projects",
   "cancel": "Cancel"
+},
+"Login":{
+  "errorMessage":"Login failed",
+  "errorDesc" :"The email or password is incorrect. Please try again.",
+  "successMessage":"Login successfully",
+  "welcome" :"Welcome back!",
+  "successDesc" :"You have been logged in",
+  "validateEmail" :"Please enter a valid email address",
+  "password" :"Password",
+  "validatePassword" :"Please enter a password",
+  "login" :"Login",
+  "dontHaveAccount" :"Don't have an account?",
+  "signup" :"Sign up here"
+},
+"Signup" :{
+  "signUp" :"Sign Up",
+  "alreadyHaveAccount" :"Already have an account?",
+  "login" :"Login",
+  "fullName" :"Full Name",
+  "validateFullName" :"Please enter your full name",
+  "validateEmail" :"Please enter a valid email address",
+  "password" :"Password",
+  "validatePassword" :"Please enter a password",
+  "confirmPassword" :"Confirm Password",
+  "validateConfirmPassword" :"Please confirm your password",
+  "passwordNotMatch" :"Passwords do not match",
+  "signUpSuccess" :"Sign up successfully",
+  "signUpSuccessDesc" :"Your account has been created successfully. Please login to continue.",
+  "signUpFailed" :"Sign up failed",
+  "signUpFailedDesc" :"Failed to create your account. Please try again."
 }
+
+
 
 }

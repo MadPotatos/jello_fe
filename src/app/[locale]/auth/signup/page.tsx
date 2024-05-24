@@ -6,9 +6,11 @@ import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
 import { Backend_URL } from "@/lib/Constants";
+import { useTranslations } from "next-intl";
 
 const SignupPage = () => {
   const router = useRouter();
+  const t = useTranslations("Signup");
 
   const onFinish = async (values: any) => {
     try {
@@ -26,17 +28,16 @@ const SignupPage = () => {
 
       if (!res.ok) {
         const response = await res.json();
-        throw new Error(response.message || "Registration failed");
+        throw new Error(response.message || t("signUpFailed"));
       }
 
       notification.success({
-        message: "Registration successful",
-        description:
-          "You have successfully registered. Please login to continue.",
+        message: t("signUpSuccess"),
+        description: t("signUpSuccessDesc"),
       });
       router.push("/auth/login");
     } catch (error) {
-      message.error("Registration failed. Please try again.");
+      message.error(t("signUpFailedDesc"));
     }
   };
 
@@ -49,7 +50,7 @@ const SignupPage = () => {
           alt="logo"
           style={{ width: "200px", height: "auto", marginBottom: "20px" }}
         />
-        <h2 className="text-2xl font-bold mb-4">Sign up</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("signUp")}</h2>
         <Form
           onFinish={onFinish}
           autoComplete="off"
@@ -57,13 +58,13 @@ const SignupPage = () => {
           initialValues={{ remember: true }}
         >
           <Form.Item
-            label="Name"
+            label={t("fullName")}
             name="name"
-            rules={[{ required: true, message: "Please enter your name!" }]}
+            rules={[{ required: true, message: t("validateFullName") }]}
           >
             <Input
               prefix={<UserOutlined />}
-              placeholder="Name"
+              placeholder={t("fullName")}
               style={{ minHeight: "50px", fontSize: "16px" }}
             />
           </Form.Item>
@@ -73,11 +74,11 @@ const SignupPage = () => {
             rules={[
               {
                 type: "email",
-                message: "Please enter a valid email address!",
+                message: t("validateEmail"),
               },
               {
                 required: true,
-                message: "Please enter your email!",
+                message: t("validateEmail"),
               },
             ]}
           >
@@ -88,12 +89,12 @@ const SignupPage = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label={t("password")}
             name="password"
             rules={[
               {
                 required: true,
-                message: "Please enter your password!",
+                message: t("validatePassword"),
               },
             ]}
           >
@@ -104,29 +105,27 @@ const SignupPage = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Confirm Password"
+            label={t("confirmPassword")}
             name="confirmPassword"
             dependencies={["password"]}
             rules={[
               {
                 required: true,
-                message: "Please confirm your password!",
+                message: t("validateConfirmPassword"),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(
-                    new Error("The two passwords do not match!")
-                  );
+                  return Promise.reject(new Error(t("passwordNotMatch")));
                 },
               }),
             ]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               style={{ minHeight: "50px", fontSize: "16px" }}
             />
           </Form.Item>
@@ -141,15 +140,18 @@ const SignupPage = () => {
                 fontWeight: "bold",
               }}
             >
-              Submit
+              {t("signUp")}
             </Button>
           </Form.Item>
         </Form>
 
         <p className="mt-4 text-base text-gray-700">
-          Already have an account?{" "}
-          <a href="/auth/login" className="text-blue-500">
-            Sign in here
+          {t("alreadyHaveAccount")}
+          <a
+            className="ml-2 text-blue-500"
+            onClick={() => router.push("/auth/login")}
+          >
+            {t("login")}
           </a>
           .
         </p>
