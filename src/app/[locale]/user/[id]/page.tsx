@@ -12,13 +12,14 @@ import {
 } from "antd";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { EditOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { Project, User } from "@/lib/types";
 import { Typography } from "antd";
 import useSWR, { mutate } from "swr";
 import { fetchProjects } from "@/app/api/projectApi";
 import { fetchUser, updateAvatar, updateUser } from "@/app/api/userApi";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const UploadImage = dynamic(() => import("@/components/UploadImage"), {
   ssr: false,
@@ -49,19 +50,19 @@ const Profile = () => {
   );
 
   const [image, setImage] = useState<string>(user?.avatar || "");
+  const t = useTranslations("Profile");
 
   const showSuccessNotification = () => {
     notification.success({
-      message: "Profile Updated",
-      description: "Your profile has been updated successfully.",
+      message: t("profileUpdated"),
+      description: t("profileUpdatedDesc"),
     });
   };
 
   const showEmailTakenNotification = () => {
     notification.error({
-      message: "Email Already Taken",
-      description:
-        "The email address is already in use. Please choose a different email.",
+      message: t("emailTaken"),
+      description: t("emailTakenDesc"),
     });
   };
 
@@ -76,24 +77,25 @@ const Profile = () => {
       if ((error as Error).message === "Email already taken") {
         showEmailTakenNotification();
       } else {
-        message.error("Failed to update profile. Please try again.");
+        message.error(t("updateFailed"));
       }
     }
   };
 
   const handleUpdateAvatar = async () => {
     try {
-      if (image !== null) {
+      if (image !== "") {
         await updateAvatar(user?.id, image, session?.backendTokens.accessToken);
         handleCancel();
         showSuccessNotification();
         await update();
         mutate(`user-profile-${userId}`);
+        mutate(`project-all-${userId}`);
       } else {
-        message.warning("Please choose a new avatar to update.");
+        message.warning(t("chooseNewAvatar"));
       }
     } catch (error) {
-      message.error("Failed to update avatar. Please try again.");
+      message.error(t("avatarUpdateFailed"));
     }
   };
 
@@ -173,10 +175,10 @@ const Profile = () => {
                   htmlType="submit"
                   style={{ backgroundColor: "#1890ff" }}
                 >
-                  Save
+                  {t("save")}
                 </Button>
                 <Button onClick={handleEditCancel} className="ml-2">
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </Item>
             </Form>
@@ -184,7 +186,7 @@ const Profile = () => {
             <div>
               <div className="flex items-center justify-between">
                 <h4 className="text-xl text-gray-900 font-bold">
-                  Personal Info
+                  {t("personalInfo")}
                 </h4>
                 {session?.user?.id === user?.id && (
                   <EditOutlined
@@ -199,19 +201,19 @@ const Profile = () => {
               </div>
               <ul className="mt-2 text-gray-700">
                 <li className="flex border-y py-2">
-                  <span className="font-bold w-24">Full name:</span>
+                  <span className="font-bold w-24">{t("fullName")}</span>
                   <span className="text-gray-700">{user?.name}</span>
                 </li>
                 <li className="flex border-b py-2">
-                  <span className="font-bold w-24">Email:</span>
+                  <span className="font-bold w-24">{t("email")}</span>
                   <span className="text-gray-700">{user?.email}</span>
                 </li>
                 <li className="flex border-b py-2">
-                  <span className="font-bold w-24">Job title:</span>
+                  <span className="font-bold w-24">{t("jobTitle")}</span>
                   <span className="text-gray-700">{user?.job}</span>
                 </li>
                 <li className="flex border-b py-2">
-                  <span className="font-bold w-24">Organization:</span>
+                  <span className="font-bold w-24">{t("organization")}</span>
                   <span className="text-gray-700">{user?.organization}</span>
                 </li>
               </ul>
@@ -221,7 +223,9 @@ const Profile = () => {
 
         {/* Project List */}
         <Card className="flex-1 mt-4">
-          <h4 className="text-xl text-gray-900 font-bold mb-3">Projects</h4>
+          <h4 className="text-xl text-gray-900 font-bold mb-3">
+            {t("projects")}
+          </h4>
           <div className="overflow-x-scroll max-w-3xl flex flex-row  space-x-4">
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
@@ -238,7 +242,7 @@ const Profile = () => {
                       />
                       <Text className="mb-4">{project.description}</Text>
                       <div className="flex items-center">
-                        <span className="font-semibold">Leader:</span>
+                        <span className="font-semibold"> {t("leader")}</span>
                         {project.leader && (
                           <Avatar
                             src={project.leader.avatar}
@@ -253,7 +257,7 @@ const Profile = () => {
                 </div>
               ))
             ) : (
-              <p>No projects found.</p>
+              <p>{t("noProjects")}</p>
             )}
           </div>
         </Card>
@@ -262,8 +266,14 @@ const Profile = () => {
       <Modal
         title="Update Avatar"
         open={isModalVisible}
-        onOk={handleUpdateAvatar}
-        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            {t("cancel")}
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleUpdateAvatar}>
+            {t("save")}
+          </Button>,
+        ]}
       >
         <UploadImage image={image} setImage={setImage} />
       </Modal>

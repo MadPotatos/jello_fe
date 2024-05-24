@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button, Table, Input, Avatar, message, Modal } from "antd";
 import { Leader, Project } from "@/lib/types";
@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { fetchDeletedProjects, restoreProject } from "@/app/api/projectApi";
+import { useTranslations } from "next-intl";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -15,6 +16,7 @@ const DeletedProjectList = () => {
   const pathname = usePathname();
   const [searchValue, setSearchValue] = useState<string>("");
   const { data: session } = useSession();
+  const t = useTranslations("Trash");
 
   const userId: number = parseInt(pathname.split("/")[3]);
 
@@ -33,7 +35,7 @@ const DeletedProjectList = () => {
 
   const columns = [
     {
-      title: "Project",
+      title: t("project"),
       dataIndex: "image",
       key: "project",
       render: (text: string, record: Project) => (
@@ -52,13 +54,13 @@ const DeletedProjectList = () => {
       ),
     },
     {
-      title: "Description",
+      title: t("description"),
       dataIndex: "description",
       key: "description",
       width: "40%",
     },
     {
-      title: "Leader",
+      title: t("leader"),
       dataIndex: "leader",
       key: "leader",
       render: (leader: Leader, record: Project) => (
@@ -75,7 +77,7 @@ const DeletedProjectList = () => {
       ),
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "action",
       render: (text: any, record: Project) => (
         <Button
@@ -83,7 +85,7 @@ const DeletedProjectList = () => {
           type="default"
           onClick={(e) => handleRestore(record.id, e)}
         >
-          Restore
+          {t("restore")}
         </Button>
       ),
     },
@@ -95,17 +97,18 @@ const DeletedProjectList = () => {
   ) => {
     event.stopPropagation();
     confirm({
-      title: "Do you want to restore this project?",
+      title: t("restoreProjectConfirmation"),
       icon: <ExclamationCircleOutlined />,
-      okType: "default",
+      okText: t("restore"),
+      cancelText: t("cancel"),
       onOk: async () => {
         try {
           await restoreProject(projectId, session?.backendTokens.accessToken);
-          message.success("Project is removed from recycle bin !");
+          message.success(t("projectRestored"));
           mutate(`project-deleted-${userId}`);
         } catch (err) {
           console.error(err);
-          message.error("Failed to restore project");
+          message.error(t("failedToRestoreProject"));
         }
       },
       onCancel() {},
@@ -114,11 +117,13 @@ const DeletedProjectList = () => {
 
   return (
     <div className="w-full flex flex-col justify-start px-16 py-4 bg-gradient-to-b from-white to-purple-200 min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-10">Recycle Bin</h1>
+      <h1 className="text-3xl font-bold text-center mb-10">
+        {t("recycleBin")}
+      </h1>
 
       <div className="flex justify-between items-center mb-10">
         <Search
-          placeholder="Search projects"
+          placeholder={t("searchProjects")}
           size="large"
           style={{ width: "300px" }}
           onSearch={handleSearch}

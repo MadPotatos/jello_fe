@@ -1,7 +1,9 @@
 "use client";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 const ContactPage = () => {
+  const t = useTranslations("Contact");
   return (
     <section
       className="bg-gradient-to-b from-white to-blue-200 dark:bg-slate-800 min-h-screen"
@@ -11,13 +13,13 @@ const ContactPage = () => {
         <div className="mb-4">
           <div className="mb-6 max-w-3xl text-center sm:text-center md:mx-auto md:mb-12">
             <p className="text-base font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-200">
-              Contact
+              {t("contact")}
             </p>
             <h2 className="font-heading mb-4 font-bold tracking-tight text-gray-900 dark:text-white text-3xl sm:text-5xl">
-              Get in Touch
+              {t("getInTouch")}
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-xl text-gray-600 dark:text-slate-400">
-              Feel free to reach out to us for any inquiries or questions.
+              {t("inquiriesQuestions")}
             </p>
           </div>
         </div>
@@ -25,8 +27,7 @@ const ContactPage = () => {
           <div className="grid md:grid-cols-2">
             <div className="h-full pr-6">
               <p className="mt-3 mb-12 text-lg text-gray-600 dark:text-slate-400">
-                If you have any questions about our services or need assistance,
-                please don&apos;t hesitate to contact us.
+                {t("haveQuestions")}
               </p>
               <ul className="mb-6 md:mb-0">
                 <li className="flex">
@@ -49,13 +50,13 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4 mb-4">
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                      Our Address
+                      {t("ourAddress")}
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
-                      1230 Maecenas Street, Donec Road
+                      {t("addressLine1")}
                     </p>
                     <p className="text-gray-600 dark:text-slate-400">
-                      New York, USA
+                      {t("addressLine2")}
                     </p>
                   </div>
                 </li>
@@ -80,13 +81,13 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4 mb-4">
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                      Contact
+                      {t("contactInfo")}
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
-                      Mobile: +1 (123) 456-7890
+                      {t("phoneNumber")}: +981621201
                     </p>
                     <p className="text-gray-600 dark:text-slate-400">
-                      Email: tailnext@gmail.com
+                      Email: viet.nt194718@sis.hust.edu.vn
                     </p>
                   </div>
                 </li>
@@ -110,20 +111,22 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4 mb-4">
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                      Working hours
+                      {t("workingHours")}
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
-                      Monday - Friday: 08:00 - 17:00
+                      {t("weekdays")}
                     </p>
                     <p className="text-gray-600 dark:text-slate-400">
-                      Saturday &amp; Sunday: 08:00 - 12:00
+                      {t("weekends")}
                     </p>
                   </div>
                 </li>
               </ul>
             </div>
             <div className="card h-fit max-w-6xl p-5 md:p-12" id="form">
-              <h2 className="mb-4 text-2xl font-bold">Ready to Get Started?</h2>
+              <h2 className="mb-4 text-2xl font-bold">
+                {t("readyToGetStarted")}
+              </h2>
               <form id="contactForm">
                 <div className="mb-6">
                   <div className="mx-0 mb-1 sm:mb-4">
@@ -132,13 +135,13 @@ const ContactPage = () => {
                         htmlFor="name"
                         className="pb-1 text-xs uppercase tracking-wider"
                       >
-                        Name:
+                        {t("name")}
                       </label>
                       <input
                         type="text"
                         id="name"
                         autoComplete="given-name"
-                        placeholder="Your name"
+                        placeholder={t("yourName")}
                         className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
                         name="name"
                       />
@@ -154,7 +157,7 @@ const ContactPage = () => {
                         type="email"
                         id="email"
                         autoComplete="email"
-                        placeholder="Your email address"
+                        placeholder={t("yourEmail")}
                         className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
                         name="email"
                       />
@@ -165,12 +168,12 @@ const ContactPage = () => {
                       htmlFor="textarea"
                       className="pb-1 text-xs uppercase tracking-wider"
                     >
-                      Message:
+                      {t("messageLabel")}
                     </label>
                     <textarea
                       id="textarea"
                       name="textarea"
-                      placeholder="Write your message..."
+                      placeholder={t("writeMessage")}
                       className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
                     ></textarea>
                   </div>
@@ -180,7 +183,7 @@ const ContactPage = () => {
                     type="submit"
                     className="w-full bg-blue-800 text-white px-6 py-3 font-bold rounded-md sm:mb-0"
                   >
-                    Send Message
+                    {t("sendMessage")}
                   </button>
                 </div>
               </form>

@@ -3,6 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { Upload, Button, message, Image } from "antd";
 import { RcFile, UploadProps } from "antd/es/upload";
 import { Backend_URL } from "@/lib/Constants";
+import { useTranslations } from "next-intl";
 const { Dragger } = Upload;
 type Props = {
   image: string;
@@ -18,24 +19,27 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 const UploadImage: React.FC<Props> = ({ image, setImage }) => {
+  const t = useTranslations("UploadImage");
   const props: UploadProps = {
     name: "file",
     onChange(info) {
       if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
+        message.success(t("successUpload"));
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(t("uploadFailed"));
       }
     },
     beforeUpload: (file) => {
       const isJpgOrPng =
         file.type === "image/jpeg" || file.type === "image/png";
       if (!isJpgOrPng) {
-        message.error("Please upload JPG/PNG file!");
+        message.error(t("fileError"));
+        return false;
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        message.error("Image must be smaller than 2MB!");
+        message.error(t("fileSizeError"));
+        return false;
       }
       return isJpgOrPng && isLt2M;
     },
@@ -44,7 +48,9 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
         const image = await uploadImageAPI(file);
         //@ts-ignore
         onSuccess(null, file);
-        setImage(image.url);
+        if (image) {
+          setImage(image.url);
+        }
       } catch (error) {
         console.log(error);
         //@ts-ignore
@@ -70,12 +76,8 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
-      <p className="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-      <p className="ant-upload-hint">
-        Only JPG/PNG file with size smaller than 2MB
-      </p>
+      <p className="ant-upload-text">{t("dragAndDrop")}</p>
+      <p className="ant-upload-hint">{t("onlyJpgPng")}</p>
     </Dragger>
   );
 };

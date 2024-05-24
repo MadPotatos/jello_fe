@@ -14,7 +14,13 @@
     "projects": "Projects",
     "contact": "Contact Us",
     "signin": "Sign In",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "profile": "Profile",
+    "recycleBin": "Recycle Bin",
+    "signout": "Sign Out",
+    "notification": "Notification",
+    "markAllAsRead": "Mark All as Read"
+
   },
   "Footer": {
     "contacts": "Contacts",
@@ -30,5 +36,82 @@
     "faq": "F.A.Q",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions"
-  }
+  },
+
+    "Profile": {
+    "profileUpdated": "Profile Updated",
+    "profileUpdatedDesc": "Your profile has been updated successfully.",
+    "emailTaken": "Email Already Taken",
+    "emailTakenDesc": "The email address is already in use. Please choose a different email.",
+    "updateFailed": "Failed to update profile. Please try again.",
+    "avatarUpdated": "Avatar Updated",
+    "avatarUpdateFailed": "Failed to update avatar. Please try again.",
+    "chooseNewAvatar": "Please choose a new avatar to update.",
+    "personalInfo": "Personal Info",
+    "fullName": "Full name",
+    "email": "Email",
+    "jobTitle": "Job title",
+    "organization": "Organization",
+    "save": "Save",
+    "cancel": "Cancel",
+    "projects": "Projects",
+    "noProjects": "No projects found.",
+    "updateAvatar": "Update Avatar",
+    "leader": "Leader"
+  },
+   "UploadImage": {
+    "dragAndDrop": "Click or drag file to this area to upload",
+    "onlyJpgPng": "Only JPG/PNG file with size smaller than 2MB",
+    "maxOneFile": "Max 1 file",
+    "fileError" :"Please upload JPG/PNG file!",
+    "fileSizeError" :"Please upload file smaller than 2MB!",
+    "successUpload" :"Upload successfully!",
+    "uploadFailed" :"Upload failed!"
+},
+  "Features": {
+    "discoverFeatures": "Discover Jello's Features",
+    "exploreFeatures": "Explore the powerful features of Jello designed to streamline your team's workflow and boost productivity.",
+    "taskManagement": "Task Management",
+    "taskManagementDescription": "Take control of your workload with intuitive task lists, prioritization tools, and progress tracking. Easily assign tasks, set deadlines, and collaborate with your team in real-time.",
+    "collaboration": "Collaboration",
+    "collaborationDescription": "Foster seamless communication and teamwork. Stay on top of project updates and discussions, keeping everyone in the loop.",
+    "analytics": "Analytics",
+    "analyticsDescription": "Gain valuable insights into team performance and project progress with comprehensive analytics. Track key metrics, identify bottlenecks, and make data-driven decisions to optimize your workflow."
+  },
+   "Contact": {
+    "contact": "Contact",
+    "getInTouch": "Get in Touch",
+    "inquiriesQuestions": "Feel free to reach out to us for any inquiries or questions.",
+    "haveQuestions": " If you have any questions about our services or need assistance,please do not hesitate to contact us.",
+    "ourAddress": "Our Address",
+    "addressLine1": "1 Dai Co Viet, Hai Ba Trung",
+    "addressLine2": "Hanoi, Vietnam",
+    "contactInfo": "Contact",
+    "phoneNumber": "Mobile",
+    "workingHours": "Working hours",
+    "weekdays": "Monday - Friday: 08:00 - 17:00",
+    "weekends": "Saturday and Sunday: 08:00 - 12:00",
+    "readyToGetStarted": "Ready to Get Started?",
+    "name": "Name:",
+    "yourName": "Your name",
+    "yourEmail": "Your email address",
+    "messageLabel": "Message:",
+    "writeMessage": "Write your message...",
+    "sendMessage": "Send Message"
+  },
+
+"Trash":{
+  "project": "Project",
+  "description": "Description",
+  "leader": "Leader",
+  "action": "Action",
+  "restore": "Restore",
+  "restoreProjectConfirmation": "Do you want to restore this project?",
+  "projectRestored": "Project is removed from recycle bin!",
+  "failedToRestoreProject": "Failed to restore project",
+  "recycleBin": "Recycle Bin",
+  "searchProjects": "Search projects",
+  "cancel": "Cancel"
+}
+
 }

@@ -137,19 +137,19 @@ const SignInButton: React.FC = () => {
     },
     {
       key: "manage-account",
-      label: "Profile",
+      label: t("profile"),
       icon: <UserOutlined />,
       onClick: () => handleNavigate("/user/" + user?.id),
     },
     {
       key: "trash",
-      label: "Recycle Bin",
+      label: t("recycleBin"),
       icon: <DeleteOutlined />,
       onClick: () => handleNavigate("/trash/" + user?.id),
     },
     {
       key: "signout",
-      label: "Sign Out",
+      label: t("signout"),
       icon: <LogoutOutlined />,
       onClick: handleSignOut,
     },
@@ -160,13 +160,13 @@ const SignInButton: React.FC = () => {
       key: "notification-header",
       label: (
         <div className="flex justify-between w-full items-center pb-4">
-          <div className="text-lg font-bold">Notifications</div>
+          <div className="text-lg font-bold">{t("notification")}</div>
           <Button
             type="link"
             onClick={() => handleMarkAllAsRead()}
             disabled={!notifications?.unreadNotificationsCount}
           >
-            Mark All as Read
+            {t("markAllAsRead")}
           </Button>
         </div>
       ),

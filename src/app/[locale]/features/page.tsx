@@ -1,16 +1,10 @@
-"use client";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next-nprogress-bar";
+
 import React from "react";
+import { useTranslations } from "next-intl";
 
 const FeaturesPage: React.FC = () => {
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const handleGetStartedClick = () => {
-    router.push(`/projects/${session?.user.id}`);
-  };
+  const t = useTranslations("Features");
 
   return (
     <section
@@ -19,13 +13,8 @@ const FeaturesPage: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4">
-            Discover Jello&apos;s Features
-          </h1>
-          <p className="text-xl mb-8">
-            Explore the powerful features of Jello designed to streamline your
-            team&apos;s workflow and boost productivity.
-          </p>
+          <h1 className="text-6xl font-bold mb-4">{t("discoverFeatures")}</h1>
+          <p className="text-xl mb-8">{t("exploreFeatures")}</p>
         </div>
 
         <div className="flex flex-wrap justify-between">
@@ -33,13 +22,10 @@ const FeaturesPage: React.FC = () => {
             {/* Feature Section 1 */}
             <div className="feature-section mb-8 flex items-center">
               <div className="flex-grow mr-4">
-                <h2 className="text-3xl font-bold mb-4">Task Management</h2>
-                <p className="text-lg">
-                  Take control of your workload with intuitive task lists,
-                  prioritization tools, and progress tracking. Easily assign
-                  tasks, set deadlines, and collaborate with your team in
-                  real-time.
-                </p>
+                <h2 className="text-3xl font-bold mb-4">
+                  {t("taskManagement")}
+                </h2>
+                <p className="text-lg">{t("taskManagementDescription")}</p>
               </div>
               <Image
                 src="/images/feature1.png"
@@ -52,12 +38,10 @@ const FeaturesPage: React.FC = () => {
             {/* Feature Section 2 */}
             <div className="feature-section mb-8 flex items-center">
               <div className="flex-grow mr-4">
-                <h2 className="text-3xl font-bold mb-4">Collaboration</h2>
-                <p className="text-lg">
-                  Foster seamless communication and teamwork with built-in chat,
-                  file sharing, and @mentions. Stay on top of project updates
-                  and discussions, keeping everyone in the loop.
-                </p>
+                <h2 className="text-3xl font-bold mb-4">
+                  {t("collaboration")}
+                </h2>
+                <p className="text-lg">{t("collaborationDescription")}</p>
               </div>
               <Image
                 src="/images/feature2.png"
@@ -71,13 +55,8 @@ const FeaturesPage: React.FC = () => {
           {/* Feature Section 3 */}
           <div className="feature-section mb-10 flex items-center w-full lg:w-1/2">
             <div className="flex-grow ml-4">
-              <h2 className="text-3xl font-bold mb-4">Analytics</h2>
-              <p className="text-lg">
-                Gain valuable insights into team performance and project
-                progress with comprehensive analytics. Track key metrics,
-                identify bottlenecks, and make data-driven decisions to optimize
-                your workflow.
-              </p>
+              <h2 className="text-3xl font-bold mb-4">{t("analytics")}</h2>
+              <p className="text-lg">{t("analyticsDescription")}</p>
             </div>
             <Image
               src="/images/feature3.png"
