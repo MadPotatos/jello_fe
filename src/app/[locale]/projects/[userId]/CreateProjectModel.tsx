@@ -4,10 +4,12 @@ import { useSession } from "next-auth/react";
 import UploadImage from "@/components/UploadImage";
 import { createProject } from "@/app/api/projectApi";
 import { validateRepository } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const { Item } = Form;
 
 const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
+  const t = useTranslations("CreateProjectModel");
   const [form] = Form.useForm();
   const [image, setImage] = useState<string>("");
   const { data: session } = useSession();
@@ -24,51 +26,49 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
 
       if (success) {
         onCreate();
-        message.success("Project created successfully");
+        message.success(t("createSuccess"));
         form.resetFields();
         onCancel();
       } else {
-        message.error("Failed to create project. Please try again.");
+        message.error(t("createFailed"));
       }
     } catch (error) {
       console.error("Error creating project:", error);
-      message.error("An error occurred. Please try again.");
+      message.error(t("createError"));
     }
   };
 
   return (
     <Modal
       open={visible}
-      title="Create New Project"
-      okText="Create"
-      cancelText="Cancel"
+      title={t("title")}
+      okText={t("okText")}
+      cancelText={t("cancelText")}
       onCancel={onCancel}
       onOk={() => form.submit()}
       okButtonProps={{ style: { backgroundColor: "#1890ff" } }}
     >
       <Form form={form} onFinish={onFinish} layout="vertical">
-        <Item label="Project Image">
+        <Item label={t("projectImage")}>
           <UploadImage image={image} setImage={setImage} />
         </Item>
         <Item
           name="name"
-          label="Project Name"
-          rules={[{ required: true, message: "Please enter the project name" }]}
+          label={t("projectName")}
+          rules={[{ required: true, message: t("nameRequired") }]}
         >
           <Input />
         </Item>
         <Item
           name="description"
-          label="Description"
-          rules={[
-            { required: true, message: "Please enter the project description" },
-          ]}
+          label={t("description")}
+          rules={[{ required: true, message: t("descriptionRequired") }]}
         >
           <Input.TextArea />
         </Item>
         <Item
           name="repo"
-          label="Repository ( Example: https://github.com/{user}/{repo} )"
+          label="Repository ( https://github.com/{user}/{repo} )"
           rules={[{ validator: validateRepository }]}
         >
           <Input />

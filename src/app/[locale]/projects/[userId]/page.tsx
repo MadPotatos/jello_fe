@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next-nprogress-bar";
 import { Button, Table, Input, Breadcrumb, Avatar, message, Modal } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { Leader, Project } from "@/lib/types";
 import { useSession } from "next-auth/react";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { deleteProject, fetchProjects } from "@/app/api/projectApi";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const CreateProjectModel = dynamic(() => import("./CreateProjectModel"), {
   ssr: false,
@@ -22,6 +22,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const ProjectList: React.FC = () => {
+  const t = useTranslations("ProjectList");
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -58,7 +59,7 @@ const ProjectList: React.FC = () => {
 
   const columns: any[] = [
     {
-      title: "Project",
+      title: t("project"),
       dataIndex: "image",
       key: "project",
       render: (text: string, record: Project) => (
@@ -75,13 +76,13 @@ const ProjectList: React.FC = () => {
       ),
     },
     {
-      title: "Description",
+      title: t("description"),
       dataIndex: "description",
       key: "description",
       width: "40%",
     },
     {
-      title: "Leader",
+      title: t("leader"),
       dataIndex: "leader",
       key: "leader",
       render: (leader: Leader) => (
@@ -100,7 +101,7 @@ const ProjectList: React.FC = () => {
       ),
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "action",
       render: (text: any, record: Project) =>
         record.leader?.userId === session?.user.id ? (
@@ -109,7 +110,7 @@ const ProjectList: React.FC = () => {
             danger
             onClick={(e) => handleDelete(record.id, e)}
           >
-            Delete
+            {t("delete")}
           </Button>
         ) : null,
     },
@@ -121,19 +122,18 @@ const ProjectList: React.FC = () => {
   ) => {
     event.stopPropagation();
     confirm({
-      title: "Do you want to delete this project?",
+      title: t("deleteConfirmTitle"),
       icon: <ExclamationCircleOutlined />,
-      content:
-        "The project will be moved to the recycle bin and will be permanently deleted in 30 days.",
+      content: t("deleteConfirmContent"),
       okType: "danger",
       onOk: async () => {
         try {
           await deleteProject(projectId, session?.backendTokens.accessToken);
-          message.success("Project is moved to recycle bin !");
+          message.success(t("deleteSuccess"));
           mutate(`project-all-${userId}`);
         } catch (err) {
           console.error(err);
-          message.error("Failed to delete project");
+          message.error(t("deleteFailed"));
         }
       },
       onCancel() {},
@@ -145,14 +145,14 @@ const ProjectList: React.FC = () => {
       <Breadcrumb
         className="mb-8 text-lg"
         items={[
-          { title: "Home", key: "home", href: "/" },
-          { title: "Projects", key: "projects" },
+          { title: t("home"), key: "home", href: "/" },
+          { title: t("projects"), key: "projects" },
         ]}
       ></Breadcrumb>
 
       <div className="flex justify-between items-center mb-10">
         <Search
-          placeholder="Search projects"
+          placeholder={t("searchPlaceholder")}
           size="large"
           className="w-96 rounded-full "
           onSearch={handleSearch}
@@ -164,7 +164,7 @@ const ProjectList: React.FC = () => {
           shape="round"
           onClick={showModal}
         >
-          Create Project
+          {t("createProject")}
         </Button>
       </div>
 

@@ -48,9 +48,7 @@ const UploadImage: React.FC<Props> = ({ image, setImage }) => {
         const image = await uploadImageAPI(file);
         //@ts-ignore
         onSuccess(null, file);
-        if (image) {
-          setImage(image.url);
-        }
+        setImage(image.url);
       } catch (error) {
         console.log(error);
         //@ts-ignore

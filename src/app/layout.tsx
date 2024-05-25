@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { unstable_setRequestLocale } from "next-intl/server";
 
 interface Props {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export default async function RootLayout({
   params: { locale },
 }: Props) {
   const messages = await getMessages();
+  unstable_setRequestLocale(locale);
 
   return (
     <html lang={locale}>

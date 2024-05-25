@@ -143,7 +143,44 @@
   "signUpSuccessDesc" :"Chúc mừng! Tài khoản của bạn đã được tạo thành công.",
   "signUpFailed" :"Đăng ký không thành công",
   "signUpFailedDesc" :"Đăng ký không thành công. Vui lòng thử lại."
-}
+},
+ "ProjectList": {
+    "project": "Dự án",
+    "description": "Mô tả",
+    "leader": "Trưởng nhóm",
+    "action": "Hành động",
+    "delete": "Xóa",
+    "deleteConfirmTitle": "Bạn có muốn xóa dự án này?",
+    "deleteConfirmContent": "Dự án sẽ được chuyển vào thùng rác và sẽ bị xóa vĩnh viễn sau 30 ngày.",
+    "deleteSuccess": "Dự án đã được chuyển vào thùng rác!",
+    "deleteFailed": "Xóa dự án thất bại",
+    "home": "Trang chủ",
+    "projects": "Dự án",
+    "searchPlaceholder": "Tìm kiếm dự án",
+    "createProject": "Tạo dự án"
+  },
+
+  "CreateProjectModel": {
+    "title": "Tạo Dự Án Mới",
+    "okText": "Tạo",
+    "cancelText": "Hủy",
+    "projectImage": "Hình Ảnh Dự Án",
+    "projectName": "Tên Dự Án",
+    "nameRequired": "Vui lòng nhập tên dự án",
+    "description": "Mô Tả",
+    "descriptionRequired": "Vui lòng nhập mô tả dự án",
+    "createSuccess": "Dự án đã được tạo thành công",
+    "createFailed": "Không thể tạo dự án. Vui lòng thử lại.",
+    "createError": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "UserPopover":
+  {
+    "profile": "Xem hồ sơ"
+  },
+  "NotFound" :{
+    "notFoundDesc" :"Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
+    "back" :"Quay lại"
+  }
 
 
 
