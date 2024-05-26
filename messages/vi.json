@@ -277,8 +277,74 @@
     "selectProgress": "Chọn tiến độ",
     "selectDueDate": "Chọn hạn",
     "add": "Thêm"
+  },
+    "completeSprint": {
+    "title": "Hoàn thành Sprint",
+    "complete": "Hoàn thành",
+    "cancel": "Hủy",
+    "containsOpenIssues": "Sprint này chứa: ",
+    "openIssues": " Issue mở",
+    "moveOpenIssuesToSprint": "Di chuyển các Issue mở sang sprint",
+    "pleaseSelectSprint": "Vui lòng chọn một sprint",
+    "sprintCompletedSuccess": "Hoàn thành sprint thành công"
+  },
+  "allIssues": {
+    "issues": "Issues",
+    "type": "Loại",
+    "summary": "Mô tả",
+    "priority": "Ưu tiên",
+    "status": "Trạng thái",
+    "sprint": "Sprint",
+    "assignee": "Người được giao",
+    "created": "Tạo lúc",
+    "updated": "Cập nhật lúc",
+    "reporter": "Người báo cáo"
+  },
+   "pullRequests": {
+    "date": "Ngày",
+    "title": "Tiêu đề",
+    "state": "Trạng thái",
+    "user": "Người dùng",
+    "head": "Head",
+    "base": "Base",
+    "detail": "Chi tiết"
+  },
+   "projectSettings": {
+    "title": "Cài đặt Dự án",
+    "changeImage": "Thay đổi Hình ảnh",
+    "name": "Tên",
+    "nameError": "Vui lòng nhập tên dự án",
+    "repo": "Repository",
+    "repoValidatorError": "URL Repository không hợp lệ",
+    "description": "Mô tả",
+    "descriptionError": "Vui lòng nhập mô tả dự án",
+    "save": "Lưu",
+    "members": "Thành viên",
+    "noMembers": "Không có thành viên",
+    "updateImageTitle": "Cập nhật Hình ảnh Dự án",
+    "selectImageError": "Vui lòng chọn một hình ảnh",
+    "updateSuccess": "Cập nhật dự án thành công",
+    "updateError": "Lỗi khi cập nhật dự án",
+    "imageUpdateSuccess": "Cập nhật hình ảnh thành công",
+    "imageUpdateError": "Lỗi khi cập nhật hình ảnh"
+  },
+   "Sidebar": {
+    "planning": "Lập kế hoạch",
+    "board": "Bảng",
+    "timeline": "Dòng thời gian",
+    "backlog": "Backlog",
+    "issues": "Issues",
+    "development": "Phát triển",
+    "pullRequests": "Pull Requests",
+    "projectSetting": "Cài đặt dự án",
+    "softwareProject": "Dự án phần mềm"
+  },
+   "TimelineChart": {
+    "timeline": "Dòng thời gian",
+    "day": "Ngày",
+    "days": "Ngày",
+    "goal": "Mục tiêu"
   }
-
 }
 
 

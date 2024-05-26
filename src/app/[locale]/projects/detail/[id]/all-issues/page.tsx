@@ -20,12 +20,14 @@ import {
 } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { fetchLists } from "@/app/api/listApi";
+import { useTranslations } from "next-intl";
 
 const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
   ssr: false,
 });
 
 const AllIssuesListPage = () => {
+  const t = useTranslations("allIssues");
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
   const [filteredIssues, setFilteredIssues] = useState<any>([]);
@@ -109,7 +111,7 @@ const AllIssuesListPage = () => {
 
   const columns: any[] = [
     {
-      title: "Type",
+      title: t("type"),
       dataIndex: "type",
       key: "type",
       align: "center",
@@ -119,13 +121,13 @@ const AllIssuesListPage = () => {
       sorter: (a: any, b: any) => a.type - b.type,
     },
     {
-      title: "Summary",
+      title: t("summary"),
       dataIndex: "summary",
       key: "summary",
       width: "20%",
     },
     {
-      title: "Priority",
+      title: t("priority"),
       dataIndex: "priority",
       key: "priority",
       align: "center",
@@ -135,7 +137,7 @@ const AllIssuesListPage = () => {
       sorter: (a: any, b: any) => a.priority - b.priority,
     },
     {
-      title: "Status",
+      title: t("status"),
       dataIndex: "status",
       key: "status",
       align: "center",
@@ -149,7 +151,7 @@ const AllIssuesListPage = () => {
         ),
     },
     {
-      title: "Sprint",
+      title: t("sprint"),
       dataIndex: "sprint",
       key: "sprint",
       align: "center",
@@ -166,7 +168,7 @@ const AllIssuesListPage = () => {
       title: (
         <span className="flex items-center gap-3">
           <TeamOutlined />
-          Assignee
+          {t("assignee")}
         </span>
       ),
       dataIndex: "assignee",
@@ -198,7 +200,7 @@ const AllIssuesListPage = () => {
       title: (
         <span className="flex items-center gap-3">
           <CalendarOutlined />
-          Created
+          {t("created")}
         </span>
       ),
       dataIndex: "createdAt",
@@ -213,7 +215,7 @@ const AllIssuesListPage = () => {
       title: (
         <span className="flex items-center gap-3">
           <CalendarOutlined />
-          Updated
+          {t("updated")}
         </span>
       ),
       dataIndex: "updatedAt",
@@ -228,7 +230,7 @@ const AllIssuesListPage = () => {
       title: (
         <span className="flex items-center gap-3">
           <UserOutlined />
-          Reporter
+          {t("reporter")}
         </span>
       ),
       dataIndex: "reporter",
@@ -258,7 +260,9 @@ const AllIssuesListPage = () => {
 
   return (
     <div className="site-layout-content">
-      <h1 className="text-xl font-semibold text-gray-800 mb-4">Issues</h1>
+      <h1 className="text-xl font-semibold text-gray-800 mb-4">
+        {t("issues")}
+      </h1>
       <Filter
         members={members}
         onSearch={handleSearch}

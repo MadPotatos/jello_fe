@@ -275,8 +275,74 @@
     "selectProgress": "Select Progress",
     "selectDueDate": "Select Due Date",
     "add": "Add"
+  },
+    "completeSprint": {
+    "title": "Complete Sprint",
+    "complete": "Complete",
+    "cancel": "Cancel",
+    "containsOpenIssues": "This sprint contains: ",
+    "openIssues": " open issues",
+    "moveOpenIssuesToSprint": "Move open issues to sprint",
+    "pleaseSelectSprint": "Please select a sprint",
+    "sprintCompletedSuccess": "Sprint completed"
+  },
+   "allIssues": {
+    "issues": "Issues",
+    "type": "Type",
+    "summary": "Summary",
+    "priority": "Priority",
+    "status": "Status",
+    "sprint": "Sprint",
+    "assignee": "Assignee",
+    "created": "Created",
+    "updated": "Updated",
+    "reporter": "Reporter"
+  },
+   "pullRequests": {
+    "date": "Date",
+    "title": "Title",
+    "state": "State",
+    "user": "User",
+    "head": "Head",
+    "base": "Base",
+    "detail": "Detail"
+  },
+   "projectSettings": {
+    "title": "Project Settings",
+    "changeImage": "Change Image",
+    "name": "Name",
+    "nameError": "Please enter project name",
+    "repo": "Repository",
+    "repoValidatorError": "Invalid repository URL",
+    "description": "Description",
+    "descriptionError": "Please enter the project description",
+    "save": "Save",
+    "members": "Members",
+    "noMembers": "No members",
+    "updateImageTitle": "Update Project Image",
+    "selectImageError": "Please select an image",
+    "updateSuccess": "Project updated successfully",
+    "updateError": "Error updating project",
+    "imageUpdateSuccess": "Image updated successfully",
+    "imageUpdateError": "Error updating image"
+  },
+   "Sidebar": {
+    "planning": "Planning",
+    "board": "Board",
+    "timeline": "Timeline",
+    "backlog": "Backlog",
+    "issues": "Issues",
+    "development": "Development",
+    "pullRequests": "Pull requests",
+    "projectSetting": "Project setting",
+    "softwareProject": "Software Project"
+  },
+  "TimelineChart": {
+    "timeline": "Timeline",
+    "day": "day",
+    "days": "days",
+    "goal": "Goal"
   }
-
 
 
 

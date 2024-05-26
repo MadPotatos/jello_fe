@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Form, Image, Modal, Select, notification } from "antd";
 import { completeSprint, fetchNotInProgressSprints } from "@/app/api/sprintApi";
 import useSWR from "swr";
+import { useTranslations } from "next-intl";
 
 interface CompleteSprintModelProps {
   visible: boolean;
@@ -27,6 +28,7 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
   const { data: sprints } = useSWR<any>(`waiting-sprint-${projectId}`, () =>
     fetchNotInProgressSprints(projectId)
   );
+  const t = useTranslations("completeSprint");
 
   const onFinish = async (values: any) => {
     try {
@@ -35,7 +37,7 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
         values.sprint,
         session?.backendTokens.accessToken
       );
-      notification.success({ message: "Sprint completed" });
+      notification.success({ message: t("sprintCompletedSuccess") });
       onComplete();
     } catch (error) {
       console.error("Error completing sprint:", error);
@@ -45,12 +47,11 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
   return (
     <Modal
       open={visible}
-      title={`Complete Sprint ${sprint?.name}`}
-      okText="Complete"
-      cancelText="Cancel"
+      title={`${t("title")} ${sprint?.name}`}
+      okText={t("complete")}
+      cancelText={t("cancel")}
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{ style: { backgroundColor: "#0064f2" } }}
     >
       <div className="flex justify-center items-center my-4">
         <Image
@@ -62,15 +63,15 @@ const CompleteSprintModel: React.FC<CompleteSprintModelProps> = ({
       </div>
 
       <p className="text-lg text-center pb-6">
-        This sprint contains:{" "}
-        <span className="font-semibold">{sprintLength}</span> open issues
+        {t("containsOpenIssues")}{" "}
+        <span className="font-semibold">{sprintLength}</span> {t("openIssues")}
       </p>
 
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           name="sprint"
-          label="Move open issues to sprint"
-          rules={[{ required: true, message: "Please select a sprint" }]}
+          label={t("moveOpenIssuesToSprint")}
+          rules={[{ required: true, message: t("pleaseSelectSprint") }]}
         >
           <Select
             options={sprints?.map((sprint: Sprint) => ({

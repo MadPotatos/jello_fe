@@ -7,10 +7,12 @@ import { Sprint } from "@/lib/types";
 import { fetchSprints } from "@/app/api/sprintApi";
 import { usePathname } from "next/navigation";
 import { Spin } from "antd";
+import { useTranslations } from "next-intl";
 
-const IndexPage: React.FC = () => {
+const TimelinePage: React.FC = () => {
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
+  const t = useTranslations("TimelineChart");
   const { data: sprints } = useSWR<Sprint[]>(`sprints-${projectId}`, () =>
     fetchSprints(projectId)
   );
@@ -25,16 +27,20 @@ const IndexPage: React.FC = () => {
   if (!sprints)
     return (
       <div className="site-layout-content">
-        <h1 className="text-xl font-semibold text-gray-800 mb-4">Timeline</h1>
+        <h1 className="text-xl font-semibold text-gray-800 mb-4">
+          {t("timeline")}
+        </h1>
         <Spin />
       </div>
     );
   return (
     <div className="site-layout-content">
-      <h1 className="text-xl font-semibold text-gray-800 mb-4">Timeline</h1>
+      <h1 className="text-xl font-semibold text-gray-800 mb-4">
+        {t("timeline")}
+      </h1>
       <TimelineChart data={data} />
     </div>
   );
 };
 
-export default IndexPage;
+export default TimelinePage;

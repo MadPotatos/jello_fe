@@ -6,7 +6,6 @@ import {
   ToolOutlined,
   PullRequestOutlined,
   GroupOutlined,
-  BugOutlined,
   UnorderedListOutlined,
   TableOutlined,
 } from "@ant-design/icons";
@@ -14,6 +13,7 @@ import type { MenuProps } from "antd";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next-nprogress-bar";
 import { ProjectDetail } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 const { Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
@@ -33,6 +33,7 @@ function getItem(
     onClick,
   } as MenuItem;
 }
+
 interface SidebarProps {
   project?: ProjectDetail;
 }
@@ -40,6 +41,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ project }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const t = useTranslations("Sidebar");
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>(["1"]);
   const pathname = usePathname();
@@ -61,27 +63,27 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
   }, [pathname]);
 
   const items: MenuItem[] = [
-    getItem("Planning", "grp-1", null, [
-      getItem("Board", "1", <ProjectOutlined />, undefined, () =>
+    getItem(t("planning"), "grp-1", null, [
+      getItem(t("board"), "1", <ProjectOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/board")
       ),
-      getItem("Timeline", "2", <GroupOutlined />, undefined, () =>
+      getItem(t("timeline"), "2", <GroupOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/timeline")
       ),
-      getItem("Backlog", "3", <TableOutlined />, undefined, () =>
+      getItem(t("backlog"), "3", <TableOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/backlog")
       ),
-      getItem("Issues", "4", <UnorderedListOutlined />, undefined, () =>
+      getItem(t("issues"), "4", <UnorderedListOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/all-issues")
       ),
     ]),
-    getItem("Development", "grp-2", null, [
-      getItem("Pull requests", "5", <PullRequestOutlined />, undefined, () =>
+    getItem(t("development"), "grp-2", null, [
+      getItem(t("pullRequests"), "5", <PullRequestOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/pull-requests")
       ),
     ]),
     { type: "divider" },
-    getItem("Project setting", "6", <ToolOutlined />, undefined, () =>
+    getItem(t("projectSetting"), "6", <ToolOutlined />, undefined, () =>
       router.push("/projects/detail/" + project?.id + "/setting")
     ),
   ];
@@ -107,7 +109,9 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
               <h3 className="m-0 text-black text-lg">
                 {project && project.name}
               </h3>
-              <p className="m-0 text-gray-600 text-sm">Software Project</p>
+              <p className="m-0 text-gray-600 text-sm">
+                {t("softwareProject")}
+              </p>
             </div>
           </>
         )}

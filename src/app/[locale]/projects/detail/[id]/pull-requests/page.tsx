@@ -13,8 +13,10 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
 
 const PullRequestsManagementPage = () => {
+  const t = useTranslations("pullRequests");
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
 
@@ -27,7 +29,7 @@ const PullRequestsManagementPage = () => {
 
   const columns: any[] = [
     {
-      title: "Date",
+      title: t("date"),
       dataIndex: "createdAt",
       key: "createdAt",
       render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
@@ -35,13 +37,13 @@ const PullRequestsManagementPage = () => {
         dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
     },
     {
-      title: "Title",
+      title: t("title"),
       dataIndex: "title",
       key: "title",
       width: "30%",
     },
     {
-      title: "State",
+      title: t("state"),
       dataIndex: "state",
       key: "state",
       render: (state: string) => (
@@ -54,22 +56,22 @@ const PullRequestsManagementPage = () => {
       ),
     },
     {
-      title: "User",
+      title: t("user"),
       dataIndex: "user",
       key: "user",
     },
     {
-      title: "Head",
+      title: t("head"),
       dataIndex: "head",
       key: "head",
     },
     {
-      title: "Base",
+      title: t("base"),
       dataIndex: "base",
       key: "base",
     },
     {
-      title: "Detail",
+      title: t("detail"),
       key: "url",
       render: (record: any) => (
         <Space size="middle">

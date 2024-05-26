@@ -13,6 +13,7 @@ import {
 import { fetchMembers } from "@/app/api/memberApi";
 import { validateRepository } from "@/lib/utils";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const UserPopover = dynamic(() => import("@/components/UserPopover"), {
   ssr: false,
@@ -30,6 +31,7 @@ const ProjectSettingPage = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const t = useTranslations("projectSettings");
 
   const projectId: number = parseInt(pathname.split("/")[4]);
   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () =>
@@ -53,17 +55,21 @@ const ProjectSettingPage = () => {
         values,
         session?.backendTokens.accessToken
       );
-      message.success("Project updated successfully");
+      message.success(t("updateSuccess"));
       mutate(`project-${projectId}`);
     } catch (error) {
-      message.error("Error updating project");
+      message.error(t("updateError"));
     }
   };
 
   const handleUpdateImage = async (id: number, image: string) => {
     try {
+      if (image === "") {
+        message.error(t("selectImageError"));
+        return;
+      }
       await updateProjectImage(id, image, session?.backendTokens.accessToken);
-      message.success("Image updated successfully");
+      message.success(t("imageUpdateSuccess"));
       setIsModalVisible(false);
       mutate(`project-${projectId}`);
     } catch (error) {
@@ -86,9 +92,7 @@ const ProjectSettingPage = () => {
 
   return (
     <div className="site-layout-content">
-      <h1 className="mb-4 text-xl font-semibold text-c-text">
-        Project Settings
-      </h1>
+      <h1 className="mb-4 text-xl font-semibold text-c-text">{t("title")}</h1>
       <div className="flex mt-10 px-5 justify-center">
         <Form
           layout="vertical"
@@ -107,40 +111,37 @@ const ProjectSettingPage = () => {
             {isAdmin && (
               <Button
                 type="text"
-                className=""
+                size="large"
                 onClick={() => setIsModalVisible(true)}
-                style={{ backgroundColor: "#ccc", fontSize: "16px" }}
+                style={{ backgroundColor: "#ccc" }}
               >
-                Change Image
+                {t("changeImage")}
               </Button>
             )}
           </div>
 
           <div className="mt-6 text-center">
             <Form.Item
-              label="Name"
+              label={t("name")}
               name="name"
-              rules={[{ required: true, message: "Please enter project name" }]}
+              rules={[{ required: true, message: t("nameError") }]}
             >
               <Input disabled={!isAdmin} />
             </Form.Item>
             <Form.Item
-              label="Repository"
+              label={t("repo")}
               name="repo"
-              rules={[
-                { required: true, message: "Please enter the repository URL" },
-                { validator: validateRepository },
-              ]}
+              rules={[{ validator: validateRepository }]}
             >
               <Input disabled={!isAdmin} />
             </Form.Item>
             <Form.Item
-              label="Description"
+              label={t("description")}
               name="descr"
               rules={[
                 {
                   required: true,
-                  message: "Please enter the project description",
+                  message: t("descriptionError"),
                 },
               ]}
             >
@@ -148,11 +149,11 @@ const ProjectSettingPage = () => {
             </Form.Item>
             {isAdmin && (
               <Button type="primary" htmlType="submit" size="large">
-                Save
+                {t("save")}
               </Button>
             )}
           </div>
-          <h2 className="mt-8 font-bold">Members</h2>
+          <h2 className="mt-8 font-bold">{t("members")}</h2>
           <div className="py-4">
             <Avatar.Group
               maxCount={6}
@@ -169,14 +170,14 @@ const ProjectSettingPage = () => {
                   </UserPopover>
                 ))
               ) : (
-                <p>No members</p>
+                <p>{t("noMembers")}</p>
               )}
             </Avatar.Group>
           </div>
         </Form>
       </div>
       <Modal
-        title="Update Project Image"
+        title={t("updateImageTitle")}
         open={isModalVisible}
         onOk={() => handleUpdateImage(projectId, image)}
         onCancel={handleCancel}
