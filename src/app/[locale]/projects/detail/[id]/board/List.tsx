@@ -86,9 +86,9 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
         title: t("Board.deleteListConfirmTitle"),
         icon: <ExclamationCircleOutlined />,
         content: t("Board.deleteListConfirmContent"),
-        okText: "Yes",
+        okText: t("Board.delete"),
         okButtonProps: { style: { backgroundColor: "#1890ff" } },
-        cancelText: "No",
+        cancelText: t("Board.cancel"),
         onOk: async () => {
           await deleteList(list.id);
           message.success(t("Board.deleteListSuccess"));
@@ -189,6 +189,10 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                     {
                       required: true,
                       message: t("Board.validateIssueSummary"),
+                    },
+                    {
+                      max: 100,
+                      message: t("Board.maxSummaryLength"),
                     },
                   ]}
                 >

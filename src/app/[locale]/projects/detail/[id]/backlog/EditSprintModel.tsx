@@ -1,9 +1,10 @@
 import React from "react";
-import { Modal, Form, Input, DatePicker, message } from "antd";
+import { Modal, Form, Input, DatePicker, message, notification } from "antd";
 import { Sprint } from "@/lib/types";
 import { updateSprint } from "@/app/api/sprintApi";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -23,6 +24,7 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({
 }) => {
   const [form] = Form.useForm();
   const { data: session } = useSession();
+  const t = useTranslations("SprintModal");
 
   const onFinish = async (values: any) => {
     try {
@@ -39,22 +41,25 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({
         session?.backendTokens.accessToken
       );
       onUpdate();
-      message.success("Sprint updated successfully");
+      notification.success({
+        message: t("updateSuccess"),
+      });
     } catch (error) {
       console.error("Error updating sprint:", error);
-      message.error("Failed to update sprint");
+      notification.error({
+        message: t("updateFailed"),
+      });
     }
   };
 
   return (
     <Modal
       open={visible}
-      title="Edit Sprint"
-      okText="Update"
-      cancelText="Cancel"
+      title={t("title")}
+      okText={t("update")}
+      cancelText={t("cancel")}
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{ style: { backgroundColor: "#0064f2" } }}
     >
       <Form
         form={form}
@@ -71,18 +76,16 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({
       >
         <Item
           name="name"
-          label="Sprint Name"
-          rules={[{ required: true, message: "Please enter the sprint name" }]}
+          label={t("sprintName")}
+          rules={[{ required: true, message: t("nameRequired") }]}
         >
           <Input />
         </Item>
 
         <Item
-          label="Start and End Date"
+          label={t("startendDate")}
           name="date"
-          rules={[
-            { required: true, message: "Please enter the sprint duration" },
-          ]}
+          rules={[{ required: true, message: t("dateRequired") }]}
         >
           <RangePicker
             disabledDate={(current) =>
@@ -92,7 +95,7 @@ const EditSprintModel: React.FC<EditSprintModelProps> = ({
           />
         </Item>
 
-        <Item name="goal" label="Sprint Goal">
+        <Item name="goal" label={t("goal")}>
           <Input.TextArea />
         </Item>
       </Form>

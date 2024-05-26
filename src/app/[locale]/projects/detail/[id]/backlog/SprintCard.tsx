@@ -21,16 +21,12 @@ import { Droppable } from "@hello-pangea/dnd";
 import { createIssue } from "@/app/api/issuesApi";
 import { useSession } from "next-auth/react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import {
-  getColoredIconByIssueType,
-  getColoredIconByPriority,
-  priorityOptions,
-  typeOptions,
-} from "@/lib/utils";
+import { priorityOptions, typeOptions } from "@/lib/utils";
 import dayjs from "dayjs";
 import { fetchLists } from "@/app/api/listApi";
 import { useRouter } from "next-nprogress-bar";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const CompleteSprintModel = dynamic(
   () => import("@/components/CompleteSprintModel"),
@@ -72,13 +68,14 @@ const SprintCard: React.FC<SprintProps> = ({
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
+  const t = useTranslations();
 
   const { data: lists } = useSWR<ListType[]>(`lists-${projectId}`, () =>
     fetchLists(projectId)
   );
 
-  const formattedStartDate = dayjs(sprint.startDate).format("D MMM");
-  const formattedEndDate = dayjs(sprint.endDate).format("D MMM");
+  const formattedStartDate = dayjs(sprint.startDate).format("DD/MM/YYYY");
+  const formattedEndDate = dayjs(sprint.endDate).format("DD/MM/YYYY");
 
   const handleUpdate = () => {
     setIsModalVisible(false);
@@ -109,7 +106,7 @@ const SprintCard: React.FC<SprintProps> = ({
   const items: MenuProps["items"] = [
     {
       key: "edit-sprint",
-      label: "Edit Sprint",
+      label: t("Backlog.editSprint"),
       onClick: () => {
         setIsModalVisible(true);
       },
@@ -117,7 +114,7 @@ const SprintCard: React.FC<SprintProps> = ({
     {
       key: "delete-sprint",
       danger: true,
-      label: "Delete Sprint",
+      label: t("Backlog.deleteSprint"),
       onClick: () => {
         handleDelete();
       },
@@ -138,17 +135,16 @@ const SprintCard: React.FC<SprintProps> = ({
       if (!sprint.startDate || !sprint.endDate) {
         setIsModalVisible(true);
         notification.warning({
-          message: "Please set sprint dates",
-          description:
-            "You need to set sprint dates before starting the sprint",
+          message: t("Backlog.setSprintDateTitle"),
+          description: t("Backlog.setSprintDateContent"),
         });
         return;
       }
 
       if (filteredIssues?.length === 0) {
         notification.warning({
-          message: "Cannot start sprint",
-          description: "There are no issues in the sprint",
+          message: t("Backlog.cantStartSprint"),
+          description: t("Backlog.cantStartSprintContent1"),
         });
         return;
       }
@@ -160,22 +156,21 @@ const SprintCard: React.FC<SprintProps> = ({
       );
       if (res.statusCode === 409) {
         notification.warning({
-          message: "Cannot start sprint",
-          description: "Another sprint is already in progress",
+          message: t("Backlog.cantStartSprint"),
+          description: t("Backlog.cantStartSprintContent2"),
         });
         return;
       }
       mutate(`sprints-${projectId}`);
       router.push(`/projects/detail/${projectId}/board`);
       notification.success({
-        message: "Sprint started",
-        description:
-          "We have filled the board with your sprint issues. Good luck!",
+        message: t("Backlog.sprintStarted"),
+        description: t("Backlog.sprintStartedContent"),
       });
     } catch (error: any) {
       notification.error({
-        message: "Failed to start sprint",
-        description: "An error occurred while starting the sprint",
+        message: t("Backlog.sprintStartedError"),
+        description: t("Backlog.sprintStartedErrorContent"),
       });
     }
   };
@@ -183,20 +178,19 @@ const SprintCard: React.FC<SprintProps> = ({
   const handleDelete = async () => {
     try {
       confirm({
-        title: "Are you sure you want to delete this list?",
+        title: t("Backlog.deleteSprintConfirmTitle"),
         icon: <ExclamationCircleOutlined />,
-        content: "This action cannot be undone",
-        okText: "Yes",
-        okButtonProps: { style: { backgroundColor: "#1890ff" } },
-        cancelText: "No",
+        content: t("Backlog.deleteSprintConfirmContent"),
+        okText: t("Backlog.delete"),
+        cancelText: t("Backlog.cancel"),
         onOk: async () => {
           await deleteSprint(sprint.id, session?.backendTokens.accessToken);
-          message.success("List deleted successfully");
+          message.success(t("Backlog.deleteSprintSuccess"));
           mutate(`sprints-${projectId}`);
         },
       });
     } catch (error) {
-      console.error("Error deleting list:", error);
+      console.error("Error deleting sprint:", error);
     }
   };
 
@@ -225,7 +219,7 @@ const SprintCard: React.FC<SprintProps> = ({
 
         <div className="flex gap-2 items-center">
           {sprint.order !== 0 && sprint.status === SprintStatus.CREATED && (
-            <Tooltip title="Only the admin can start the sprint">
+            <Tooltip title={t("Backlog.startSprintTooltip")}>
               <Button
                 type="primary"
                 size="large"
@@ -233,12 +227,12 @@ const SprintCard: React.FC<SprintProps> = ({
                 onClick={() => handleStartSprint()}
                 disabled={!isAdmin}
               >
-                Start Sprint
+                {t("Backlog.startSprint")}
               </Button>
             </Tooltip>
           )}
           {sprint.order !== 0 && sprint.status === SprintStatus.IN_PROGRESS && (
-            <Tooltip title="Only the admin can complete the sprint">
+            <Tooltip title={t("Backlog.completeSprintTooltip")}>
               <Button
                 type="text"
                 className="bg-gray-300"
@@ -246,7 +240,7 @@ const SprintCard: React.FC<SprintProps> = ({
                 onClick={() => setIsCompleteModalVisible(true)}
                 disabled={!isAdmin}
               >
-                Complete Sprint
+                {t("Backlog.completeSprint")}
               </Button>
             </Tooltip>
           )}
@@ -255,13 +249,21 @@ const SprintCard: React.FC<SprintProps> = ({
               menu={{ items }}
               trigger={["click"]}
               placement="bottomRight"
+              disabled={!isAdmin}
             >
-              <Button type="text" className="bg-gray-300" size="large">
-                ...
-              </Button>
+              <Tooltip title={t("Backlog.editSprintTooltip")}>
+                <Button
+                  type="text"
+                  className="bg-gray-300"
+                  size="large"
+                  disabled={!isAdmin}
+                >
+                  ...
+                </Button>
+              </Tooltip>
             </Dropdown>
           ) : (
-            <Tooltip title="Only the admin can create a sprint">
+            <Tooltip title={t("Backlog.createSprintTooltip")}>
               <Button
                 type="text"
                 className="bg-gray-300"
@@ -269,7 +271,7 @@ const SprintCard: React.FC<SprintProps> = ({
                 onClick={() => handleCreateSprint()}
                 disabled={!isAdmin}
               >
-                Create Sprint
+                {t("Backlog.createSprint")}
               </Button>
             </Tooltip>
           )}
@@ -286,8 +288,8 @@ const SprintCard: React.FC<SprintProps> = ({
                 emptyText: (
                   <div className="border border-gray-400 border-dashed py-3 px-6 text-center text-lg">
                     {sprint.order === 0
-                      ? "Your backlog is empty"
-                      : "Plan your sprint by dragging issues here or create new issues"}
+                      ? t("Backlog.backlogPlaceholder")
+                      : t("Backlog.sprintPlaceholder")}
                   </div>
                 ),
               }}
@@ -319,24 +321,21 @@ const SprintCard: React.FC<SprintProps> = ({
         >
           <div className="flex  gap-6 text-lg">
             <Form.Item name="type">
-              <Select
-                placeholder="Select issue type"
-                options={typeOptions}
-              ></Select>
+              <Select options={typeOptions(t)}></Select>
             </Form.Item>
 
             <Form.Item
               name="summary"
               rules={[
-                { required: true, message: "Please enter issue summary" },
+                { required: true, message: t("Backlog.validateIssueSummary") },
                 {
                   max: 100,
-                  message: "Summary must be at most 100 characters",
+                  message: t("Backlog.validateIssueSummaryLength"),
                 },
               ]}
             >
               <Input
-                placeholder="What needs to be done?"
+                placeholder={t("Backlog.issueSummaryPlaceholder")}
                 variant="borderless"
                 autoFocus
                 style={{ minWidth: "500px" }}
@@ -359,9 +358,9 @@ const SprintCard: React.FC<SprintProps> = ({
 
             <Form.Item name="priority">
               <Select
-                placeholder="Select priority"
+                placeholder={t("Backlog.issuePriorityPlaceholder")}
                 style={{ minWidth: "100px" }}
-                options={priorityOptions}
+                options={priorityOptions(t)}
               ></Select>
             </Form.Item>
 
@@ -390,7 +389,7 @@ const SprintCard: React.FC<SprintProps> = ({
           onClick={() => setIsCreatingIssue(true)}
           disabled={!isAdmin}
         >
-          + Add Issue
+          {t("Backlog.addIssue")}
         </Button>
       )}
       <EditSprintModel

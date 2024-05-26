@@ -147,7 +147,7 @@ const ProjectDetailPage = () => {
               <ClockCircleOutlined /> {daysRemaining} {t("Board.daysRemaining")}
             </p>
             <Divider type="vertical" />
-            <Tooltip title="Only the admin can complete the sprint">
+            <Tooltip title={t("Board.toolTip")}>
               <Button
                 type="primary"
                 size="large"
