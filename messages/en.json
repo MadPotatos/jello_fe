@@ -19,7 +19,16 @@
     "recycleBin": "Recycle Bin",
     "signout": "Sign Out",
     "notification": "Notification",
-    "markAllAsRead": "Mark All as Read"
+    "markAllAsRead": "Mark All as Read",
+    "noNewNotifications": "No new notifications",
+    "assginToIssue": "You have been assigned to the issue",
+    "inviteToProject": "You have been invited to the project",
+    "sprintStart": "A sprint has started in the project",
+    "sprintComplete": "A sprint has been completed in the project",
+    "newNotification": "You have a new notification.",
+    "justNow": "Just now",
+    "minutesAgo": " minutes ago",
+    "hoursAgo": " hours ago"
 
   },
   "Footer": {

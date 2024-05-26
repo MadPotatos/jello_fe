@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import { connectSocket, disconnectSocket } from "@/lib/socketConnection";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import { NotificationType } from "@/lib/enum";
 
 const Dropdown = dynamic(() => import("antd").then((mod) => mod.Dropdown), {
   ssr: false,
@@ -69,13 +70,30 @@ const SignInButton: React.FC = () => {
     const diffInMinutes = now.diff(notificationDate, "minute");
 
     if (diffInMinutes < 1) {
-      return "Just now";
+      return t("justNow");
     } else if (diffInMinutes < 60) {
-      return Math.round(diffInMinutes) + " minutes ago";
+      return Math.round(diffInMinutes) + t("minutesAgo");
     } else if (diffInMinutes < 1440) {
-      return Math.round(diffInMinutes / 60) + " hours ago";
+      return Math.round(diffInMinutes / 60) + t("hoursAgo");
     } else {
-      return notificationDate.format("MMM D, YYYY");
+      return notificationDate.format("DD-MM-YYYY");
+    }
+  };
+  const getNotificationMessage = (
+    type: NotificationType,
+    notification: any
+  ) => {
+    switch (type) {
+      case NotificationType.ASSIGNED_TO_ISSUE:
+        return `${t("assginToIssue")} ${notification.Issue.summary}`;
+      case NotificationType.PROJECT_INVITE:
+        return `${t("inviteToProject")} ${notification.Project.name}`;
+      case NotificationType.SPRINT_STARTED:
+        return `${t("sprintStart")} ${notification.Project.name}`;
+      case NotificationType.SPRINT_COMPLETED:
+        return `${t("sprintComplete")} ${notification.Project.name}`;
+      default:
+        return t("newNotification");
     }
   };
 
@@ -172,69 +190,87 @@ const SignInButton: React.FC = () => {
       ),
       disabled: true,
     },
-    ...(notifications?.notifications?.map((notification: any) => ({
-      key: "notification-" + notification.id,
-      label: (
-        <div className="group relative">
-          <div className="flex justify-between w-full items-center group-hover:bg-gray-100 p-2 rounded-md">
-            <div className="flex items-center gap-3">
-              <Avatar
-                size="large"
-                src={notification.Project.image ?? ""}
-                alt={notification.Project.name}
-              />
-              <div className="grow-0 w-80">
-                <div className="text-sky-600 text-lg">
-                  {notification.Project.name}
+    ...(notifications?.notifications?.length
+      ? notifications.notifications.map((notification: any) => ({
+          key: "notification-" + notification.id,
+          label: (
+            <div className="group relative">
+              <div className="flex justify-between w-full items-center group-hover:bg-gray-100 p-2 rounded-md">
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    size="large"
+                    src={notification.Project.image ?? ""}
+                    alt={notification.Project.name}
+                  />
+                  <div className="grow-0 w-80">
+                    <div className="text-sky-600 text-lg">
+                      {notification.Project.name}
+                    </div>
+                    <div className="text-gray-500">
+                      {" "}
+                      {getNotificationMessage(
+                        notification.type as NotificationType,
+                        notification
+                      )}
+                    </div>
+                    <div className="text-gray-400">
+                      {formatNotificationTime(notification.createdAt)}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-gray-500">{notification.message}</div>
-                <div className="text-gray-400">
-                  {formatNotificationTime(notification.createdAt)}
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-4 items-center">
-              <div className="group-hover:block hidden">
-                <Button
-                  shape="circle"
-                  danger
-                  icon={<DeleteOutlined />}
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteNotification(
-                      notification.id,
-                      session?.backendTokens.accessToken
-                    );
-                  }}
-                />
-              </div>
-              <div className="group-hover:hidden block">
-                <Button
-                  shape="circle"
-                  size="small"
-                  className="opacity-0 pointer-events-none"
-                />
-              </div>
+                <div className="flex gap-4 items-center">
+                  <div className="group-hover:block hidden">
+                    <Button
+                      shape="circle"
+                      danger
+                      icon={<DeleteOutlined />}
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteNotification(
+                          notification.id,
+                          session?.backendTokens.accessToken
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className="group-hover:hidden block">
+                    <Button
+                      shape="circle"
+                      size="small"
+                      className="opacity-0 pointer-events-none"
+                    />
+                  </div>
 
-              {!notification.isRead ? (
-                <div className="h-3 w-3 bg-blue-400 rounded-full"></div>
-              ) : (
-                <span className="h-3 w-3"></span>
-              )}
+                  {!notification.isRead ? (
+                    <div className="h-3 w-3 bg-blue-400 rounded-full"></div>
+                  ) : (
+                    <span className="h-3 w-3"></span>
+                  )}
+                </div>
+              </div>
+              <Divider className="m-2" />
             </div>
-          </div>
-          <Divider className="m-2" />
-        </div>
-      ),
-      onClick: () =>
-        handleOpenNotification(
-          notification.id,
-          notification.projectId,
-          notification.isRead,
-          session?.backendTokens.accessToken
-        ),
-    })) ?? []),
+          ),
+          onClick: () =>
+            handleOpenNotification(
+              notification.id,
+              notification.projectId,
+              notification.isRead,
+              session?.backendTokens.accessToken
+            ),
+        }))
+      : [
+          {
+            key: "no-new-notifications",
+            label: (
+              <div className="text-gray-500 text-lg text-center pb-4">
+                {t("noNewNotifications")}
+              </div>
+            ),
+            disabled: true,
+          },
+        ]),
   ];
 
   if (session?.user)

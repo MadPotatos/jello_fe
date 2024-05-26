@@ -22,9 +22,12 @@ import dynamic from "next/dynamic";
 import { fetchLists } from "@/app/api/listApi";
 import { useTranslations } from "next-intl";
 
-const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
-  ssr: false,
-});
+const IssueDetailModal = dynamic(
+  () => import("@/components/modal/IssueDetailModal"),
+  {
+    ssr: false,
+  }
+);
 
 const AllIssuesListPage = () => {
   const t = useTranslations("allIssues");

@@ -11,9 +11,12 @@ import { deleteProject, fetchProjects } from "@/app/api/projectApi";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
-const CreateProjectModel = dynamic(() => import("./CreateProjectModel"), {
-  ssr: false,
-});
+const CreateProjectModel = dynamic(
+  () => import("../../../../components/modal/CreateProjectModal"),
+  {
+    ssr: false,
+  }
+);
 const UserPopover = dynamic(() => import("@/components/UserPopover"), {
   ssr: false,
 });

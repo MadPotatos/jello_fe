@@ -17,7 +17,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
 const CompleteSprintModel = dynamic(
-  () => import("@/components/CompleteSprintModel"),
+  () => import("@/components/modal/CompleteSprintModal"),
   {
     ssr: false,
   }

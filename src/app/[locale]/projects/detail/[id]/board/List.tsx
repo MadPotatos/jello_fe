@@ -20,9 +20,12 @@ import { List as ListType } from "@/lib/types";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
-const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
-  ssr: false,
-});
+const IssueDetailModal = dynamic(
+  () => import("@/components/modal/IssueDetailModal"),
+  {
+    ssr: false,
+  }
+);
 
 const { confirm } = Modal;
 

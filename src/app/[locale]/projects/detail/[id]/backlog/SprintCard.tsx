@@ -29,22 +29,28 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
 const CompleteSprintModel = dynamic(
-  () => import("@/components/CompleteSprintModel"),
+  () => import("@/components/modal/CompleteSprintModal"),
   {
     ssr: false,
   }
 );
 
-const EditSprintModel = dynamic(() => import("./EditSprintModel"), {
-  ssr: false,
-});
+const EditSprintModel = dynamic(
+  () => import("../../../../../../components/modal/EditSprintModal"),
+  {
+    ssr: false,
+  }
+);
 const Tooltip = dynamic(() => import("antd").then((mod) => mod.Tooltip), {
   ssr: false,
 });
 
-const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
-  ssr: false,
-});
+const IssueDetailModal = dynamic(
+  () => import("@/components/modal/IssueDetailModal"),
+  {
+    ssr: false,
+  }
+);
 
 const { confirm } = Modal;
 

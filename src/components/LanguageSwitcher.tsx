@@ -1,6 +1,7 @@
 "use client";
-
-import { Select } from "antd";
+import React from "react";
+import { Button, Dropdown, MenuProps } from "antd";
+import { GlobalOutlined } from "@ant-design/icons";
 import {
   localeNames,
   locales,
@@ -9,32 +10,29 @@ import {
   type Locale,
 } from "@/i18n.config";
 
-const { Option } = Select;
-
 export default function LocaleSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const changeLocale = (value: string) => {
-    const newLocale = value as Locale;
+  const changeLocale = (newLocale: Locale) => {
     router.replace(pathname, { locale: newLocale });
     window.location.href = `/${newLocale}/${pathname}`;
   };
 
+  const items: MenuProps["items"] = locales.map((loc) => ({
+    key: loc,
+    label: localeNames[loc],
+    onClick: () => changeLocale(loc),
+  }));
+
   return (
-    <div>
-      <Select
-        value={locale}
-        onChange={changeLocale}
-        style={{ width: 200 }}
-        className="..."
-      >
-        {locales.map((loc) => (
-          <Option key={loc} value={loc}>
-            {localeNames[loc]}
-          </Option>
-        ))}
-      </Select>
-    </div>
+    <Dropdown menu={{ items }} trigger={["click"]}>
+      <Button
+        type="default"
+        size="large"
+        icon={<GlobalOutlined />}
+        shape="circle"
+      />
+    </Dropdown>
   );
 }

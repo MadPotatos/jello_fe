@@ -7,9 +7,12 @@ import dynamic from "next/dynamic";
 import { priorityOptions, typeOptions } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
-const AddMemberModal = dynamic(() => import("@/components/AddMemberModal"), {
-  ssr: false,
-});
+const AddMemberModal = dynamic(
+  () => import("@/components/modal/AddMemberModal"),
+  {
+    ssr: false,
+  }
+);
 
 const UserPopover = dynamic(() => import("@/components/UserPopover"), {
   ssr: false,

@@ -19,7 +19,16 @@
     "recycleBin": "Thùng rác",
     "signout": "Đăng xuất",
      "notification": "Thông báo",
-    "markAllAsRead": "Đánh dấu đã đọc"
+    "markAllAsRead": "Đánh dấu đã đọc",
+    "noNewNotifications": "Không có thông báo mới",
+    "assginToIssue": "Bạn đã được phân công vào issue",
+    "inviteToProject": "Bạn đã được mời tham gia dự án",
+    "sprintStart": "Một sprint đã bắt đầu trong dự án",
+    "sprintComplete": "Một sprint đã hoàn thành trong dự án",
+    "newNotification": "Thông báo mới",
+    "justNow": "Vừa xong",
+    "minutesAgo": " phút trước",
+    "hoursAgo": " giờ trước"
 
   },
   "Footer": {

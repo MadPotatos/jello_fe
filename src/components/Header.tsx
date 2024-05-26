@@ -63,7 +63,7 @@ const AppBar = () => {
           className="flex gap-4"
           items={items}
         />
-        <div className="flex gap-2 ml-auto">
+        <div className="flex gap-4 ml-auto  items-center">
           <LanguageSwitcher locale={locale} />
           <SignInButton />
         </div>
