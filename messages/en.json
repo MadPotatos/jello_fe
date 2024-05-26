@@ -179,7 +179,105 @@
     "NotFound" :{
     "notFoundDesc" :"The page you are looking for does not exist.",
     "back" :"Back"
+  },
+    "ProjectLayout": {
+    "home": "Home",
+    "projects": "Projects",
+    "project": "Project"
+  },
+  "Filter": {
+    "searchIssues": "Search issues",
+    "type": "Type",
+    "priority": "Priority",
+    "clearFilter": "Clear Filter"
+  },
+   "TypeOptions": {
+    "task": "Task",
+    "bug": "Bug",
+    "review": "Review"
+  },
+  "PriorityOptions": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "Board":{
+    "daysRemaining": "days remaining",
+    "completeSprint": "Complete Sprint",
+    "kanbanBoard": "Kanban Board",
+    "updateListSuccess": "List updated successfully",
+    "updateListFailed": "Failed to update list",
+    "deleteListConfirmTitle": "Are you sure you want to delete this list?",
+    "deleteListConfirmContent": "All tasks in this list will be deleted.",
+    "deleteListSuccess": "List deleted successfully",
+    "issueCreated": "Issue created",
+    "issueCreatedFailed": "Failed to create issue",
+    "validateIssueSummary": "Please enter the issue summary",
+    "issueSummaryPlaceholder": "What needs to be done?",
+    "issueTypePlaceholder": "Select issue type",
+    "issuePriorityPlaceholder": "Select issue priority",
+    "createIssue": "Create Issue",
+    "addIssue": "+ Add Issue"
+  },
+  "addMemberModal": {
+    "title": "Add Member",
+    "cancelButton": "Cancel",
+    "addButton": "Add Member",
+    "placeholder": "Search user",
+    "userAlreadyMember": "User is already a member",
+    "memberAddedSuccess": "Member added successfully",
+    "memberAddedDesc": "The user has been added to the project successfully.",
+    "memberAddFailed": "Failed to add member",
+    "selectUser": "Please select a user",
+    "memberCapabilitiesTitle": "Member Capabilities:",
+    "capability1": "Access project resources and features",
+    "capability2": "Contribute to tasks and discussions",
+    "capability3": "Invite other members"
+  },
+   "issueDetail": {
+    "addCommentSuccess": "Comment added successfully",
+    "deleteCommentSuccess": "Comment deleted successfully",
+    "addSubIssueSuccess": "Sub issue added successfully",
+    "deleteIssueSuccess": "Issue deleted successfully",
+    "validateIssueSummary": "Please enter the issue summary",
+    "validateComment": "Please enter the comment",
+    "maxSummaryLength": "The issue summary must be less than 100 characters",
+    "issueSummaryPlaceholder": "What needs to be done?",
+    "title": "Issue Detail",
+    "deleteIssue": "Delete Issue",
+    "deleteIssueConfirmation": "Are you sure you want to delete this issue?",
+    "deleteIssueWarning": "This action cannot be undone",
+    "deleteCommentConfirmation": "Are you sure you want to delete this comment?",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "type": "Type",
+    "priority": "Priority",
+    "status": "Status",
+    "progress": "Progress",
+    "dueDate": "Due Date",
+    "reporter": "Reporter",
+    "assignees": "Assignees",
+    "updatedAt": "Updated At",
+    "createdAt": "Created At",
+    "summary": "Summary",
+    "description": "Description",
+    "subIssues": "Sub Issues",
+    "comments": "Comments",
+    "addComment": "Add Comment",
+    "commentPlaceholder": "Please input comment",
+    "submit": "Submit",
+    "addSubIssue": "Add Sub Issue",
+    "addSubIssuePlaceholder": "What needs to be done?",
+    "selectType": "Select Type",
+    "selectPriority": "Select Priority",
+    "selectStatus": "Select Status",
+    "selectAssignees": "Select Assignees",
+    "selectProgress": "Select Progress",
+    "selectDueDate": "Select Due Date",
+    "add": "Add"
   }
+
+
 
 
 

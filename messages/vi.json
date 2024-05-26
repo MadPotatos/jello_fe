@@ -180,9 +180,108 @@
   "NotFound" :{
     "notFoundDesc" :"Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
     "back" :"Quay lại"
+  },
+
+  "ProjectLayout": {
+    "home": "Trang chủ",
+    "projects": "Dự án",
+    "project": "Dự án"
+  },
+  "Filter": {
+    "searchIssues": "Tìm kiếm Issue",
+    "type": "Loại",
+    "priority": "Ưu tiên",
+    "clearFilter": "Xóa bộ lọc"
+  },
+    "TypeOptions": {
+    "task": "Công việc",
+    "bug": "Lỗi",
+    "review": "Đánh giá"
+  },
+  "PriorityOptions": {
+    "high": "Cao",
+    "medium": "Trung bình",
+    "low": "Thấp"
+  },
+   "Board":{
+    "daysRemaining": "Ngày còn lại",
+    "completeSprint": "Hoàn thành Sprint",
+    "kanbanBoard": "Bảng",
+    "updateListSuccess": "Cập nhật danh sách thành công",
+    "updateListFailed": "Cập nhật danh sách không thành công",
+    "deleteListConfirmTitle": "Bạn có muốn xóa danh sách này?",
+    "deleteListConfirmContent": "Tất cả các issue trong danh sách sẽ bị xóa.",
+    "deleteListSuccess": "Danh sách đã được xóa",
+    "issueCreated": "Issue đã được tạo",
+    "issueCreatedFailed": "Không thể tạo issue",
+    "validateIssueSummary": "Vui lòng nhập mô tả issue",
+    "issueSummaryPlaceholder": "Nhập mô tả issue",
+    "issueTypePlaceholder": "Chọn loại ",
+    "issuePriorityPlaceholder": "Chọn ưu tiên ",
+    "createIssue": "Tạo Issue",
+    "addIssue": "+ Thêm Issue"
+  },
+  
+  "addMemberModal": {
+    "title": "Thêm Thành Viên",
+    "cancelButton": "Hủy",
+    "addButton": "Thêm Thành Viên",
+    "placeholder": "Tìm kiếm người dùng",
+    "userAlreadyMember": "Người dùng đã là thành viên",
+    "memberAddedSuccess": "Thêm thành viên thành công",
+    "memberAddedDesc": "Người dùng đã được thêm vào dự án.",
+    "memberAddFailed": "Thêm thành viên thất bại",
+    "selectUser": "Vui lòng chọn một người dùng",
+    "memberCapabilitiesTitle": "Thành viên có thể:",
+    "capability1": "Truy cập tài nguyên và tính năng dự án",
+    "capability2": "Đóng góp vào nhiệm vụ và thảo luận",
+    "capability3": "Mời các thành viên khác"
+  },
+   "issueDetail": {
+    "addCommentSuccess": "Bình luận đã được thêm",
+    "deleteCommentSuccess": "Bình luận đã được xóa",
+    "addSubIssueSuccess": "Issue con đã được thêm",
+    "validateIssueSummary": "Vui lòng nhập mô tả issue",
+    "validateComment": "Vui lòng nhập bình luận",
+    "maxSummaryLength": "Mô tả không được vượt quá 100 ký tự",
+    "issueSummaryPlaceholder": "Nhập mô tả issue",
+    "title": "Chi tiết Issue",
+    "deleteIssue": "Xóa Issue",
+    "deleteIssueConfirmation": "Bạn có chắc chắn muốn xóa Issue này không?",
+    "deleteIssueWarning": "Hành động này không thể hoàn tác",
+    "deleteCommentConfirmation": "Bạn có chắc chắn muốn xóa bình luận này không?",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "type": "Loại",
+    "priority": "Ưu tiên",
+    "status": "Trạng thái",
+    "progress": "Tiến độ",
+    "dueDate": "Hạn",
+    "reporter": "Người báo cáo",
+    "assignees": "Người được giao",
+    "updatedAt": "Cập nhật lúc",
+    "createdAt": "Tạo lúc",
+    "summary": "Tóm tắt",
+    "description": "Mô tả",
+    "subIssues": "Issue con",
+    "comments": "Bình luận",
+    "addComment": "Thêm bình luận",
+    "commentPlaceholder": "Vui lòng nhập bình luận",
+    "submit": "Gửi",
+    "addSubIssue": "Issue con",
+    "addSubIssuePlaceholder": "Cần làm gì?",
+    "selectType": "Chọn loại",
+    "selectPriority": "Chọn mức ưu tiên",
+    "selectStatus": "Chọn trạng thái",
+    "selectAssignees": "Chọn người được giao",
+    "selectProgress": "Chọn tiến độ",
+    "selectDueDate": "Chọn hạn",
+    "add": "Thêm"
   }
+
+}
 
 
 
  
-}
+

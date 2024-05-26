@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Member } from "@/lib/types";
 import dynamic from "next/dynamic";
 import { priorityOptions, typeOptions } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const AddMemberModal = dynamic(() => import("@/components/AddMemberModal"), {
   ssr: false,
@@ -33,13 +34,14 @@ const Filter: React.FC<FilterProps> = ({
   onFilterChange,
   onClearFilter,
 }) => {
+  const t = useTranslations();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [filtering, setFiltering] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
   const [selectedPriorities, setSelectedPriorities] = useState<number[]>([]);
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -86,7 +88,7 @@ const Filter: React.FC<FilterProps> = ({
       key: "1",
       label: (
         <Checkbox.Group
-          options={typeOptions}
+          options={typeOptions(t)}
           value={selectedTypes}
           onChange={handleTypeChange}
         />
@@ -99,7 +101,7 @@ const Filter: React.FC<FilterProps> = ({
       key: "1",
       label: (
         <Checkbox.Group
-          options={priorityOptions}
+          options={priorityOptions(t)}
           value={selectedPriorities}
           onChange={handlePriorityChange}
         />
@@ -111,7 +113,7 @@ const Filter: React.FC<FilterProps> = ({
     <div className="flex justify-between items-center mb-4 pr-8">
       <div className="flex items-center">
         <Input.Search
-          placeholder="Search issues"
+          placeholder={t("Filter.searchIssues")}
           size="large"
           onSearch={handleSearchIssue}
         />
@@ -155,7 +157,7 @@ const Filter: React.FC<FilterProps> = ({
             onClick={clearFilter}
             style={{ marginLeft: "10px", color: "#f5222d" }}
           >
-            Clear Filter
+            {t("Filter.clearFilter")}
           </Button>
         )}
       </div>
@@ -168,7 +170,7 @@ const Filter: React.FC<FilterProps> = ({
           trigger={["click"]}
         >
           <Button type="text" icon={<FilterOutlined />}>
-            Type
+            {t("Filter.type")}
           </Button>
         </Dropdown>
         <Dropdown
@@ -178,7 +180,7 @@ const Filter: React.FC<FilterProps> = ({
           trigger={["click"]}
         >
           <Button type="text" icon={<FilterOutlined />}>
-            Priority
+            {t("Filter.priority")}
           </Button>
         </Dropdown>
       </div>

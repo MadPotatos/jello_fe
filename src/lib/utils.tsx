@@ -3,8 +3,12 @@ import {
   BugFilled,
   ThunderboltFilled,
   SubnodeOutlined,
+  UpOutlined,
+  MinusOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
-import { UpOutlined, MinusOutlined, DownOutlined } from "@ant-design/icons";
+import { useTranslations } from "next-intl";
+import { CheckboxOptionType } from "antd/es/checkbox/Group";
 
 export const getColoredIconByIssueType = (issueType: number) => {
   switch (issueType) {
@@ -28,22 +32,79 @@ export const getColoredIconByPriority = (priority: number) => {
     case 2:
       return <MinusOutlined style={{ color: "orange" }} />;
     case 3:
-      return <DownOutlined style={{ color: "1890ff" }} />;
+      return <DownOutlined style={{ color: "#1890ff" }} />;
     default:
       return null;
   }
 };
-export const typeOptions = [
-  { label: <span>{getColoredIconByIssueType(1)} Task</span>, value: 1 },
-  { label: <span>{getColoredIconByIssueType(2)} Bug</span>, value: 2 },
-  { label: <span>{getColoredIconByIssueType(3)} Review</span>, value: 3 },
-];
 
-export const priorityOptions = [
-  { label: <span>{getColoredIconByPriority(1)} High</span>, value: 1 },
-  { label: <span>{getColoredIconByPriority(2)} Medium</span>, value: 2 },
-  { label: <span>{getColoredIconByPriority(3)} Low</span>, value: 3 },
-];
+export const typeOptions = (
+  t: (key: string) => string
+): CheckboxOptionType<number>[] => {
+  return [
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByIssueType(1)}
+          {t("TypeOptions.task")}
+        </span>
+      ),
+      value: 1,
+    },
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByIssueType(2)}
+          {t("TypeOptions.bug")}
+        </span>
+      ),
+      value: 2,
+    },
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByIssueType(3)}
+          {t("TypeOptions.review")}
+        </span>
+      ),
+      value: 3,
+    },
+  ];
+};
+
+export const priorityOptions = (
+  t: (key: string) => string
+): CheckboxOptionType<number>[] => {
+  return [
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByPriority(1)}
+          {t("PriorityOptions.high")}
+        </span>
+      ),
+      value: 1,
+    },
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByPriority(2)}
+          {t("PriorityOptions.medium")}
+        </span>
+      ),
+      value: 2,
+    },
+    {
+      label: (
+        <span className="flex gap-2">
+          {getColoredIconByPriority(3)}
+          {t("PriorityOptions.low")}
+        </span>
+      ),
+      value: 3,
+    },
+  ];
+};
 
 export const fetcher = (url: string) => fetch(url).then((r) => r.json());
 

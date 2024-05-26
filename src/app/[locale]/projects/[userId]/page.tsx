@@ -103,6 +103,7 @@ const ProjectList: React.FC = () => {
     {
       title: t("action"),
       key: "action",
+      align: "center",
       render: (text: any, record: Project) =>
         record.leader?.userId === session?.user.id ? (
           <Button

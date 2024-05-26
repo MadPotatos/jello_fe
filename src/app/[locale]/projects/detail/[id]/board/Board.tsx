@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "@hello-pangea/dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import List from "./List";
 import { usePathname } from "next/navigation";
 import { Button } from "antd";
@@ -20,7 +15,7 @@ interface BoardProps {
 
 const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
   const pathname = usePathname();
-  const projectId = Number(pathname.split("/")[3]);
+  const projectId = Number(pathname.split("/")[4]);
 
   const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;

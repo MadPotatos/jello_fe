@@ -12,6 +12,7 @@ import {
   List,
   message,
   DatePicker,
+  notification,
 } from "antd";
 import { Avatar, Typography } from "antd";
 import { Comment } from "@ant-design/compatible";
@@ -46,6 +47,7 @@ import {
   updateIssue,
 } from "@/app/api/issuesApi";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
 
 const { confirm } = Modal;
 
@@ -71,6 +73,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [showAddSubIssueInput, setShowAddSubIssueInput] = useState(false);
   const [selectedSubIssue, setSelectedSubIssue] = useState<any | null>(null);
   const [isSubIssueModalVisible, setIsSubIssueModalVisible] = useState(false);
+  const t = useTranslations();
 
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -133,7 +136,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
         commentText,
         session?.backendTokens.accessToken
       );
-      message.success("Comment added successfully");
+      notification.success({
+        message: t("issueDetail.addCommentSuccess"),
+      });
       mutate(`comments-${issue.id}`);
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -143,7 +148,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const handleDeleteComment = async (commentId: number) => {
     try {
       await deleteComment(commentId, session?.backendTokens.accessToken);
-      message.success("Comment deleted successfully");
+      notification.success({
+        message: t("issueDetail.deleteCommentSuccess"),
+      });
       mutate(`comments-${issue.id}`);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -189,7 +196,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       mutate(`all-issues-${projectId}`);
       mutate(`issues-${projectId}`);
       setShowAddSubIssueInput(false);
-      message.success("Issue created successfully!");
+      notification.success({
+        message: t("issueDetail.addSubIssueSuccess"),
+      });
     } catch (error) {
       console.error("Error adding sub issue:", error);
     }
@@ -198,15 +207,17 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const handleDeteleIssue = async () => {
     try {
       confirm({
-        title: "Are you sure you want to delete this issue?",
+        title: t("issueDetail.deleteIssueConfirmation"),
         icon: <ExclamationCircleOutlined />,
-        content: "This action cannot be undone",
-        okText: "Yes",
+        content: t("issueDetail.deleteIssueWarning"),
+        okText: t("issueDetail.delete"),
         okButtonProps: { style: { backgroundColor: "#1890ff" } },
-        cancelText: "No",
+        cancelText: t("issueDetail.cancel"),
         onOk: async () => {
           await deleteIssue(issue.id, session?.backendTokens.accessToken);
-          message.success("Issue deleted successfully");
+          notification.success({
+            message: t("issueDetail.deleteIssueSuccess"),
+          });
           onClose();
           mutate(`issues-${projectId}`);
         },
@@ -234,7 +245,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       width={1000}
       footer={[
         <Button type="text" danger onClick={handleDeteleIssue} key="1">
-          Delete Issue
+          {t("issueDetail.deleteIssue")}
         </Button>,
       ]}
     >
@@ -263,7 +274,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 />
               </Form.Item>
               <Form.Item
-                label="Description"
+                label={t("issueDetail.description")}
                 name="descr"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -285,7 +296,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               {isEditingDescription ? (
                 <Form.Item>
                   <Button type="primary" onClick={handleDescriptionSubmit}>
-                    Submit
+                    {t("issueDetail.submit")}
                   </Button>
                 </Form.Item>
               ) : (
@@ -296,7 +307,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               <Form.Item>
                 <div className="flex items-center justify-between">
                   <div className="font-base font-bold mb-3">
-                    Sub Issues: {subIssues?.length}
+                    {t("issueDetail.subIssues")}: {subIssues?.length}
                   </div>
                   <Button
                     type="text"
@@ -364,16 +375,16 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                       rules={[
                         {
                           required: true,
-                          message: "Please enter issue summary",
+                          message: t("issueDetail.validateIssueSummary"),
                         },
                         {
                           max: 100,
-                          message: "Summary must be at most 100 characters",
+                          message: t("issueDetail.maxSummaryLength"),
                         },
                       ]}
                     >
                       <Input
-                        placeholder="What needs to be done?"
+                        placeholder={t("issueDetail.issueSummaryPlaceholder")}
                         variant="borderless"
                         autoFocus
                       />
@@ -382,9 +393,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     <div className="flex gap-2">
                       <Form.Item name="priority">
                         <Select
-                          placeholder="Select priority"
+                          placeholder={t("issueDetail.selectPriority")}
                           style={{ minWidth: "100px" }}
-                          options={priorityOptions}
+                          options={priorityOptions(t)}
                         ></Select>
                       </Form.Item>
 
@@ -404,7 +415,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               </Form.Item>
             )}
             <Form.Item
-              label={`Comments: ${comments?.length}`}
+              label={`${t("issueDetail.comments")}: ${comments?.length}`}
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
             >
@@ -434,13 +445,10 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
 
                       {session?.user.id === comment.userId && (
                         <Popconfirm
-                          title="Are you sure you want to delete this comment?"
+                          title={t("issueDetail.deleteCommentConfirmation")}
                           onConfirm={() => handleDeleteComment(comment.id)}
-                          okText="Yes"
-                          okButtonProps={{
-                            style: { backgroundColor: "#1890ff" },
-                          }}
-                          cancelText="No"
+                          okText={t("issueDetail.delete")}
+                          cancelText={t("issueDetail.cancel")}
                         >
                           <Button
                             type="text"
@@ -461,10 +469,13 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
-                    label="Add Comment"
+                    label={t("issueDetail.addComment")}
                     name="comment"
                     rules={[
-                      { required: true, message: "Please input comment" },
+                      {
+                        required: true,
+                        message: t("issueDetail.validateComment"),
+                      },
                     ]}
                   >
                     <Input.TextArea />
@@ -474,7 +485,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               <Row>
                 <Col span={24} className="text-right">
                   <Button type="primary" htmlType="submit">
-                    Add Comment
+                    {t("issueDetail.addComment")}
                   </Button>
                 </Col>
               </Row>
@@ -487,41 +498,41 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
               <Space direction="vertical" size={8}>
                 {issue.type !== 4 && (
                   <Form.Item
-                    label="Type"
+                    label={t("issueDetail.type")}
                     name="type"
                     labelCol={{ span: 24 }}
                     wrapperCol={{ span: 24 }}
                   >
                     <Select
                       style={{ width: "100%" }}
-                      options={typeOptions}
-                      placeholder="Select Type"
+                      options={typeOptions(t)}
+                      placeholder={t("issueDetail.selectType")}
                       onChange={(value) => handleUpdateIssue("type", value)}
                     />
                   </Form.Item>
                 )}
                 <Form.Item
-                  label="Priority"
+                  label={t("issueDetail.priority")}
                   name="priority"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
                   <Select
                     style={{ width: "100%" }}
-                    placeholder="Select Priority"
-                    options={priorityOptions}
+                    placeholder={t("issueDetail.selectPriority")}
+                    options={priorityOptions(t)}
                     onChange={(value) => handleUpdateIssue("priority", value)}
                   />
                 </Form.Item>
                 <Form.Item
-                  label="Status"
+                  label={t("issueDetail.status")}
                   name="listId"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
                   <Select
                     style={{ width: "100%" }}
-                    placeholder="Select List"
+                    placeholder={t("issueDetail.selectStatus")}
                     onChange={(value) => handleUpdateIssue("listId", value)}
                     options={lists?.map((list: ListType) => ({
                       label: list.name,
@@ -531,14 +542,14 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Form.Item
-                  label="Progress"
+                  label={t("issueDetail.progress")}
                   name="progress"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
                   <Select
                     style={{ width: "100%" }}
-                    placeholder="Select progress"
+                    placeholder={t("issueDetail.selectProgress")}
                     onChange={(value) => handleUpdateIssue("progress", value)}
                     options={[
                       { label: "0%", value: 0 },
@@ -551,7 +562,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Form.Item
-                  label="Due Date"
+                  label={t("issueDetail.dueDate")}
                   name="dueDate"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
@@ -562,12 +573,13 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     }
                     format="DD-MM-YYYY"
                     style={{ width: "100%" }}
+                    placeholder={t("issueDetail.selectDueDate")}
                     onChange={(date) => handleUpdateIssue("dueDate", date)}
                   />
                 </Form.Item>
 
                 <Form.Item
-                  label="Reporter"
+                  label={t("issueDetail.reporter")}
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
@@ -580,7 +592,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Form.Item
-                  label="Assignees"
+                  label={t("issueDetail.assignees")}
                   name="assignees"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
@@ -588,7 +600,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                   <Select
                     mode="multiple"
                     style={{ width: "100%" }}
-                    placeholder="Select Assignees"
+                    placeholder={t("issueDetail.selectAssignees")}
                     onChange={(value) =>
                       handleUpdateIssue("addAssignee", value)
                     }
@@ -605,10 +617,10 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Typography.Text type="secondary">
-                  Updated At: {formattedCreatedAt}
+                  {t("issueDetail.updatedAt")}: {formattedCreatedAt}
                 </Typography.Text>
                 <Typography.Text type="secondary">
-                  Created At: {formattedUpdatedAt}
+                  {t("issueDetail.createdAt")}: {formattedUpdatedAt}
                 </Typography.Text>
               </Space>
             </div>

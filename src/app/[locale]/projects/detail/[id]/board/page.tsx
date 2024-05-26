@@ -14,6 +14,7 @@ import { ClockCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const CompleteSprintModel = dynamic(
   () => import("@/components/CompleteSprintModel"),
@@ -35,6 +36,7 @@ const ProjectDetailPage = () => {
   const [filterUseId, setFilterUserId] = useState<number>();
   const [filterTypes, setFilterTypes] = useState<number[]>([]);
   const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
+  const t = useTranslations();
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -142,7 +144,7 @@ const ProjectDetailPage = () => {
           </div>
           <div className="flex items-center">
             <p className="text-gray-600 text-c-text">
-              <ClockCircleOutlined /> {daysRemaining} days remaining
+              <ClockCircleOutlined /> {daysRemaining} {t("Board.daysRemaining")}
             </p>
             <Divider type="vertical" />
             <Tooltip title="Only the admin can complete the sprint">
@@ -153,13 +155,13 @@ const ProjectDetailPage = () => {
                 onClick={() => setIsCompleteModalVisible(true)}
                 disabled={!isAdmin}
               >
-                Complete Sprint
+                {t("Board.completeSprint")}
               </Button>
             </Tooltip>
           </div>
         </div>
       )}
-      <h2 className="mb-4 text-xl text-c-text">Kanban Board</h2>
+      <h2 className="mb-4 text-xl text-c-text">{t("Board.kanbanBoard")}</h2>
       <Filter
         members={members}
         onSearch={handleSearch}

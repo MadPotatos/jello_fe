@@ -10,12 +10,7 @@ import {
 } from "@ant-design/icons";
 import Issue from "./Issue";
 import { useSession } from "next-auth/react";
-import {
-  getColoredIconByIssueType,
-  getColoredIconByPriority,
-  priorityOptions,
-  typeOptions,
-} from "@/lib/utils";
+import { priorityOptions, typeOptions } from "@/lib/utils";
 
 import { mutate } from "swr";
 import { usePathname } from "next/navigation";
@@ -23,6 +18,7 @@ import { deleteList, updateList } from "@/app/api/listApi";
 import { createIssue } from "@/app/api/issuesApi";
 import { List as ListType } from "@/lib/types";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const IssueDetailModal = dynamic(() => import("@/components/IssueDetail"), {
   ssr: false,
@@ -46,6 +42,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
   const [visible, setVisible] = useState(false);
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
+  const t = useTranslations();
 
   const handleCreateIssueClick = () => {
     setIsCreatingIssue(true);
@@ -77,24 +74,24 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
       await updateList(list.id, newListName);
       setIsEditing(false);
       mutate(`lists-${projectId}`);
-      message.success("List name updated successfully!");
+      message.success(t("Board.updateListSuccess"));
     } catch (error) {
-      message.error("Failed to update list name");
+      message.error(t("Board.updateListFailed"));
     }
   };
 
   const handleDelete = async () => {
     try {
       confirm({
-        title: "Are you sure you want to delete this list?",
+        title: t("Board.deleteListConfirmTitle"),
         icon: <ExclamationCircleOutlined />,
-        content: "This action cannot be undone",
+        content: t("Board.deleteListConfirmContent"),
         okText: "Yes",
         okButtonProps: { style: { backgroundColor: "#1890ff" } },
         cancelText: "No",
         onOk: async () => {
           await deleteList(list.id);
-          message.success("List deleted successfully");
+          message.success(t("Board.deleteListSuccess"));
           mutate(`lists-${projectId}`);
         },
       });
@@ -112,10 +109,10 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`issues-${projectId}`);
       setIsCreatingIssue(false);
-      message.success("Issue created successfully!");
+      message.success(t("Board.issueCreated"));
     } catch (error) {
       console.error("Error creating issue:", error);
-      message.error("Failed to create issue");
+      message.error(t("Board.issueCreateFailed"));
     }
   };
 
@@ -189,11 +186,14 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                 <Form.Item
                   name="summary"
                   rules={[
-                    { required: true, message: "Please enter issue summary" },
+                    {
+                      required: true,
+                      message: t("Board.validateIssueSummary"),
+                    },
                   ]}
                 >
                   <Input
-                    placeholder="What needs to be done?"
+                    placeholder={t("Board.issueSummaryPlaceholder")}
                     variant="borderless"
                   />
                 </Form.Item>
@@ -201,15 +201,15 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                 <div className="flex items-center">
                   <Form.Item name="type">
                     <Select
-                      placeholder="Select issue type"
-                      options={typeOptions}
+                      placeholder={t("Board.issueTypePlaceholder")}
+                      options={typeOptions(t)}
                     ></Select>
                   </Form.Item>
 
                   <Form.Item name="priority" style={{ marginLeft: "10px" }}>
                     <Select
-                      placeholder="Select priority"
-                      options={priorityOptions}
+                      placeholder={t("Board.issuePriorityPlaceholder")}
+                      options={priorityOptions(t)}
                     ></Select>
                   </Form.Item>
                 </div>
@@ -223,14 +223,14 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                     htmlType="submit"
                     style={{ backgroundColor: "#1890ff" }}
                   >
-                    Create Issue
+                    {t("Board.createIssue")}
                   </Button>
                 </div>
               </div>
             </Form>
           ) : (
             <Button type="text" size="large" onClick={handleCreateIssueClick}>
-              + Add Issue
+              {t("Board.addIssue")}
             </Button>
           )}
         </>

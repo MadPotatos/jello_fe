@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Button, Modal, Select, Avatar, Typography, message } from "antd";
+import {
+  Button,
+  Modal,
+  Select,
+  Avatar,
+  Typography,
+  message,
+  notification,
+} from "antd";
 import { useSession } from "next-auth/react";
 import { addMember } from "@/app/api/memberApi";
 import { searchUsers } from "@/app/api/userApi";
 import { Member, User } from "@/lib/types";
 import { mutate } from "swr";
 import { debounce } from "lodash";
+import { useTranslations } from "next-intl";
 
 interface AddMemberModalProps {
   isVisible: boolean;
@@ -23,6 +32,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
   const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const { data: session } = useSession();
+  const t = useTranslations("addMemberModal");
 
   const debouncedSearch = debounce(async (value: string) => {
     try {
@@ -44,7 +54,9 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
           (member) => member.userId === selectedUserId
         );
         if (isAlreadyMember) {
-          message.error("User is already a member");
+          notification.error({
+            message: t("userAlreadyMember"),
+          });
           return;
         }
         await addMember(
@@ -52,34 +64,38 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
           selectedUserId,
           session?.backendTokens.accessToken
         );
-        message.success("Member added successfully");
+        notification.success({
+          message: t("memberAddedSuccess"),
+          description: t("memberAddedDesc"),
+        });
         mutate(`members-${projectId}`);
         setSelectedUserId(null);
         onCancel();
       } catch (error) {
-        message.error("Failed to add member");
+        message.error(t("memberAddFailed"));
       }
     } else {
-      message.error("Please select a user");
+      message.error(t("selectUser"));
     }
   };
+
   return (
     <Modal
-      title="Add Member"
+      title={t("title")}
       open={isVisible}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Cancel
+          {t("cancelButton")}
         </Button>,
         <Button key="add" type="primary" onClick={handleAddMember}>
-          Add Member
+          {t("addButton")}
         </Button>,
       ]}
     >
       <Select
         value={selectedUserId}
-        placeholder="Search user"
+        placeholder={t("placeholder")}
         showSearch
         onSearch={handleUserSearch}
         style={{ width: "100%" }}
@@ -98,11 +114,11 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
         }))}
       />
       <div className="prose mt-4">
-        <Typography.Text strong>Member Capabilities:</Typography.Text>
+        <Typography.Text strong>{t("memberCapabilitiesTitle")}</Typography.Text>
         <ul className="list-disc pl-6">
-          <li>Access project resources and features</li>
-          <li>Contribute to tasks and discussions</li>
-          <li>Invite other members</li>
+          <li>{t("capability1")}</li>
+          <li>{t("capability2")}</li>
+          <li>{t("capability3")}</li>
         </ul>
       </div>
     </Modal>

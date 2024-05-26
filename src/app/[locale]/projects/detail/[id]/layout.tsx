@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { ProjectDetail } from "@/lib/types";
 import { fetchProjectById } from "@/app/api/projectApi";
+import { useTranslations } from "next-intl";
 
 const { Content } = Layout;
 
@@ -16,6 +17,7 @@ interface ProjectLayoutProps {
 }
 
 const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
+  const t = useTranslations("ProjectLayout");
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -27,17 +29,18 @@ const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
 
   const breadcrumbItems = [
     {
-      title: "Home",
+      title: t("home"),
       onClick: () => router.push("/"),
       className: "cursor-pointer hover:text-blue-500",
     },
     {
-      title: "Projects",
+      title: t("projects"),
       onClick: () => router.push(`/projects/${session?.user.id}`),
       className: "cursor-pointer hover:text-blue-500",
     },
-    { title: project ? project.name : "Project" },
+    { title: project ? project.name : t("project") },
   ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar project={project} />
