@@ -1,9 +1,13 @@
 import React from "react";
-import { Image, Layout } from "antd";
+import { Layout } from "antd";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const { Footer: AntFooter } = Layout;
 
 const Footer = () => {
+  const t = useTranslations("Footer");
+
   return (
     <AntFooter className="bg-white border-t shadow">
       <div className="px-4 pt-8 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
@@ -11,22 +15,18 @@ const Footer = () => {
           <div className="sm:col-span-2">
             <Image src="/images/logo.png" alt="logo" width={150} height={60} />
             <div className="mt-6 lg:max-w-sm">
-              <p className="text-sm text-gray-800">
-                Helps your team to build the best projects with the best tools
-              </p>
+              <p className="text-sm text-gray-800">{t("description")}</p>
               <p className="mt-4 text-sm text-gray-800">
-                Collaborate, manage projects, and reach new productivity peaks.
-                From high rises to the home office, the way your team works is
-                unique—accomplish it all with Jello.
+                {t("additionalDescription")}
               </p>
             </div>
           </div>
           <div className="space-y-2 text-sm">
             <p className="text-base font-bold tracking-wide text-gray-900">
-              Contacts
+              {t("contacts")}
             </p>
             <div className="flex">
-              <p className="mr-1 text-gray-800">Phone:</p>
+              <p className="mr-1 text-gray-800">{t("phone")}:</p>
               <a
                 aria-label="My phone"
                 title="My phone"
@@ -36,7 +36,7 @@ const Footer = () => {
               </a>
             </div>
             <div className="flex">
-              <p className="mr-1 text-gray-800">Email:</p>
+              <p className="mr-1 text-gray-800">{t("email")}:</p>
               <a
                 aria-label="My email"
                 title="My email"
@@ -46,7 +46,7 @@ const Footer = () => {
               </a>
             </div>
             <div className="flex">
-              <p className="mr-1 text-gray-800">Address:</p>
+              <p className="mr-1 text-gray-800">{t("address")}:</p>
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -54,13 +54,13 @@ const Footer = () => {
                 title="Our address"
                 className="transition-colors duration-300 text-blue-600 hover:text-deep-blue-800"
               >
-                202 Cau Bay Street, Hanoi
+                {t("addressDetail")}
               </a>
             </div>
           </div>
           <div>
             <span className="text-base font-bold tracking-wide text-gray-900">
-              Social
+              {t("social")}
             </span>
             <div className="flex items-center mt-1 space-x-3">
               <a
@@ -89,22 +89,19 @@ const Footer = () => {
               </a>
             </div>
             <p className="mt-4 text-sm text-gray-500">
-              An IT student that helps teams to build the best projects with the
-              best tools
+              {t("studentDescription")}
             </p>
           </div>
         </div>
         <div className="flex flex-col-reverse justify-between pt-5 pb-10 border-t lg:flex-row">
-          <p className="text-sm text-gray-600">
-            © Copyright 2024 Nguyen Tien Viet. All rights reserved.
-          </p>
+          <p className="text-sm text-gray-600">{t("copyright")}</p>
           <ul className="flex flex-col mb-3 space-y-2 lg:mb-0 sm:space-y-0 sm:space-x-5 sm:flex-row">
             <li>
               <a
                 href="/"
                 className="text-sm text-gray-600 transition-colors duration-300 hover:text-deep-purple-accent-400"
               >
-                F.A.Q
+                {t("faq")}
               </a>
             </li>
             <li>
@@ -112,7 +109,7 @@ const Footer = () => {
                 href="/"
                 className="text-sm text-gray-600 transition-colors duration-300 hover:text-deep-purple-accent-400"
               >
-                Privacy Policy
+                {t("privacyPolicy")}
               </a>
             </li>
             <li>
@@ -120,7 +117,7 @@ const Footer = () => {
                 href="/"
                 className="text-sm text-gray-600 transition-colors duration-300 hover:text-deep-purple-accent-400"
               >
-                Terms &amp; Conditions
+                {t("termsConditions")}
               </a>
             </li>
           </ul>

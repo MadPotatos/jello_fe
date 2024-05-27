@@ -1,14 +1,14 @@
-// UserPopover.tsx
-
 import React from "react";
 import { Avatar, Popover } from "antd";
+import { useTranslations } from "next-intl";
 
 interface UserPopoverProps {
   user: any;
-  children: React.ReactNode; // Accept children as props
+  children: React.ReactNode;
 }
 
 const UserPopover: React.FC<UserPopoverProps> = ({ user, children }) => {
+  const t = useTranslations("UserPopover");
   return (
     <Popover
       content={
@@ -31,7 +31,7 @@ const UserPopover: React.FC<UserPopoverProps> = ({ user, children }) => {
                 className="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
                 href={`/user/${user.userId}`}
               >
-                View Profile
+                {t("profile")}
               </a>
             </div>
           </div>
