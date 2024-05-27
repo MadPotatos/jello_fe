@@ -577,7 +577,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     onChange={(date) => handleUpdateIssue("dueDate", date)}
                   />
                 </Form.Item>
-
                 <Form.Item
                   label={t("issueDetail.reporter")}
                   labelCol={{ span: 24 }}
