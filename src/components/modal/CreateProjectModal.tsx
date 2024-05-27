@@ -46,7 +46,6 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
       cancelText={t("cancelText")}
       onCancel={onCancel}
       onOk={() => form.submit()}
-      okButtonProps={{ style: { backgroundColor: "#1890ff" } }}
     >
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Item label={t("projectImage")}>

@@ -230,10 +230,7 @@ const Profile = () => {
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
                 <div key={project.id} className="mb-4">
-                  <Card
-                    className="shadow-lg border border-gray-300 rounded-lg"
-                    style={{ minWidth: "320px" }}
-                  >
+                  <Card className="shadow-lg border border-gray-300 rounded-lg w-72">
                     <div className="flex flex-col items-center">
                       <Title level={4} className="mb-2">
                         {project.name}

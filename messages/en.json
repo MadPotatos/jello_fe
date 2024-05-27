@@ -399,6 +399,10 @@
     "goal": "Sprint Goal",
     "updateSuccess": "Sprint updated successfully",
     "updateFailed": "Failed to update sprint. Please try again."
+  },
+  "NotMember":{     
+    "notMemberDesc" :"You are not a member of this project.",
+    "goBackHome" :"Go back to home"
   }
 
 

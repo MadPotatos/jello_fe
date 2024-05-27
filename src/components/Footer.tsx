@@ -1,6 +1,7 @@
 import React from "react";
-import { Image, Layout } from "antd";
+import { Layout } from "antd";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const { Footer: AntFooter } = Layout;
 
@@ -12,13 +13,7 @@ const Footer = () => {
       <div className="px-4 pt-8 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
         <div className="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2">
-            <Image
-              src="/images/logo.png"
-              alt="logo"
-              width={150}
-              height={60}
-              preview={false}
-            />
+            <Image src="/images/logo.png" alt="logo" width={150} height={60} />
             <div className="mt-6 lg:max-w-sm">
               <p className="text-sm text-gray-800">{t("description")}</p>
               <p className="mt-4 text-sm text-gray-800">

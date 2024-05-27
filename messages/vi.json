@@ -401,7 +401,12 @@
     "goal": "Mục tiêu Sprint",
     "updateSuccess": "Cập nhật sprint thành công",
     "updateFailed": "Không thể cập nhật sprint. Vui lòng thử lại."
+  },
+   "NotMember":{     
+    "notMemberDesc" :"Bạn không phải là thành viên của dự án này.",
+    "goBackHome" :"Quay lại trang chủ"
   }
+
 }
 
 
