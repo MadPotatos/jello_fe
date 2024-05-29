@@ -41,27 +41,47 @@ const ProjectBacklogPage: React.FC = () => {
   );
 
   const onDragEnd = async (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination || !sprints || !issues) return;
+
     // Extract numeric ID from the draggable ID
     const id = parseInt(result.draggableId.split("-")[1], 10);
+    const sourceSprintId = parseInt(
+      result.source.droppableId.split("-")[1],
+      10
+    );
+    const destinationSprintId = parseInt(
+      result.destination.droppableId.split("-")[1],
+      10
+    );
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
+
+    const updatedIssues = { ...issues };
+    const [movedIssue] = updatedIssues[sourceSprintId].splice(sourceIndex, 1);
+    updatedIssues[destinationSprintId].splice(destinationIndex, 0, movedIssue);
+
+    mutate(`sprint-issues-${projectId}`, updatedIssues, false);
+
     const body = {
-      id, // The id of the issue being reordered
+      id,
       s: {
-        sId: parseInt(result.source.droppableId.split("-")[1], 10), // The source list ID
-        order: result.source.index, // The current order of the issue in the source list
+        sId: sourceSprintId,
+        order: sourceIndex,
       },
       d: {
-        dId: parseInt(result.destination.droppableId.split("-")[1], 10), // The destination list ID
-        newOrder: result.destination.index, // The new order of the issue in the destination list
+        dId: destinationSprintId,
+        newOrder: destinationIndex,
       },
       type: "sprint",
     };
+
     try {
       await reorderIssues(body);
       await updateIssueDate(body.id);
       mutate(`sprint-issues-${projectId}`);
     } catch (error) {
       console.error("Error reordering:", error);
+      mutate(`sprint-issues-${projectId}`);
     }
   };
 
