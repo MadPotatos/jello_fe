@@ -4,33 +4,48 @@ import List from "./List";
 import { usePathname } from "next/navigation";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import { createList } from "@/app/api/listApi";
 import { reorderIssues, updateIssueDate } from "@/app/api/issuesApi";
+
 interface BoardProps {
   lists: any[];
   issues: any;
   sprintId: number | undefined;
 }
 
-const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
+const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
 
   const onDragEnd = async (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination || !lists || !issues) return;
 
     // Extract numeric ID from the draggable ID
     const id = parseInt(result.draggableId.split("-")[1], 10);
+    const sourceListId = parseInt(result.source.droppableId.split("-")[1], 10);
+    const destinationListId = parseInt(
+      result.destination.droppableId.split("-")[1],
+      10
+    );
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
+
+    const updatedIssues = { ...issues };
+    const [movedIssue] = updatedIssues[sourceListId].splice(sourceIndex, 1);
+    updatedIssues[destinationListId].splice(destinationIndex, 0, movedIssue);
+
+    mutate(`issues-${projectId}`, updatedIssues, false);
+
     const body = {
-      id, // The id of the issue being reordered
+      id,
       s: {
-        sId: parseInt(result.source.droppableId.split("-")[1], 10), // The source list ID
-        order: result.source.index, // The current order of the issue in the source list
+        sId: sourceListId,
+        order: sourceIndex,
       },
       d: {
-        dId: parseInt(result.destination.droppableId.split("-")[1], 10), // The destination list ID
-        newOrder: result.destination.index, // The new order of the issue in the destination list
+        dId: destinationListId,
+        newOrder: destinationIndex,
       },
       type: "list",
     };
@@ -41,6 +56,7 @@ const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
       mutate(`issues-${projectId}`);
     } catch (error) {
       console.error("Error reordering:", error);
+      mutate(`issues-${projectId}`);
     }
   };
 
@@ -52,6 +68,8 @@ const Board: React.FC<BoardProps> = ({ lists, issues, sprintId }) => {
       console.error("Error creating list:", error);
     }
   };
+
+  if (!lists || !issues) return <div>Loading...</div>;
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

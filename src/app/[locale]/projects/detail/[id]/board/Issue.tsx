@@ -22,6 +22,7 @@ const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="bg-white hover:bg-gray-200 shadow-md mb-2 group"
+          style={{ maxWidth: "300px" }}
           onClick={() => onClick(issue)}
         >
           <div className="p-3">

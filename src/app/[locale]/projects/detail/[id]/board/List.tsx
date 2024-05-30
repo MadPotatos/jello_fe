@@ -163,7 +163,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                   <Issue
                     key={issue.id}
                     issue={issue}
-                    index={innerIndex}
+                    index={issue.listOrder}
                     onClick={() => handleIssueClick(issue)}
                   />
                 ))
