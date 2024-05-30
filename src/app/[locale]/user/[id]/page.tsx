@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Project, User } from "@/lib/types";
 import { Typography } from "antd";
 import useSWR, { mutate } from "swr";
@@ -29,7 +29,7 @@ const Modal = dynamic(() => import("antd").then((mod) => mod.Modal), {
   ssr: false,
 });
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const { Item } = Form;
 
@@ -226,22 +226,40 @@ const Profile = () => {
           <h4 className="text-xl text-gray-900 font-bold mb-3">
             {t("projects")}
           </h4>
-          <div className="overflow-x-scroll max-w-3xl flex flex-row  space-x-4">
+          <div className="overflow-x-scroll max-w-3xl flex flex-row space-x-4">
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
-                <div key={project.id} className="mb-4">
+                <div key={project.id} className="mb-6 flex-1 flex-grow">
                   <Card className="shadow-lg border border-gray-300 rounded-lg w-72">
-                    <div className="flex flex-col items-center">
-                      <Title level={4} className="mb-2">
+                    <div className="flex flex-col items-center gap-3">
+                      <Title level={4} className="text-center flex-grow flex-1">
                         {project.name}
                       </Title>
                       <Image
                         alt={project.name}
                         src={project.image || "/images/logo2.jpeg"}
+                        height={250}
+                        width={250}
                         preview={false}
-                        className="w-full object-cover mb-4"
+                        className="object-cover rounded-lg"
                       />
-                      <Text className="mb-4">{project.description}</Text>
+                      <div>
+                        <Paragraph
+                          ellipsis={{
+                            rows: 3,
+                            expandable: "collapsible",
+                            symbol(expanded) {
+                              return expanded ? (
+                                <MinusOutlined />
+                              ) : (
+                                <PlusOutlined />
+                              );
+                            },
+                          }}
+                        >
+                          {project.description}
+                        </Paragraph>
+                      </div>
                       <div className="flex items-center">
                         <span className="font-semibold"> {t("leader")}</span>
                         {project.leader && (

@@ -304,7 +304,7 @@ const SprintCard: React.FC<SprintProps> = ({
                 <SprintIssues
                   key={issue.id}
                   issue={issue}
-                  issueIndex={issueIndex}
+                  issueIndex={issue.sprintOrder}
                   onClick={() => handleIssueClick(issue)}
                 />
               )}
@@ -393,7 +393,6 @@ const SprintCard: React.FC<SprintProps> = ({
           block
           className="text-left"
           onClick={() => setIsCreatingIssue(true)}
-          disabled={!isAdmin}
         >
           {t("Backlog.addIssue")}
         </Button>
