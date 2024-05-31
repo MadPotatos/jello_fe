@@ -1,3 +1,5 @@
+import { SprintStatus } from "./enum";
+
 export type User = {
   id: number;
   name: string;
@@ -14,6 +16,16 @@ export type Project = {
   repo?: string;
   description?: string;
   leader?: Leader;
+};
+
+export type ProjectDetail = {
+  id: number;
+  name: string;
+  image?: string;
+  repo?: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type Leader = {
@@ -41,8 +53,6 @@ export type List = {
   order: number;
   createdAt: Date;
   updatedAt: Date;
-  issues?: Issue[];
-  project?: Project;
   projectId: number;
 };
 
@@ -74,12 +84,42 @@ export type Assignee = {
   projectId: number;
 };
 
-export type Comment = {
+export type IssueComment = {
   id: number;
   descr: string;
   createdAt: Date;
-  issue?: Issue;
-  issueId: number;
-  user?: User;
   userId: number;
+  name: string;
+  avatar: string;
+};
+
+export type Repo = {
+  name: string;
+  url: string;
+  description: string;
+  owner: string;
+  language: string;
+  stars: number;
+  forks: number;
+};
+
+export type PullRequest = {
+  title: string;
+  url: string;
+  user: string;
+  state: string;
+  createdAt: string;
+  head: string;
+  base: string;
+};
+
+export type Sprint = {
+  id: number;
+  name: string;
+  goal?: string;
+  order: number;
+  startDate?: Date;
+  endDate?: Date;
+  createdAt: Date;
+  status: SprintStatus;
 };

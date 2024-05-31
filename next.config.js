@@ -11,4 +11,12 @@ const nextConfig = {
     }
 }
 
-module.exports = nextConfig
+const withBundleAnalyzer = require('@next/bundle-analyzer')()
+const createNextIntlPlugin = require('next-intl/plugin');
+ 
+const withNextIntl = createNextIntlPlugin();
+ 
+ 
+module.exports = 
+  process.env.ANALYZE === 'true' ? withBundleAnalyzer(withNextIntl(nextConfig)) : withNextIntl(nextConfig);
+

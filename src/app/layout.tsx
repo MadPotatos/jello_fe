@@ -1,42 +1,39 @@
-"use client";
-import AppBar from "@/components/Header";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import { usePathname } from "next/navigation";
-import Footer from "@/components/Footer";
 import { Layout } from "antd";
-import { Content } from "antd/es/layout/layout";
-
-
+import { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { unstable_setRequestLocale } from "next-intl/server";
 
 interface Props {
   children: React.ReactNode;
+  params: { locale: string };
 }
 
-export default function RootLayout(props: Props) {
-  const routesWithoutAppBar = ["/auth/login", "/auth/signup"];
-  const pathName = usePathname();
+export const metadata: Metadata = {
+  title: "Jello",
+  description: "Jello: Project management tool for teams.",
+  icons: {
+    icon: "/images/small-icon.png",
+  },
+};
+
+export default async function RootLayout({
+  children,
+  params: { locale },
+}: Props) {
+  const messages = await getMessages();
+  unstable_setRequestLocale(locale);
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
-        <Layout style={{minHeight:'100vh'}}>
-        <Providers>
-          {!routesWithoutAppBar.includes(pathName) ? (
-            <>
-              <AppBar />
-              <Content >
-              {props.children}
-            </Content>
-            <Footer />
-          
-            </>
-          ) : (
-            props.children
-          )}
-          
-      
-        </Providers>
-        </Layout>
+        <NextIntlClientProvider messages={messages}>
+          <Layout style={{ minHeight: "100vh" }}>
+            <Providers messages={messages}>{children}</Providers>
+          </Layout>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
