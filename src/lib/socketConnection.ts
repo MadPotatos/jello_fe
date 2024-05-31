@@ -8,7 +8,8 @@ let socket: Socket | null = null;
 
 export const connectSocket = (userId: string | number) => {
   if (!socket) {
-    socket = io(Backend_URL, {
+    const backendUrl = Backend_URL || "";
+    socket = io(backendUrl, {
       query: {
         userId,
       },
