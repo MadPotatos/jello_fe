@@ -43,7 +43,7 @@ const SignupPage = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
-      <div className="px-14 py-6 shadow bg-white rounded-md flex flex-col gap-4 items-center">
+      <div className="px-16 py-6 shadow bg-white rounded-md flex flex-col gap-4 items-center">
         <Image
           src="/images/logo2.jpeg"
           preview={false}

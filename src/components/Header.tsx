@@ -66,7 +66,7 @@ const AppBar = () => {
         <Menu
           mode="horizontal"
           theme="light"
-          className="flex ml-6"
+          className="flex ml-6 gap-1"
           items={items}
         />
         <div className="flex gap-4 ml-auto  items-center">
