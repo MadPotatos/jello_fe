@@ -229,7 +229,7 @@ const AllIssuesListPage = () => {
       ),
       dataIndex: "reporter",
       key: "reporter",
-      width: "15%",
+      width: "210px",
       render: (text: string, record: any) => (
         <div className="flex items-center">
           <Avatar
@@ -245,7 +245,7 @@ const AllIssuesListPage = () => {
       title: t("progress"),
       dataIndex: "progress",
       key: "progress",
-      width: "15%",
+      width: "210px",
       render: (text: string, record: any) => (
         <Progress percent={record.progress} status="active" />
       ),

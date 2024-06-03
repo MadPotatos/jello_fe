@@ -260,17 +260,6 @@ const Profile = () => {
                           {project.description}
                         </Paragraph>
                       </div>
-                      <div className="flex items-center mt-auto mb-3">
-                        <span className="font-semibold"> {t("leader")}</span>
-                        {project.leader && (
-                          <Avatar
-                            src={project.leader.avatar}
-                            size={32}
-                            className="ml-2"
-                          />
-                        )}
-                        <Text className="ml-2">{project.leader?.name}</Text>
-                      </div>
                     </div>
                   </Card>
                 </div>
