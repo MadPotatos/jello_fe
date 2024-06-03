@@ -15,10 +15,10 @@ const ContactPage = () => {
             <p className="text-base font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-200">
               {t("contact")}
             </p>
-            <h2 className="font-heading mb-4 font-bold tracking-tight text-gray-900 dark:text-white text-3xl sm:text-5xl">
+            <h2 className="font-heading mb-4 font-bold tracking-tight text-gray-900 text-3xl sm:text-5xl">
               {t("getInTouch")}
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-xl text-gray-600 dark:text-slate-400">
+            <p className="mx-auto mt-4 max-w-3xl text-xl text-gray-600">
               {t("inquiriesQuestions")}
             </p>
           </div>
@@ -26,7 +26,7 @@ const ContactPage = () => {
         <div className="flex items-stretch justify-center">
           <div className="grid md:grid-cols-2">
             <div className="h-full pr-6">
-              <p className="mt-3 mb-12 text-lg text-gray-600 dark:text-slate-400">
+              <p className="mt-3 mb-12 text-lg text-gray-600">
                 {t("haveQuestions")}
               </p>
               <ul className="mb-6 md:mb-0">
@@ -52,12 +52,8 @@ const ContactPage = () => {
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
                       {t("ourAddress")}
                     </h3>
-                    <p className="text-gray-600 dark:text-slate-400">
-                      {t("addressLine1")}
-                    </p>
-                    <p className="text-gray-600 dark:text-slate-400">
-                      {t("addressLine2")}
-                    </p>
+                    <p className="text-gray-600">{t("addressLine1")}</p>
+                    <p className="text-gray-600">{t("addressLine2")}</p>
                   </div>
                 </li>
                 <li className="flex">
@@ -80,7 +76,7 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div className="ml-4 mb-4">
-                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900">
                       {t("contactInfo")}
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
@@ -110,7 +106,7 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div className="ml-4 mb-4">
-                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900">
                       {t("workingHours")}
                     </h3>
                     <p className="text-gray-600 dark:text-slate-400">
@@ -142,7 +138,7 @@ const ContactPage = () => {
                         id="name"
                         autoComplete="given-name"
                         placeholder={t("yourName")}
-                        className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
+                        className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md sm:mb-0"
                         name="name"
                       />
                     </div>
@@ -158,7 +154,7 @@ const ContactPage = () => {
                         id="email"
                         autoComplete="email"
                         placeholder={t("yourEmail")}
-                        className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
+                        className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md sm:mb-0"
                         name="email"
                       />
                     </div>
@@ -174,7 +170,7 @@ const ContactPage = () => {
                       id="textarea"
                       name="textarea"
                       placeholder={t("writeMessage")}
-                      className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
+                      className="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md sm:mb-0"
                     ></textarea>
                   </div>
                 </div>

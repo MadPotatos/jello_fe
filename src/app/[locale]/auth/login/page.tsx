@@ -39,12 +39,13 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
-      <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
+      <div className="px-14 py-8 shadow bg-white rounded-md flex flex-col gap-4 items-center">
         <Image
           src="/images/logo2.jpeg"
           preview={false}
           alt="logo"
-          style={{ width: "200px", height: "auto", marginBottom: "20px" }}
+          width={150}
+          height={150}
         />
         <h2 className="text-2xl font-bold mb-4">{t("welcome")}</h2>
         <Form
@@ -72,7 +73,7 @@ const LoginPage = () => {
               prefix={<MailOutlined />}
               placeholder="Email"
               onChange={(e) => (email.current = e.target.value)}
-              style={{ height: "60px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
 
@@ -90,7 +91,7 @@ const LoginPage = () => {
               prefix={<LockOutlined />}
               placeholder={t("password")}
               onChange={(e) => (pass.current = e.target.value)}
-              style={{ height: "60px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
 
@@ -100,7 +101,7 @@ const LoginPage = () => {
               htmlType="submit"
               block
               style={{
-                minHeight: "60px",
+                minHeight: "40px",
                 fontSize: "16px",
                 fontWeight: "bold",
               }}
@@ -109,7 +110,7 @@ const LoginPage = () => {
             </Button>
           </Form.Item>
         </Form>
-        <p className="mt-4 text-base text-gray-700">
+        <p className="text-base text-gray-700">
           {t("dontHaveAccount")}
           <a
             className="ml-2 text-blue-500"

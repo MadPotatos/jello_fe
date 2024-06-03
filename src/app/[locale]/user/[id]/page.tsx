@@ -226,13 +226,13 @@ const Profile = () => {
           <h4 className="text-xl text-gray-900 font-bold mb-3">
             {t("projects")}
           </h4>
-          <div className="overflow-x-scroll max-w-3xl flex flex-row space-x-4">
+          <div className="overflow-x-scroll max-w-2xl flex flex-row space-x-4">
             {projects && projects.length > 0 ? (
               projects.map((project: Project) => (
-                <div key={project.id} className="mb-6 flex-1 flex-grow">
-                  <Card className="shadow-lg border border-gray-300 rounded-lg w-72">
-                    <div className="flex flex-col items-center gap-3">
-                      <Title level={4} className="text-center flex-grow flex-1">
+                <div key={project.id} className="mb-6 flex-shrink-0">
+                  <Card className="shadow-lg border border-gray-300 rounded-lg w-72 flex flex-col h-full">
+                    <div className="flex flex-col items-center gap-3 h-full">
+                      <Title level={4} className="text-center flex-grow">
                         {project.name}
                       </Title>
                       <Image
@@ -243,7 +243,7 @@ const Profile = () => {
                         preview={false}
                         className="object-cover rounded-lg"
                       />
-                      <div>
+                      <div className="flex-grow">
                         <Paragraph
                           ellipsis={{
                             rows: 3,
@@ -260,7 +260,7 @@ const Profile = () => {
                           {project.description}
                         </Paragraph>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center mt-auto mb-3">
                         <span className="font-semibold"> {t("leader")}</span>
                         {project.leader && (
                           <Avatar

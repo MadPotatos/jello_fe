@@ -307,9 +307,9 @@
     "status": "Status",
     "sprint": "Sprint",
     "assignee": "Assignee",
-    "created": "Created",
-    "updated": "Updated",
-    "reporter": "Reporter"
+    "dueDate": "Due",
+    "reporter": "Reporter",
+    "progress": "Progress"
   },
    "pullRequests": {
     "date": "Date",

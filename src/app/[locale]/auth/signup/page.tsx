@@ -43,12 +43,13 @@ const SignupPage = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-cyan-300 to-sky-600">
-      <div className="px-20 py-10 shadow bg-white rounded-md flex flex-col gap-4 items-center">
+      <div className="px-14 py-6 shadow bg-white rounded-md flex flex-col gap-4 items-center">
         <Image
           src="/images/logo2.jpeg"
           preview={false}
           alt="logo"
-          style={{ width: "200px", height: "auto", marginBottom: "20px" }}
+          width={150}
+          height={150}
         />
         <h2 className="text-2xl font-bold mb-4">{t("signUp")}</h2>
         <Form
@@ -65,7 +66,7 @@ const SignupPage = () => {
             <Input
               prefix={<UserOutlined />}
               placeholder={t("fullName")}
-              style={{ minHeight: "50px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
           <Form.Item
@@ -85,7 +86,7 @@ const SignupPage = () => {
             <Input
               prefix={<MailOutlined />}
               placeholder="Email"
-              style={{ minHeight: "50px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
           <Form.Item
@@ -101,7 +102,7 @@ const SignupPage = () => {
             <Input.Password
               prefix={<LockOutlined />}
               placeholder="Password"
-              style={{ minHeight: "50px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
           <Form.Item
@@ -126,7 +127,7 @@ const SignupPage = () => {
             <Input.Password
               prefix={<LockOutlined />}
               placeholder={t("confirmPassword")}
-              style={{ minHeight: "50px", fontSize: "16px" }}
+              style={{ minHeight: "40px" }}
             />
           </Form.Item>
           <Form.Item>
@@ -135,7 +136,7 @@ const SignupPage = () => {
               htmlType="submit"
               block
               style={{
-                minHeight: "50px",
+                minHeight: "40px",
                 fontSize: "16px",
                 fontWeight: "bold",
               }}
@@ -145,7 +146,7 @@ const SignupPage = () => {
           </Form.Item>
         </Form>
 
-        <p className="mt-4 text-base text-gray-700">
+        <p className="text-base text-gray-700">
           {t("alreadyHaveAccount")}
           <a
             className="ml-2 text-blue-500"
