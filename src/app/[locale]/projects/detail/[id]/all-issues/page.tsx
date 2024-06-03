@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import Filter from "../Filter";
 import { fetchAllIssues } from "@/app/api/issuesApi";
-import { Avatar, Spin, Table, Tag } from "antd";
+import { Avatar, Spin, Table, Tag, Progress } from "antd";
 import { List as ListType } from "@/lib/types";
 import dayjs from "dayjs";
 import {
@@ -203,31 +203,22 @@ const AllIssuesListPage = () => {
       title: (
         <span className="flex items-center gap-3">
           <CalendarOutlined />
-          {t("created")}
+          {t("dueDate")}
         </span>
       ),
-      dataIndex: "createdAt",
-      key: "createdAt",
+      dataIndex: "dueDate",
+      key: "dueDate",
       render: (text: string, record: any) => (
-        <span>{dayjs(record.createdAt).format("DD/MM/YYYY")}</span>
-      ),
-      sorter: (a: any, b: any) =>
-        dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
-    },
-    {
-      title: (
-        <span className="flex items-center gap-3">
-          <CalendarOutlined />
-          {t("updated")}
+        <span>
+          {record.dueDate ? dayjs(record.dueDate).format("DD/MM/YYYY") : ""}
         </span>
       ),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (text: string, record: any) => (
-        <span>{dayjs(record.updatedAt).format("DD/MM/YYYY")}</span>
-      ),
-      sorter: (a: any, b: any) =>
-        dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
+      sorter: (a: any, b: any) => {
+        if (!a.dueDate && !b.dueDate) return 0;
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return dayjs(a.dueDate).unix() - dayjs(b.dueDate).unix();
+      },
     },
     {
       title: (
@@ -238,6 +229,7 @@ const AllIssuesListPage = () => {
       ),
       dataIndex: "reporter",
       key: "reporter",
+      width: "15%",
       render: (text: string, record: any) => (
         <div className="flex items-center">
           <Avatar
@@ -248,6 +240,16 @@ const AllIssuesListPage = () => {
           <span>{record.User.name}</span>
         </div>
       ),
+    },
+    {
+      title: t("progress"),
+      dataIndex: "progress",
+      key: "progress",
+      width: "15%",
+      render: (text: string, record: any) => (
+        <Progress percent={record.progress} status="active" />
+      ),
+      sorter: (a: any, b: any) => a.progress - b.progress,
     },
   ];
 
@@ -280,6 +282,7 @@ const AllIssuesListPage = () => {
           rowKey="id"
           pagination={{ pageSize: 10 }}
           bordered
+          scroll={{ x: "max-content" }}
           rowClassName={(record) =>
             record.id === selectedRowKey ? "bg-blue-100" : ""
           }
