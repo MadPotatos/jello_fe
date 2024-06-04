@@ -22,15 +22,12 @@ const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="bg-white hover:bg-gray-200 shadow-md mb-2 group"
-          style={{ maxWidth: "300px" }}
           onClick={() => onClick(issue)}
         >
           <div className="p-3">
             <div className="flex flex-col ">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-base text-gray-900">
-                  {issue.summary}
-                </span>
+                <span className="text-base text-gray-900">{issue.summary}</span>
                 {issue.children > 0 ? <ApartmentOutlined /> : <div> </div>}
               </div>
               <div className="mt-5 flex items-center justify-between">

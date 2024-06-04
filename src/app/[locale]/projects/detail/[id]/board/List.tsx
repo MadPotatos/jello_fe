@@ -112,7 +112,6 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`issues-${projectId}`);
       setIsCreatingIssue(false);
-      message.success(t("Board.issueCreated"));
     } catch (error) {
       console.error("Error creating issue:", error);
       message.error(t("Board.issueCreateFailed"));
