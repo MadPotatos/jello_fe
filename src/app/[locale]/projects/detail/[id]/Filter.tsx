@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Input, Avatar, Button, Checkbox, MenuProps } from "antd";
+import { Input, Avatar, Button, Checkbox, MenuProps, Tooltip } from "antd";
 import { UserAddOutlined, FilterOutlined } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 import { Member } from "@/lib/types";
 import dynamic from "next/dynamic";
 import { priorityOptions, typeOptions } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 const AddMemberModal = dynamic(
   () => import("@/components/modal/AddMemberModal"),
@@ -38,6 +39,7 @@ const Filter: React.FC<FilterProps> = ({
   onClearFilter,
 }) => {
   const t = useTranslations();
+  const { data: session } = useSession();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [filtering, setFiltering] = useState(false);
@@ -45,6 +47,9 @@ const Filter: React.FC<FilterProps> = ({
   const [selectedPriorities, setSelectedPriorities] = useState<number[]>([]);
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
+  const isAdmin = members?.some(
+    (member) => member.userId === session?.user?.id && member.isAdmin
+  );
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -145,14 +150,17 @@ const Filter: React.FC<FilterProps> = ({
             ))}
           </Avatar.Group>
         </div>
-        <Button
-          type="text"
-          shape="circle"
-          icon={<UserAddOutlined />}
-          size="large"
-          style={{ marginLeft: "10px", backgroundColor: "#d8d9dc" }}
-          onClick={showModal}
-        />
+        <Tooltip title={t("Filter.addMember")}>
+          <Button
+            type="text"
+            shape="circle"
+            icon={<UserAddOutlined />}
+            disabled={!isAdmin}
+            size="large"
+            style={{ marginLeft: "10px", backgroundColor: "#d8d9dc" }}
+            onClick={showModal}
+          />
+        </Tooltip>
         {filtering && (
           <Button
             type="text"

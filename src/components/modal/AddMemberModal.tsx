@@ -118,7 +118,6 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
         <ul className="list-disc pl-6">
           <li>{t("capability1")}</li>
           <li>{t("capability2")}</li>
-          <li>{t("capability3")}</li>
         </ul>
       </div>
     </Modal>

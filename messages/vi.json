@@ -200,7 +200,8 @@
     "searchIssues": "Tìm kiếm Issue",
     "type": "Loại",
     "priority": "Ưu tiên",
-    "clearFilter": "Xóa bộ lọc"
+    "clearFilter": "Xóa bộ lọc",
+    "addMember": "Chỉ Admin mới có thể thêm thành viên vào dự án"
   },
     "TypeOptions": {
     "task": "Công việc",

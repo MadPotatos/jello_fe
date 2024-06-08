@@ -198,7 +198,8 @@
     "searchIssues": "Search issues",
     "type": "Type",
     "priority": "Priority",
-    "clearFilter": "Clear Filter"
+    "clearFilter": "Clear Filter",
+    "addMember": "Only the admin can add members to the project"
   },
    "TypeOptions": {
     "task": "Task",
