@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Input, Button, Form, message, Avatar } from "antd";
+import { Input, Button, Form, message, Avatar, Modal } from "antd";
 import { Member, ProjectDetail } from "@/lib/types";
 import useSWR, { mutate } from "swr";
 import {
@@ -14,23 +14,21 @@ import { fetchMembers } from "@/app/api/memberApi";
 import { validateRepository } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-
-const UserPopover = dynamic(() => import("@/components/UserPopover"), {
-  ssr: false,
-});
+import { EditTwoTone } from "@ant-design/icons";
 
 const UploadImage = dynamic(() => import("@/components/UploadImage"), {
   ssr: false,
 });
 
-const Modal = dynamic(() => import("antd").then((mod) => mod.Modal), {
+const MembersModal = dynamic(() => import("@/components/modal/MembersModal"), {
   ssr: false,
 });
 
 const ProjectSettingPage = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [isMembersModalVisible, setIsMembersModalVisible] = useState(false);
   const t = useTranslations("projectSettings");
 
   const projectId: number = parseInt(pathname.split("/")[4]);
@@ -70,7 +68,7 @@ const ProjectSettingPage = () => {
       }
       await updateProjectImage(id, image, session?.backendTokens.accessToken);
       message.success(t("imageUpdateSuccess"));
-      setIsModalVisible(false);
+      setIsImageModalVisible(false);
       mutate(`project-${projectId}`);
     } catch (error) {
       console.error("Error updating image:", error);
@@ -78,8 +76,12 @@ const ProjectSettingPage = () => {
     }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleCancelImageModal = () => {
+    setIsImageModalVisible(false);
+  };
+
+  const handleCancelMembersModal = () => {
+    setIsMembersModalVisible(false);
   };
 
   useEffect(() => {
@@ -88,7 +90,7 @@ const ProjectSettingPage = () => {
       repo: project?.repo,
       descr: project?.description,
     });
-  });
+  }, [project]);
 
   return (
     <div className="site-layout-content">
@@ -112,7 +114,7 @@ const ProjectSettingPage = () => {
               <Button
                 type="text"
                 size="large"
-                onClick={() => setIsModalVisible(true)}
+                onClick={() => setIsImageModalVisible(true)}
                 style={{ backgroundColor: "#ccc" }}
               >
                 {t("changeImage")}
@@ -154,36 +156,49 @@ const ProjectSettingPage = () => {
             )}
           </div>
           <h2 className="mt-8 font-bold">{t("members")}</h2>
-          <div className="py-4">
+          <div className="py-4 flex items-center">
             <Avatar.Group
               maxCount={6}
               maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
+              size={40}
             >
               {members && members.length > 0 ? (
                 members.map((member: any) => (
-                  <UserPopover user={member} key={member.userId}>
-                    <Avatar
-                      key={member.userId}
-                      src={member.avatar || "/images/default_avatar.jpg"}
-                      size={40}
-                    />
-                  </UserPopover>
+                  <Avatar
+                    key={member.userId}
+                    src={member.avatar || "/images/default_avatar.jpg"}
+                  />
                 ))
               ) : (
                 <p>{t("noMembers")}</p>
               )}
             </Avatar.Group>
+            {isAdmin && (
+              <Button
+                type="text"
+                size="large"
+                onClick={() => setIsMembersModalVisible(true)}
+              >
+                <EditTwoTone />
+              </Button>
+            )}
           </div>
         </Form>
       </div>
       <Modal
         title={t("updateImageTitle")}
-        open={isModalVisible}
+        open={isImageModalVisible}
         onOk={() => handleUpdateImage(projectId, image)}
-        onCancel={handleCancel}
+        onCancel={handleCancelImageModal}
       >
         <UploadImage image={image} setImage={setImage} />
       </Modal>
+      <MembersModal
+        isVisible={isMembersModalVisible}
+        members={members || []}
+        projectId={projectId}
+        onClose={handleCancelMembersModal}
+      />
     </div>
   );
 };

@@ -340,7 +340,16 @@
     "updateSuccess": "Cập nhật dự án thành công",
     "updateError": "Lỗi khi cập nhật dự án",
     "imageUpdateSuccess": "Cập nhật hình ảnh thành công",
-    "imageUpdateError": "Lỗi khi cập nhật hình ảnh"
+    "imageUpdateError": "Lỗi khi cập nhật hình ảnh",
+    "editMembers": "Chỉnh sửa thành viên",
+    "viewProfile": "Xem hồ sơ",
+    "remove": "Xóa",
+    "memberRemoveSuccess": "Thành viên đã được xóa",
+    "memberRemoveError": "Không thể xóa thành viên",
+    "removeMember": "Xóa thành viên",
+    "removeMemberDesc": "Bạn có chắc chắn muốn xóa thành viên này không?",
+    "cancel": "Hủy"
+
   },
    "Sidebar": {
     "planning": "Lập kế hoạch",

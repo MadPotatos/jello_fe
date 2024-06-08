@@ -191,7 +191,9 @@ const SprintCard: React.FC<SprintProps> = ({
         cancelText: t("Backlog.cancel"),
         onOk: async () => {
           await deleteSprint(sprint.id, session?.backendTokens.accessToken);
-          message.success(t("Backlog.deleteSprintSuccess"));
+          notification.success({
+            message: t("Backlog.deleteSprintSuccess"),
+          });
           mutate(`sprints-${projectId}`);
         },
       });

@@ -37,3 +37,15 @@ export const checkMembership = async (projectId: number, userId: number) => {
   const data = await response.json();
   return data;
 };
+
+export const removeMember = async (projectId: number, userId: number) => {
+  const response = await fetch(`${Backend_URL}/member/${projectId}/${userId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to remove member");
+  }
+};
