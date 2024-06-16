@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { checkMembership } from "./app/api/memberApi";
 import createMiddleware from "next-intl/middleware";
+import { fetchProjectById } from "./app/api/projectApi";
 
 const intlMiddleware = createMiddleware({
   locales: ["en", "vi"],
@@ -43,6 +44,15 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
             if (!isMember) {
               return NextResponse.redirect(
                 new URL(`/${locale}/not-member`, request.url)
+              );
+            }
+
+            const project = await fetchProjectById(projectId);
+            const isDeleted = project.isDeleted;
+
+            if (isDeleted) {
+              return NextResponse.redirect(
+                new URL(`/${locale}/error`, request.url)
               );
             }
           } catch (error) {

@@ -264,6 +264,7 @@
     "deleteIssue": "Xóa Issue",
     "deleteIssueConfirmation": "Bạn có chắc chắn muốn xóa Issue này không?",
     "deleteIssueWarning": "Hành động này không thể hoàn tác",
+    "deleteIssueSuccess": "Xóa Issue thành công",
     "deleteCommentConfirmation": "Bạn có chắc chắn muốn xóa bình luận này không?",
     "delete": "Xóa",
     "cancel": "Hủy",

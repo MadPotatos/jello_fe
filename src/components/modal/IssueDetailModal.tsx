@@ -237,6 +237,9 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           });
           onClose();
           mutate(`issues-${projectId}`);
+          mutate(`sprint-issues-${projectId}`);
+          mutate(`all-issues-${projectId}`);
+          mutate(`notifications-${session?.user.id}`);
         },
       });
     } catch (error) {

@@ -15,6 +15,7 @@ export type Project = {
   image?: string;
   repo?: string;
   description?: string;
+  isDeleted?: boolean;
   leader?: Leader;
 };
 
@@ -24,6 +25,7 @@ export type ProjectDetail = {
   image?: string;
   repo?: string;
   description?: string;
+  isDeleted?: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
