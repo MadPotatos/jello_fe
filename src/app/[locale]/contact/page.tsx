@@ -6,7 +6,7 @@ const ContactPage = () => {
   const t = useTranslations("Contact");
   return (
     <section
-      className="bg-gradient-to-b from-white to-blue-200 dark:bg-slate-800 min-h-screen"
+      className="bg-gradient-to-b from-white to-blue-200  min-h-screen"
       id="contact"
     >
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
@@ -49,7 +49,7 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div className="ml-4 mb-4">
-                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                    <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900">
                       {t("ourAddress")}
                     </h3>
                     <p className="text-gray-600">{t("addressLine1")}</p>
@@ -79,10 +79,10 @@ const ContactPage = () => {
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900">
                       {t("contactInfo")}
                     </h3>
-                    <p className="text-gray-600 dark:text-slate-400">
+                    <p className="text-gray-600">
                       {t("phoneNumber")}: +981621201
                     </p>
-                    <p className="text-gray-600 dark:text-slate-400">
+                    <p className="text-gray-600 ">
                       Email: viet.nt194718@sis.hust.edu.vn
                     </p>
                   </div>
