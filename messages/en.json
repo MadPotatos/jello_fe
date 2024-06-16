@@ -257,6 +257,7 @@
     "validateComment": "Please enter the comment",
     "maxSummaryLength": "The issue summary must be less than 100 characters",
     "issueSummaryPlaceholder": "What needs to be done?",
+    "issueDescriptionPlaceholder": "Please enter issue description",
     "title": "Issue Detail",
     "deleteIssue": "Delete Issue",
     "deleteIssueConfirmation": "Are you sure you want to delete this issue?",

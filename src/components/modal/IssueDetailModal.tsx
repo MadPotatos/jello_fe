@@ -32,6 +32,7 @@ import {
   PlusOutlined,
   CheckOutlined,
   CloseOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
 import { fetchMembers } from "@/app/api/memberApi";
@@ -48,6 +49,8 @@ import {
 } from "@/app/api/issuesApi";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
+import TextEditor from "../TextEditor";
+import ReactQuill from "react-quill";
 
 const { confirm } = Modal;
 
@@ -75,10 +78,15 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [isSubIssueModalVisible, setIsSubIssueModalVisible] = useState(false);
   const t = useTranslations();
 
-  const handleDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setDescriptionValue(e.target.value);
+  useEffect(() => {
+    if (issue) {
+      setDescriptionValue(issue.descr || "");
+    }
+  }, [issue]);
+
+  const handleDescriptionChange = (value: string) => {
+    setDescriptionValue(value);
+    form.setFieldsValue({ descr: value });
   };
 
   const handleEditDescription = () => {
@@ -177,7 +185,16 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const handleDescriptionSubmit = async () => {
     const newDescr = form.getFieldValue("descr");
     if (newDescr !== issue.descr) {
-      await handleUpdateIssue("descr", newDescr);
+      await updateIssue(
+        issue.id,
+        "descr",
+        newDescr,
+        projectId,
+        session?.backendTokens.accessToken
+      );
+      mutate(`issues-${projectId}`);
+      mutate(`sprint-issues-${projectId}`);
+      mutate(`all-issues-${projectId}`);
     }
     setIsEditingDescription(false);
   };
@@ -273,35 +290,46 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                   }}
                 />
               </Form.Item>
-              <Form.Item
-                label={t("issueDetail.description")}
-                name="descr"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-              >
-                <Input.TextArea
-                  className="mb-4"
-                  style={{
-                    border: "none",
-                    outline: "none",
-                    borderBottom: "1px solid #ccc",
-                    height: "200px",
-                  }}
-                  value={descriptionValue}
-                  onChange={handleDescriptionChange}
-                  onFocus={handleEditDescription}
-                  onBlur={() => setIsEditingDescription(false)}
-                />
+              <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+                <div className="flex items-center justify-between">
+                  <div className="font-base font-bold mb-3">
+                    {t("issueDetail.description")}
+                  </div>
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={handleEditDescription}
+                  ></Button>
+                </div>
+                {!isEditingDescription ? (
+                  <div className="description-container">
+                    <ReactQuill
+                      theme="snow"
+                      readOnly={true}
+                      value={descriptionValue}
+                      modules={{
+                        toolbar: false,
+                      }}
+                      className="custom-react-quill"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <TextEditor
+                      value={descriptionValue}
+                      onChange={handleDescriptionChange}
+                      placeholder={t("issueDetail.issueDescriptionPlaceholder")}
+                    />
+                    <Button
+                      type="primary"
+                      onClick={handleDescriptionSubmit}
+                      className="mt-4"
+                    >
+                      {t("issueDetail.submit")}
+                    </Button>
+                  </div>
+                )}
               </Form.Item>
-              {isEditingDescription ? (
-                <Form.Item>
-                  <Button type="primary" onClick={handleDescriptionSubmit}>
-                    {t("issueDetail.submit")}
-                  </Button>
-                </Form.Item>
-              ) : (
-                <div></div>
-              )}
             </Form>
             {issue.type !== 4 && (
               <Form.Item>

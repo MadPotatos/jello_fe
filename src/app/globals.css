@@ -19,3 +19,10 @@
   background-color: #4991fd !important;
 }
 
+
+.custom-react-quill .ql-container {
+  border-radius: 10px;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
