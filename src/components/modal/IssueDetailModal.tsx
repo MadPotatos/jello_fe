@@ -148,6 +148,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
         message: t("issueDetail.addCommentSuccess"),
       });
       mutate(`comments-${issue.id}`);
+      mutate(`issues-${projectId}`);
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -160,6 +161,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
         message: t("issueDetail.deleteCommentSuccess"),
       });
       mutate(`comments-${issue.id}`);
+      mutate(`issues-${projectId}`);
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
