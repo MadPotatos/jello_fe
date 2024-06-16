@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, message } from "antd";
+import { Modal, Form, Input, message, notification } from "antd";
 import { useSession } from "next-auth/react";
 import UploadImage from "@/components/UploadImage";
 import { createProject } from "@/app/api/projectApi";
@@ -26,11 +26,15 @@ const CreateProjectModel = ({ visible, onCreate, onCancel }: any) => {
 
       if (success) {
         onCreate();
-        message.success(t("createSuccess"));
+        notification.success({
+          message: t("createSuccess"),
+        });
         form.resetFields();
         onCancel();
       } else {
-        message.error(t("createFailed"));
+        notification.error({
+          message: t("createError"),
+        });
       }
     } catch (error) {
       console.error("Error creating project:", error);
