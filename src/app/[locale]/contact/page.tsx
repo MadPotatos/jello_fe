@@ -12,7 +12,7 @@ const ContactPage = () => {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mb-4">
           <div className="mb-6 max-w-3xl text-center sm:text-center md:mx-auto md:mb-12">
-            <p className="text-base font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-200">
+            <p className="text-base font-semibold uppercase tracking-wide text-blue-600 ">
               {t("contact")}
             </p>
             <h2 className="font-heading mb-4 font-bold tracking-tight text-gray-900 text-3xl sm:text-5xl">
@@ -109,12 +109,8 @@ const ContactPage = () => {
                     <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900">
                       {t("workingHours")}
                     </h3>
-                    <p className="text-gray-600 dark:text-slate-400">
-                      {t("weekdays")}
-                    </p>
-                    <p className="text-gray-600 dark:text-slate-400">
-                      {t("weekends")}
-                    </p>
+                    <p className="text-gray-600">{t("weekdays")}</p>
+                    <p className="text-gray-600 ">{t("weekends")}</p>
                   </div>
                 </li>
               </ul>
