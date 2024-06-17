@@ -1,5 +1,7 @@
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Layout } from "antd";
 import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -31,7 +33,11 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider messages={messages}>
           <Layout style={{ minHeight: "100vh" }}>
-            <Providers messages={messages}>{children}</Providers>
+            <Providers messages={messages}>
+              <Analytics />
+              <SpeedInsights />
+              {children}
+            </Providers>
           </Layout>
         </NextIntlClientProvider>
       </body>
