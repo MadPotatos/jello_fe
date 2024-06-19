@@ -147,14 +147,13 @@ const SprintCard: React.FC<SprintProps> = ({
         return;
       }
 
-      if (filteredIssues?.length === 0) {
+      if (!filteredIssues || filteredIssues.length === 0) {
         notification.warning({
           message: t("Backlog.cantStartSprint"),
           description: t("Backlog.cantStartSprintContent1"),
         });
         return;
       }
-
       const res = await updateSprint(
         sprint.id,
         { status: SprintStatus.IN_PROGRESS, projectId: projectId },
@@ -335,10 +334,13 @@ const SprintCard: React.FC<SprintProps> = ({
             <Form.Item
               name="summary"
               rules={[
-                { required: true, message: t("Backlog.validateIssueSummary") },
+                {
+                  required: true,
+                  message: t("Backlog.validateIssueSummary"),
+                },
                 {
                   max: 100,
-                  message: t("Backlog.validateIssueSummaryLength"),
+                  message: t("Backlog.maxSummaryLength"),
                 },
               ]}
             >
