@@ -60,8 +60,6 @@ const ProjectBacklogPage: React.FC = () => {
     const [movedIssue] = updatedIssues[sourceSprintId].splice(sourceIndex, 1);
     updatedIssues[destinationSprintId].splice(destinationIndex, 0, movedIssue);
 
-    mutate(`sprint-issues-${projectId}`, updatedIssues, false);
-
     const body = {
       id,
       s: {

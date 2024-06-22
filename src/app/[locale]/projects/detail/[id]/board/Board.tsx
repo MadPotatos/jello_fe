@@ -35,8 +35,6 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
     const [movedIssue] = updatedIssues[sourceListId].splice(sourceIndex, 1);
     updatedIssues[destinationListId].splice(destinationIndex, 0, movedIssue);
 
-    mutate(`issues-${projectId}`, updatedIssues, false);
-
     const body = {
       id,
       s: {
