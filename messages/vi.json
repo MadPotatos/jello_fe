@@ -66,7 +66,19 @@
     "projects": "Dự án",
     "noProjects": "Không tìm thấy dự án nào.",
     "updateAvatar": "Cập nhật ảnh đại diện",
-    "leader": "Trưởng nhóm"
+    "leader": "Trưởng nhóm",
+    "password": "Mật khẩu",
+     "changePassword": "Đổi mật khẩu",
+    "currentPassword": "Mật khẩu hiện tại",
+    "enterCurrentPassword": "Vui lòng nhập mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "enterNewPassword": "Vui lòng nhập mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "passwordMismatch": "Hai mật khẩu không khớp",
+    "passwordChanged": "Đổi mật khẩu thành công",
+    "passwordChangeFailed": "Đổi mật khẩu thất bại",
+    "incorrectCurrentPassword": "Mật khẩu hiện tại không chính xác"
+    
   },
   "UploadImage": {
     "dragAndDrop": "Nhấp hoặc kéo thả tập tin vào đây để tải lên",

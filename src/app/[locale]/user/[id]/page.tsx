@@ -29,6 +29,13 @@ const Modal = dynamic(() => import("antd").then((mod) => mod.Modal), {
   ssr: false,
 });
 
+const ChangePasswordModal = dynamic(
+  () => import("@/components/modal/ChangePasswordModal"),
+  {
+    ssr: false,
+  }
+);
+
 const { Title, Text, Paragraph } = Typography;
 
 const { Item } = Form;
@@ -38,6 +45,8 @@ const Profile = () => {
   const { data: session, update } = useSession();
   const pathname = usePathname();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isChangePasswordModalVisible, setIsChangePasswordModalVisible] =
+    useState(false);
 
   const userId: number = parseInt(pathname.split("/")[3]);
 
@@ -110,6 +119,14 @@ const Profile = () => {
 
   const handleEditCancel = () => {
     setEditable(false);
+  };
+
+  const showChangePasswordModal = () => {
+    setIsChangePasswordModalVisible(true);
+  };
+
+  const handleChangePasswordModalCancel = () => {
+    setIsChangePasswordModalVisible(false);
   };
 
   return (
@@ -216,6 +233,19 @@ const Profile = () => {
                   <span className="font-bold w-24">{t("organization")}</span>
                   <span className="text-gray-700">{user?.organization}</span>
                 </li>
+                {session?.user?.id === user?.id && (
+                  <li className="flex border-b py-2">
+                    <span className="font-bold w-24">{t("password")}</span>
+                    <span className="text-gray-700">********</span>
+                    <Button
+                      type="text"
+                      size="small"
+                      onClick={showChangePasswordModal}
+                    >
+                      <EditOutlined />
+                    </Button>
+                  </li>
+                )}
               </ul>
             </div>
           )}
@@ -285,6 +315,13 @@ const Profile = () => {
       >
         <UploadImage image={image} setImage={setImage} />
       </Modal>
+
+      <ChangePasswordModal
+        visible={isChangePasswordModalVisible}
+        onCancel={handleChangePasswordModalCancel}
+        userId={userId}
+        token={session?.backendTokens.accessToken}
+      />
     </div>
   );
 };

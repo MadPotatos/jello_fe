@@ -71,3 +71,31 @@ export const searchUsers = async (name: string): Promise<User[]> => {
     throw error;
   }
 };
+
+export const updatePassword = async (
+  userId: number,
+  currentPassword: string,
+  newPassword: string,
+  token: string | undefined
+) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/user/${userId}/changePassword`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      }
+    );
+    if (!response.ok) {
+      return response.json();
+    }
+    return response;
+  } catch (error) {
+    console.error("Error updating password:", error);
+    throw error;
+  }
+};

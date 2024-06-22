@@ -66,7 +66,19 @@
     "projects": "Projects",
     "noProjects": "No projects found.",
     "updateAvatar": "Update Avatar",
-    "leader": "Leader"
+    "leader": "Leader",
+    "password": "Password",
+      "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "enterCurrentPassword": "Please enter your current password",
+    "newPassword": "New Password",
+    "enterNewPassword": "Please enter your new password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordMismatch": "The two passwords do not match",
+    "passwordChanged": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "incorrectCurrentPassword": "The current password is incorrect"
+    
   },
    "UploadImage": {
     "dragAndDrop": "Click or drag file to this area to upload",
