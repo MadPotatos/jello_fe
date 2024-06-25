@@ -11,18 +11,21 @@ interface SprintIssuesProps {
   issue: any;
   issueIndex: number;
   onClick: (issue: any) => void;
+  isDragging: boolean;
 }
 
 const SprintIssues: React.FC<SprintIssuesProps> = ({
   issue,
   issueIndex,
   onClick,
+  isDragging,
 }) => {
   return (
     <Draggable
       key={issue.id}
       draggableId={`issue-${issue.id}`}
       index={issueIndex}
+      isDragDisabled={isDragging}
     >
       {(provided) => (
         <div

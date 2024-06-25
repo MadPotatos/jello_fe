@@ -25,6 +25,7 @@ const ProjectBacklogPage: React.FC = () => {
   const [filterTypes, setFilterTypes] = useState<number[]>([]);
   const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
   const [filterUseId, setFilterUserId] = useState<number>();
+  const [isDragging, setIsDragging] = useState(false);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -60,6 +61,8 @@ const ProjectBacklogPage: React.FC = () => {
     const [movedIssue] = updatedIssues[sourceSprintId].splice(sourceIndex, 1);
     updatedIssues[destinationSprintId].splice(destinationIndex, 0, movedIssue);
 
+    setIsDragging(true);
+
     const body = {
       id,
       s: {
@@ -80,6 +83,8 @@ const ProjectBacklogPage: React.FC = () => {
     } catch (error) {
       console.error("Error reordering:", error);
       mutate(`sprint-issues-${projectId}`);
+    } finally {
+      setIsDragging(false);
     }
   };
 
@@ -174,6 +179,7 @@ const ProjectBacklogPage: React.FC = () => {
                 }
                 projectId={projectId}
                 isAdmin={isAdmin}
+                isDragging={isDragging}
               />
             ))}
         </div>

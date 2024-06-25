@@ -59,6 +59,7 @@ interface SprintProps {
   filteredIssues: any;
   projectId: number;
   isAdmin: any;
+  isDragging: boolean;
 }
 
 const SprintCard: React.FC<SprintProps> = ({
@@ -66,6 +67,7 @@ const SprintCard: React.FC<SprintProps> = ({
   filteredIssues,
   projectId,
   isAdmin,
+  isDragging,
 }) => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -287,7 +289,10 @@ const SprintCard: React.FC<SprintProps> = ({
       {sprint.goal && (
         <p className="text-base px-2 pb-4 text-gray-500">{sprint.goal}</p>
       )}
-      <Droppable droppableId={`sprint-${sprint.id}`}>
+      <Droppable
+        droppableId={`sprint-${sprint.id}`}
+        isDropDisabled={isDragging}
+      >
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             <List
@@ -307,6 +312,7 @@ const SprintCard: React.FC<SprintProps> = ({
                   issue={issue}
                   issueIndex={issue.sprintOrder}
                   onClick={() => handleIssueClick(issue)}
+                  isDragging={isDragging}
                 />
               )}
             ></List>
