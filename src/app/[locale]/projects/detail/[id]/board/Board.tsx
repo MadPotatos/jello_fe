@@ -32,9 +32,9 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
 
-    // const updatedIssues = { ...issues };
-    // const [movedIssue] = updatedIssues[sourceListId].splice(sourceIndex, 1);
-    // updatedIssues[destinationListId].splice(destinationIndex, 0, movedIssue);
+    const updatedIssues = { ...issues };
+    const [movedIssue] = updatedIssues[sourceListId].splice(sourceIndex, 1);
+    updatedIssues[destinationListId].splice(destinationIndex, 0, movedIssue);
 
     setIsDragging(true);
 
