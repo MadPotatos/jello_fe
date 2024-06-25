@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import List from "./List";
 import { usePathname } from "next/navigation";
@@ -17,6 +17,7 @@ interface BoardProps {
 const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
+  const [isDragging, setIsDragging] = useState(false);
 
   const onDragEnd = async (result: DropResult) => {
     if (!result.destination || !lists || !issues) return;
@@ -34,6 +35,8 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
     // const updatedIssues = { ...issues };
     // const [movedIssue] = updatedIssues[sourceListId].splice(sourceIndex, 1);
     // updatedIssues[destinationListId].splice(destinationIndex, 0, movedIssue);
+
+    setIsDragging(true);
 
     const body = {
       id,
@@ -55,6 +58,8 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
     } catch (error) {
       console.error("Error reordering:", error);
       mutate(`issues-${projectId}`);
+    } finally {
+      setIsDragging(false);
     }
   };
 
@@ -84,6 +89,7 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
               lists={lists}
               issues={issues[list.id]}
               sprintId={sprintId}
+              isDragging={isDragging}
             />
           </div>
         ))}

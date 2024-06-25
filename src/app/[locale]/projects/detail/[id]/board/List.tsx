@@ -34,9 +34,16 @@ interface ListProps {
   lists: ListType[];
   issues: any;
   sprintId: number | undefined;
+  isDragging: boolean;
 }
 
-const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
+const List: React.FC<ListProps> = ({
+  list,
+  issues,
+  lists,
+  sprintId,
+  isDragging,
+}) => {
   const [isCreatingIssue, setIsCreatingIssue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
@@ -154,7 +161,11 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
           </div>
         )}
       </div>
-      <Droppable droppableId={`list-${list.id}`} type="ISSUE">
+      <Droppable
+        droppableId={`list-${list.id}`}
+        type="ISSUE"
+        isDropDisabled={isDragging}
+      >
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             {issues && Array.isArray(issues)
@@ -164,6 +175,7 @@ const List: React.FC<ListProps> = ({ list, issues, lists, sprintId }) => {
                     issue={issue}
                     index={issue.listOrder}
                     onClick={() => handleIssueClick(issue)}
+                    isDragging={isDragging}
                   />
                 ))
               : null}

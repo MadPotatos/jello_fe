@@ -11,11 +11,17 @@ interface IssueProps {
   issue: any;
   index: number;
   onClick: (issue: any) => void;
+  isDragging: boolean;
 }
 
-const Issue: React.FC<IssueProps> = ({ issue, index, onClick }) => {
+const Issue: React.FC<IssueProps> = ({ issue, index, onClick, isDragging }) => {
   return (
-    <Draggable key={issue.id} draggableId={`issue-${issue.id}`} index={index}>
+    <Draggable
+      key={issue.id}
+      draggableId={`issue-${issue.id}`}
+      index={index}
+      isDragDisabled={isDragging}
+    >
       {(provided) => (
         <div
           ref={provided.innerRef}
