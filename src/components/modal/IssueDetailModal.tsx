@@ -51,6 +51,7 @@ import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import TextEditor from "../TextEditor";
 import ReactQuill from "react-quill";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const { confirm } = Modal;
 
@@ -207,7 +208,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       values.sprintId = issue.sprintId;
       values.projectId = projectId;
       values.reporterId = session?.user.id;
-      values.type = 4;
+      values.type = IssueType.SUBISSUE;
       values.parentId = issue.id;
       await createIssue(values, session?.backendTokens.accessToken);
       mutate(`sub-issues-${issue.id}`);
@@ -399,7 +400,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     layout="horizontal"
                     initialValues={{
                       summary: "",
-                      priority: 1,
+                      priority: IssuePriority.HIGH,
                     }}
                     className="border border-gray-200 p-3 flex justify-between bg-white"
                   >

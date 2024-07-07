@@ -16,7 +16,7 @@ import {
 import { createSprint, deleteSprint, updateSprint } from "@/app/api/sprintApi";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
-import { SprintStatus } from "@/lib/enum";
+import { IssuePriority, IssueType, SprintStatus } from "@/lib/enum";
 import { Droppable } from "@hello-pangea/dnd";
 import { createIssue } from "@/app/api/issuesApi";
 import { useSession } from "next-auth/react";
@@ -327,8 +327,8 @@ const SprintCard: React.FC<SprintProps> = ({
           layout="horizontal"
           initialValues={{
             summary: "",
-            type: 1,
-            priority: 1,
+            type: IssueType.TASK,
+            priority: IssuePriority.HIGH,
           }}
           className="border border-gray-200 p-3 flex justify-between text-lg bg-white"
         >

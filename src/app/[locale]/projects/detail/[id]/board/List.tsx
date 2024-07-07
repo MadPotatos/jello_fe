@@ -19,6 +19,7 @@ import { createIssue } from "@/app/api/issuesApi";
 import { List as ListType } from "@/lib/types";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const IssueDetailModal = dynamic(
   () => import("@/components/modal/IssueDetailModal"),
@@ -192,8 +193,8 @@ const List: React.FC<ListProps> = ({
               layout="vertical"
               initialValues={{
                 summary: "",
-                type: 1,
-                priority: 1,
+                type: IssueType.REVIEW,
+                priority: IssuePriority.HIGH,
               }}
             >
               <div className="p-3">

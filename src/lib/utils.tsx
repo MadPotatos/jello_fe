@@ -7,31 +7,31 @@ import {
   MinusOutlined,
   DownOutlined,
 } from "@ant-design/icons";
-import { useTranslations } from "next-intl";
 import { CheckboxOptionType } from "antd/es/checkbox/Group";
+import { IssuePriority, IssueType } from "./enum";
 
-export const getColoredIconByIssueType = (issueType: number) => {
+export const getColoredIconByIssueType = (issueType: IssueType) => {
   switch (issueType) {
-    case 1:
+    case IssueType.TASK:
       return <CheckSquareFilled style={{ color: "#1890ff" }} />;
-    case 2:
+    case IssueType.BUG:
       return <BugFilled style={{ color: "red" }} />;
-    case 3:
+    case IssueType.REVIEW:
       return <ThunderboltFilled style={{ color: "orange" }} />;
-    case 4:
+    case IssueType.SUBISSUE:
       return <SubnodeOutlined style={{ color: "#0064f2" }} />;
     default:
       return null;
   }
 };
 
-export const getColoredIconByPriority = (priority: number) => {
+export const getColoredIconByPriority = (priority: IssuePriority) => {
   switch (priority) {
-    case 1:
+    case IssuePriority.HIGH:
       return <UpOutlined style={{ color: "red" }} />;
-    case 2:
+    case IssuePriority.MEDIUM:
       return <MinusOutlined style={{ color: "orange" }} />;
-    case 3:
+    case IssuePriority.LOW:
       return <DownOutlined style={{ color: "#1890ff" }} />;
     default:
       return null;
@@ -40,68 +40,68 @@ export const getColoredIconByPriority = (priority: number) => {
 
 export const typeOptions = (
   t: (key: string) => string
-): CheckboxOptionType<number>[] => {
+): CheckboxOptionType<IssueType>[] => {
   return [
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByIssueType(1)}
+          {getColoredIconByIssueType(IssueType.TASK)}
           {t("TypeOptions.task")}
         </span>
       ),
-      value: 1,
+      value: IssueType.TASK,
     },
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByIssueType(2)}
+          {getColoredIconByIssueType(IssueType.BUG)}
           {t("TypeOptions.bug")}
         </span>
       ),
-      value: 2,
+      value: IssueType.BUG,
     },
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByIssueType(3)}
+          {getColoredIconByIssueType(IssueType.REVIEW)}
           {t("TypeOptions.review")}
         </span>
       ),
-      value: 3,
+      value: IssueType.REVIEW,
     },
   ];
 };
 
 export const priorityOptions = (
   t: (key: string) => string
-): CheckboxOptionType<number>[] => {
+): CheckboxOptionType<IssuePriority>[] => {
   return [
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByPriority(1)}
+          {getColoredIconByPriority(IssuePriority.HIGH)}
           {t("PriorityOptions.high")}
         </span>
       ),
-      value: 1,
+      value: IssuePriority.HIGH,
     },
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByPriority(2)}
+          {getColoredIconByPriority(IssuePriority.MEDIUM)}
           {t("PriorityOptions.medium")}
         </span>
       ),
-      value: 2,
+      value: IssuePriority.MEDIUM,
     },
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByPriority(3)}
+          {getColoredIconByPriority(IssuePriority.LOW)}
           {t("PriorityOptions.low")}
         </span>
       ),
-      value: 3,
+      value: IssuePriority.LOW,
     },
   ];
 };

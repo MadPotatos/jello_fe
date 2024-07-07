@@ -10,3 +10,16 @@ export enum NotificationType {
   SPRINT_STARTED = "SPRINT_STARTED",
   SPRINT_COMPLETED = "SPRINT_COMPLETED",
 }
+
+export enum IssueType {
+  BUG = "BUG",
+  TASK = "TASK",
+  REVIEW = "REVIEW",
+  SUBISSUE = "SUBISSUE",
+}
+
+export enum IssuePriority {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+}
