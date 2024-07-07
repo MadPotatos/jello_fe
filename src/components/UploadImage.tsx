@@ -10,14 +10,6 @@ type Props = {
   setImage: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const getBase64 = (file: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
 const UploadImage: React.FC<Props> = ({ image, setImage }) => {
   const t = useTranslations("UploadImage");
   const props: UploadProps = {
