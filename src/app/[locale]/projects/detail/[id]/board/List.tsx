@@ -193,7 +193,7 @@ const List: React.FC<ListProps> = ({
               layout="vertical"
               initialValues={{
                 summary: "",
-                type: IssueType.REVIEW,
+                type: IssueType.TASK,
                 priority: IssuePriority.HIGH,
               }}
             >
