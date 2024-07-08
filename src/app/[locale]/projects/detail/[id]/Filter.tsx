@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { priorityOptions, typeOptions } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const AddMemberModal = dynamic(
   () => import("@/components/modal/AddMemberModal"),
@@ -27,7 +28,10 @@ interface FilterProps {
   members: Member[] | undefined;
   onSearch: (query: string) => void;
   onUserClick: (userId: number) => void;
-  onFilterChange: (filter: { types: number[]; priorities: number[] }) => void;
+  onFilterChange: (filter: {
+    types: IssueType[];
+    priorities: IssuePriority[];
+  }) => void;
   onClearFilter: () => void;
 }
 
@@ -43,8 +47,10 @@ const Filter: React.FC<FilterProps> = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [filtering, setFiltering] = useState(false);
-  const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
-  const [selectedPriorities, setSelectedPriorities] = useState<number[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<IssueType[]>([]);
+  const [selectedPriorities, setSelectedPriorities] = useState<IssuePriority[]>(
+    []
+  );
   const pathname = usePathname();
   const projectId = Number(pathname.split("/")[4]);
   const isAdmin = members?.some(
@@ -69,13 +75,13 @@ const Filter: React.FC<FilterProps> = ({
     onSearch(query);
   };
 
-  const handleTypeChange = (checkedValues: number[]) => {
+  const handleTypeChange = (checkedValues: IssueType[]) => {
     setSelectedTypes(checkedValues);
     onFilterChange({ types: checkedValues, priorities: selectedPriorities });
     setFiltering(true);
   };
 
-  const handlePriorityChange = (checkedValues: number[]) => {
+  const handlePriorityChange = (checkedValues: IssuePriority[]) => {
     setSelectedPriorities(checkedValues);
     onFilterChange({ types: selectedTypes, priorities: checkedValues });
     setFiltering(true);

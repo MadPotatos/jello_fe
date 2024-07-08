@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const CompleteSprintModel = dynamic(
   () => import("@/components/modal/CompleteSprintModal"),
@@ -34,8 +35,8 @@ const ProjectDetailPage = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
   const [filterUseId, setFilterUserId] = useState<number>();
-  const [filterTypes, setFilterTypes] = useState<number[]>([]);
-  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
+  const [filterTypes, setFilterTypes] = useState<IssueType[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<IssuePriority[]>([]);
   const t = useTranslations();
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
@@ -67,8 +68,8 @@ const ProjectDetailPage = () => {
   };
 
   const handleFilterChange = (filter: {
-    types: number[];
-    priorities: number[];
+    types: IssueType[];
+    priorities: IssuePriority[];
   }) => {
     setFilterTypes(filter.types);
     setFilterPriorities(filter.priorities);
@@ -92,8 +93,8 @@ const ProjectDetailPage = () => {
   const filterIssues = (
     query: string,
     userId?: number,
-    types: number[] = [],
-    priorities: number[] = []
+    types: IssueType[] = [],
+    priorities: IssuePriority[] = []
   ) => {
     if (!issues) return;
 

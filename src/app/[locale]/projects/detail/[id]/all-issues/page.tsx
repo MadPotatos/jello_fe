@@ -21,6 +21,7 @@ import {
 import dynamic from "next/dynamic";
 import { fetchLists } from "@/app/api/listApi";
 import { useTranslations } from "next-intl";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const IssueDetailModal = dynamic(
   () => import("@/components/modal/IssueDetailModal"),
@@ -39,8 +40,8 @@ const AllIssuesListPage = () => {
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const [selectedRowKey, setSelectedRowKey] = useState<number | null>(null);
   const [filterUseId, setFilterUserId] = useState<number>();
-  const [filterTypes, setFilterTypes] = useState<number[]>([]);
-  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
+  const [filterTypes, setFilterTypes] = useState<IssueType[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<IssuePriority[]>([]);
 
   const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
     fetchMembers(projectId)
@@ -74,8 +75,8 @@ const AllIssuesListPage = () => {
   };
 
   const handleFilterChange = (filter: {
-    types: number[];
-    priorities: number[];
+    types: IssueType[];
+    priorities: IssuePriority[];
   }) => {
     setFilterTypes(filter.types);
     setFilterPriorities(filter.priorities);
@@ -91,8 +92,8 @@ const AllIssuesListPage = () => {
   const filterIssues = (
     query: string,
     userId?: number,
-    types: number[] = [],
-    priorities: number[] = []
+    types: IssueType[] = [],
+    priorities: IssuePriority[] = []
   ) => {
     if (!issues) return;
     const filtered = issues?.filter((issue: any) => {

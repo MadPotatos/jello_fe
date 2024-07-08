@@ -11,6 +11,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { usePathname } from "next/navigation";
 import SprintCard from "./SprintCard";
 import { useSession } from "next-auth/react";
+import { IssuePriority, IssueType } from "@/lib/enum";
 
 const ProjectBacklogPage: React.FC = () => {
   const pathname = usePathname();
@@ -18,8 +19,8 @@ const ProjectBacklogPage: React.FC = () => {
   const projectId = Number(pathname.split("/")[4]);
   const [filteredIssues, setFilteredIssues] = useState<any>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filterTypes, setFilterTypes] = useState<number[]>([]);
-  const [filterPriorities, setFilterPriorities] = useState<number[]>([]);
+  const [filterTypes, setFilterTypes] = useState<IssueType[]>([]);
+  const [filterPriorities, setFilterPriorities] = useState<IssuePriority[]>([]);
   const [filterUseId, setFilterUserId] = useState<number>();
   const [isDragging, setIsDragging] = useState(false);
 
@@ -94,8 +95,8 @@ const ProjectBacklogPage: React.FC = () => {
   };
 
   const handleFilterChange = (filter: {
-    types: number[];
-    priorities: number[];
+    types: IssueType[];
+    priorities: IssuePriority[];
   }) => {
     setFilterTypes(filter.types);
     setFilterPriorities(filter.priorities);
@@ -111,8 +112,8 @@ const ProjectBacklogPage: React.FC = () => {
   const filterIssues = (
     query: string,
     userId?: number,
-    types: number[] = [],
-    priorities: number[] = []
+    types: IssueType[] = [],
+    priorities: IssuePriority[] = []
   ) => {
     if (!issues) return;
 
