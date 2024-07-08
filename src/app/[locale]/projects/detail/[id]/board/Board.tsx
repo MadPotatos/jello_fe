@@ -4,9 +4,9 @@ import List from "./List";
 import { usePathname } from "next/navigation";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 import { createList } from "@/app/api/listApi";
-import { reorderIssues, updateIssueDate } from "@/app/api/issuesApi";
+import { reorderIssues } from "@/app/api/issuesApi";
 
 interface BoardProps {
   lists: any[];
@@ -53,7 +53,6 @@ const Board: React.FC<BoardProps> = ({ sprintId, lists, issues }) => {
 
     try {
       await reorderIssues(body);
-      await updateIssueDate(body.id);
       mutate(`issues-${projectId}`);
     } catch (error) {
       console.error("Error reordering:", error);

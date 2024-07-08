@@ -238,7 +238,7 @@
     "cancel": "Hủy",
     "toolTip": "Chỉ trưởng dự án mới có thể hoàn thành Sprint",
     "issueCreated": "Issue đã được tạo",
-    "issueCreatedFailed": "Không thể tạo issue",
+    "issueCreateFailed": "Không thể tạo issue",
     "validateIssueSummary": "Vui lòng nhập mô tả issue",
     "maxSummaryLength": "Mô tả không được vượt quá 100 ký tự",
     "issueSummaryPlaceholder": "Nhập mô tả issue",

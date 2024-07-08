@@ -650,10 +650,10 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 </Form.Item>
 
                 <Typography.Text type="secondary">
-                  {t("issueDetail.updatedAt")}: {formattedCreatedAt}
+                  {t("issueDetail.updatedAt")}: {formattedUpdatedAt}
                 </Typography.Text>
                 <Typography.Text type="secondary">
-                  {t("issueDetail.createdAt")}: {formattedUpdatedAt}
+                  {t("issueDetail.createdAt")}: {formattedCreatedAt}
                 </Typography.Text>
               </Space>
             </div>

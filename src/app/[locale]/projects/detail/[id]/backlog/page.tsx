@@ -4,11 +4,7 @@ import { Spin } from "antd";
 import { Member, Sprint } from "@/lib/types";
 import useSWR, { mutate } from "swr";
 import { fetchMembers } from "@/app/api/memberApi";
-import {
-  fetchIssuesInSprint,
-  reorderIssues,
-  updateIssueDate,
-} from "@/app/api/issuesApi";
+import { fetchIssuesInSprint, reorderIssues } from "@/app/api/issuesApi";
 import { fetchSprints } from "@/app/api/sprintApi";
 import Filter from "../Filter";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
@@ -78,7 +74,6 @@ const ProjectBacklogPage: React.FC = () => {
 
     try {
       await reorderIssues(body);
-      await updateIssueDate(body.id);
       mutate(`sprint-issues-${projectId}`);
     } catch (error) {
       console.error("Error reordering:", error);
