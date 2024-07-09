@@ -337,7 +337,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                 )}
               </Form.Item>
             </Form>
-            {issue.type !== 4 && (
+            {issue.type !== IssueType.SUBISSUE && (
               <Form.Item>
                 <div className="flex items-center justify-between">
                   <div className="font-base font-bold mb-3">
