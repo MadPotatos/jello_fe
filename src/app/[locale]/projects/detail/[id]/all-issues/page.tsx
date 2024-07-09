@@ -122,7 +122,6 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <div>{getColoredIconByIssueType(record.type)}</div>
       ),
-      sorter: (a: any, b: any) => a.type - b.type,
     },
     {
       title: t("summary"),
@@ -138,7 +137,6 @@ const AllIssuesListPage = () => {
       render: (text: string, record: any) => (
         <div>{getColoredIconByPriority(record.priority)}</div>
       ),
-      sorter: (a: any, b: any) => a.priority - b.priority,
     },
     {
       title: t("status"),
