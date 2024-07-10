@@ -28,6 +28,7 @@ import { fetchLists } from "@/app/api/listApi";
 import { useRouter } from "next-nprogress-bar";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import AddTaskFromUserStory from "@/components/modal/AddTaskFromUserStory";
 
 const CompleteSprintModel = dynamic(
   () => import("@/components/modal/CompleteSprintModal"),
@@ -76,6 +77,8 @@ const SprintCard: React.FC<SprintProps> = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isCompleteModalVisible, setIsCompleteModalVisible] = useState(false);
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
+  const [isAddTaskFromUserStoryVisible, setIsAddTaskFromUserStoryVisible] =
+    useState(false);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const t = useTranslations();
 
@@ -89,6 +92,12 @@ const SprintCard: React.FC<SprintProps> = ({
   const handleUpdate = () => {
     setIsModalVisible(false);
     mutate(`sprints-${projectId}`);
+  };
+
+  const handleAddTaskFromUserStory = () => {
+    setIsAddTaskFromUserStoryVisible(false);
+    setIsCreatingIssue(false);
+    mutate(`sprints-issues-${projectId}`);
   };
 
   const handleComplete = () => {
@@ -410,6 +419,12 @@ const SprintCard: React.FC<SprintProps> = ({
             >
               <CloseOutlined />
             </Button>
+            <Button
+              type="primary"
+              onClick={() => setIsAddTaskFromUserStoryVisible(true)}
+            >
+              {t("Backlog.addTaskFromUserStory")}
+            </Button>
           </div>
         </Form>
       ) : (
@@ -448,6 +463,14 @@ const SprintCard: React.FC<SprintProps> = ({
           onClose={() => setSelectedIssue(null)}
         />
       )}
+
+      <AddTaskFromUserStory
+        visible={isAddTaskFromUserStoryVisible}
+        onCancel={() => setIsAddTaskFromUserStoryVisible(false)}
+        onUpdate={handleAddTaskFromUserStory}
+        userStories={sprint.userStories}
+        sprintId={sprint.id}
+      />
     </div>
   );
 };

@@ -133,3 +133,33 @@ export const createTask = async (values: any) => {
     throw new Error("Failed to create task");
   }
 };
+
+export const fetchIssuesNotInSprint = async (userStoryId: number) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/issues/user-story/not-in-sprint/${userStoryId}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching issues not in sprint:", error);
+    throw error;
+  }
+};
+
+export const addIssueToSprint = async (issueId: number, sprintId: number) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/issues/sprint/${issueId}/${sprintId}`,
+      {
+        method: "PUT",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to add issue to sprint");
+    }
+  } catch (error) {
+    console.error("Error adding issue to sprint:", error);
+    throw error;
+  }
+};
