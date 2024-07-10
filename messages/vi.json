@@ -306,7 +306,8 @@
     "selectProgress": "Chọn tiến độ",
     "selectDueDate": "Chọn hạn",
     "add": "Thêm",
-    "statusInSprint": "Trạng thái trong Sprint"
+    "statusInSprint": "Trạng thái trong Sprint",
+    "assign":"Phân công"
   },
     "completeSprint": {
     "title": "Hoàn thành Sprint",

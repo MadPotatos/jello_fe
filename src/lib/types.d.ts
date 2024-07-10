@@ -1,4 +1,4 @@
-import { SprintStatus } from "./enum";
+import { SprintStatus, Role } from "./enum";
 
 export type User = {
   id: number;
@@ -48,6 +48,7 @@ export type Member = {
   avatar: string;
   email: string;
   userId: number;
+  role: Role;
 };
 
 export type List = {

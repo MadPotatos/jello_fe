@@ -29,3 +29,10 @@ export enum StatusInSprint {
   IN_SPRINT = "IN_SPRINT",
   IN_SPRINT_REVIEW = "IN_SPRINT_REVIEW",
 }
+
+export enum Role {
+  SCRUM_MASTER = "SCRUM_MASTER",
+  PRODUCT_OWNER = "PRODUCT_OWNER",
+  DEVELOPER = "DEVELOPER",
+  TESTER = "TESTER",
+}

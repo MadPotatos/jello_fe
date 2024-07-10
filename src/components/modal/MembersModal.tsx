@@ -1,13 +1,16 @@
 import React from "react";
-import { Modal, Button, Avatar, message, notification } from "antd";
+import { Modal, Button, Avatar, message, notification, Select } from "antd";
 import { Member } from "@/lib/types";
 import { useTranslations } from "next-intl";
 import { mutate } from "swr";
-import { removeMember } from "@/app/api/memberApi";
+import { removeMember, updateRole } from "@/app/api/memberApi";
 import { useRouter } from "next-nprogress-bar";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Role } from "@/lib/enum"; // Assuming Role enum is defined elsewhere
 
 const { confirm } = Modal;
+const { Option } = Select;
+
 interface MembersModalProps {
   isVisible: boolean;
   members: Member[];
@@ -49,12 +52,26 @@ const MembersModal: React.FC<MembersModalProps> = ({
     }
   };
 
+  const handleRoleChange = async (userId: number, role: Role) => {
+    try {
+      await updateRole(projectId, userId, role);
+
+      mutate(`members-${projectId}`);
+    } catch (error) {
+      console.error("Error updating role:", error);
+      notification.error({
+        message: t("roleUpdateError"),
+      });
+    }
+  };
+
   return (
     <Modal
       title={t("editMembers")}
       open={isVisible}
       onCancel={onClose}
       footer={null}
+      width={600}
     >
       {members && members.length > 0 ? (
         members.map((member: any) => (
@@ -70,7 +87,7 @@ const MembersModal: React.FC<MembersModalProps> = ({
               <p>{member.name}</p>
               <p>{member.email}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button
                 type="link"
                 onClick={() => router.push(`/user/${member.userId}`)}
@@ -78,6 +95,17 @@ const MembersModal: React.FC<MembersModalProps> = ({
               >
                 {t("viewProfile")}
               </Button>
+              <Select
+                defaultValue={member.role}
+                style={{ minWidth: 200 }}
+                onChange={(value) => handleRoleChange(member.userId, value)}
+              >
+                {Object.values(Role).map((role: Role) => (
+                  <Option key={role} value={role}>
+                    {role.replace(/_/g, " ")}
+                  </Option>
+                ))}
+              </Select>
               {!member.isAdmin ? (
                 <Button
                   type="link"

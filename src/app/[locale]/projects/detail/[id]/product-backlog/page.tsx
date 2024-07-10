@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -11,6 +11,7 @@ import {
   Spin,
   Popconfirm,
   notification,
+  Tag,
 } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { createUserStory, fetchUserStory } from "@/app/api/userStoryApi";
@@ -26,7 +27,8 @@ import { useTranslations } from "next-intl";
 import CreateTaskModal from "@/components/modal/CreateTaskModal";
 import { createTask } from "@/app/api/issuesApi";
 import { useSession } from "next-auth/react";
-import { IssueType } from "@/lib/enum";
+import { IssueType, Role } from "@/lib/enum";
+import { checkRole } from "@/app/api/memberApi";
 
 const ProductBacklogPage: React.FC = () => {
   const t = useTranslations();
@@ -36,6 +38,7 @@ const ProductBacklogPage: React.FC = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isTaskModalVisible, setIsTaskModalVisible] = useState(false);
+  const [isProductOwner, setIsProductOwner] = useState(false);
   const [selectedUserStoryId, setSelectedUserStoryId] = useState<number | null>(
     null
   );
@@ -52,6 +55,21 @@ const ProductBacklogPage: React.FC = () => {
     setIsModalVisible(false);
     form.resetFields();
   };
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const data = await checkRole(projectId, session?.user.id);
+        setIsProductOwner(data.role === Role.PRODUCT_OWNER);
+      } catch (error) {
+        console.error("Failed to check role", error);
+      }
+    };
+
+    if (session?.user.id && projectId) {
+      fetchRole();
+    }
+  }, [session?.user.id, projectId]);
 
   const handleCreateUserStory = async (values: any) => {
     try {
@@ -144,6 +162,14 @@ const ProductBacklogPage: React.FC = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      align: "center",
+      render: (text: string) => {
+        const formattedText = text
+          .toLowerCase()
+          .replace(/_/g, " ")
+          .replace(/^\w/, (c) => c.toUpperCase());
+        return <Tag color="blue">{formattedText}</Tag>;
+      },
     },
     {
       title: "Độ ưu tiên",
@@ -191,10 +217,12 @@ const ProductBacklogPage: React.FC = () => {
             type="text"
             icon={<PlusOutlined />}
             onClick={() => handleCreateTask(record.id)}
+            disabled={!isProductOwner}
           ></Button>
           <Button
             icon={<EditOutlined />}
             onClick={() => handleEdit(record.id)}
+            disabled={!isProductOwner}
           ></Button>
           <Popconfirm
             title={t("Bạn có chắc muốn xóa user story này không?")}
@@ -202,7 +230,11 @@ const ProductBacklogPage: React.FC = () => {
             okText={t("Đồng ý")}
             cancelText={t("Hủy")}
           >
-            <Button danger icon={<DeleteOutlined />}></Button>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!isProductOwner}
+            ></Button>
           </Popconfirm>
         </Space>
       ),
@@ -223,7 +255,7 @@ const ProductBacklogPage: React.FC = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Product Backlog</h1>
-        <Button type="primary" onClick={showModal}>
+        <Button type="primary" onClick={showModal} disabled={!isProductOwner}>
           Tạo User Story
         </Button>
       </div>

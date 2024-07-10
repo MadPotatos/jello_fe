@@ -10,7 +10,6 @@ import {
   Select,
   Space,
   List,
-  message,
   DatePicker,
   notification,
 } from "antd";
@@ -36,7 +35,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import useSWR, { mutate } from "swr";
-import { fetchMembers } from "@/app/api/memberApi";
+import { fetchMembers, getMembersByRole } from "@/app/api/memberApi";
 import {
   createComment,
   deleteComment,
@@ -52,7 +51,7 @@ import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import TextEditor from "../TextEditor";
 import ReactQuill from "react-quill";
-import { IssuePriority, IssueType, StatusInSprint } from "@/lib/enum";
+import { IssuePriority, IssueType, Role, StatusInSprint } from "@/lib/enum";
 
 const { confirm } = Modal;
 
@@ -78,6 +77,8 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [showAddSubIssueInput, setShowAddSubIssueInput] = useState(false);
   const [selectedSubIssue, setSelectedSubIssue] = useState<any | null>(null);
   const [isSubIssueModalVisible, setIsSubIssueModalVisible] = useState(false);
+  const [roleSelected, setRoleSelected] = useState<Role | null>(null);
+  const [roleMembers, setRoleMembers] = useState<Member[]>([]);
   const t = useTranslations();
 
   useEffect(() => {
@@ -85,6 +86,10 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
       setDescriptionValue(issue.descr || "");
     }
   }, [issue]);
+
+  const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
+    fetchMembers(projectId)
+  );
 
   const handleDescriptionChange = (value: string) => {
     setDescriptionValue(value);
@@ -98,9 +103,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const formattedUpdatedAt = dayjs(issue.updatedAt).format("DD-MM-YYYY HH:mm");
   const formattedCreatedAt = dayjs(issue.createdAt).format("DD-MM-YYYY HH:mm");
 
-  const { data: members } = useSWR<Member[]>(`members-${projectId}`, () =>
-    fetchMembers(projectId)
-  );
   const { data: comments } = useSWR<IssueComment[]>(
     `comments-${issue.id}`,
     () => fetchComments(issue.id)
@@ -109,9 +111,6 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     fetchSubIssues(issue.id)
   );
 
-  const reporter = members?.find(
-    (member) => member.userId === issue.reporterId
-  );
   const defaultAssigneeIds = issue.assignees.map(
     (assignee: { userId: string }) => Number(assignee.userId)
   );
@@ -129,6 +128,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
             descr: issue.descr,
             summary: issue.summary,
             statusInSprint: issue.statusInSprint,
+            assignRole: issue.assignRole,
           });
         }
       } catch (error) {
@@ -137,7 +137,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
     };
 
     fetchData();
-  }, [issue, members, form]);
+  }, [issue, form]);
 
   const handleAddComment = async (commentText: string) => {
     try {
@@ -261,6 +261,19 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const handleSubIssueClick = (subIssue: any) => {
     setSelectedSubIssue(subIssue);
     setIsSubIssueModalVisible(true);
+  };
+
+  const handleUpdateRole = async (value: any) => {
+    try {
+      setRoleSelected(value);
+      mutate(`issues-${projectId}`);
+
+      await handleUpdateIssue("assignRole", value);
+      const members = await getMembersByRole(projectId, value);
+      setRoleMembers(members);
+    } catch (error) {
+      console.error("Error updating role:", error);
+    }
   };
 
   return (
@@ -636,16 +649,21 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                   />
                 </Form.Item>
                 <Form.Item
-                  label={t("issueDetail.reporter")}
+                  label={t("issueDetail.assign")}
+                  name="assignRole"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
-                  <div className="border border-gray-300 rounded-md p-2 cursor-not-allowed">
-                    <Typography.Text>
-                      {reporter ? <Avatar src={reporter.avatar} /> : null}{" "}
-                      {reporter ? reporter.name : null}
-                    </Typography.Text>
-                  </div>
+                  <Select
+                    style={{ minWidth: 200 }}
+                    onChange={(value) => handleUpdateRole(value)}
+                  >
+                    {Object.values(Role).map((role: Role) => (
+                      <Select.Option key={role} value={role}>
+                        {role.replace(/_/g, " ")}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
 
                 <Form.Item
@@ -658,10 +676,11 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     mode="multiple"
                     style={{ width: "100%" }}
                     placeholder={t("issueDetail.selectAssignees")}
+                    disabled={!roleSelected}
                     onChange={(value) =>
                       handleUpdateIssue("addAssignee", value)
                     }
-                    options={members?.map((member) => ({
+                    options={roleMembers?.map((member) => ({
                       label: (
                         <div className="flex items-center gap-2">
                           <Avatar src={member.avatar} />
