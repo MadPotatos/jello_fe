@@ -53,6 +53,20 @@ const SprintIssues: React.FC<SprintIssuesProps> = ({
                     {issue.List.name}
                   </Tag>
                 )}
+                {issue.statusInSprint && (
+                  <Tag
+                    color="blue"
+                    className="text-sm pb-1 pt-0.5 rounded-full"
+                  >
+                    {issue.statusInSprint
+                      .split("_")
+                      .map(
+                        (word: string) =>
+                          word.charAt(0) + word.slice(1).toLowerCase()
+                      )
+                      .join(" ")}
+                  </Tag>
+                )}
               </div>
               <div>{getColoredIconByPriority(issue.priority)}</div>
               <Avatar.Group

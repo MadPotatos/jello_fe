@@ -384,7 +384,7 @@ const SprintCard: React.FC<SprintProps> = ({
             </Form.Item>
           </div>
           <div className="flex gap-2">
-            <Form.Item
+            {/* <Form.Item
               name="listId"
               initialValue={lists && lists.length > 0 ? lists[0].id : undefined}
             >
@@ -395,7 +395,7 @@ const SprintCard: React.FC<SprintProps> = ({
                   value: list.id,
                 }))}
               ></Select>
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item name="priority">
               <Select

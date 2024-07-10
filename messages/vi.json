@@ -218,7 +218,8 @@
     "TypeOptions": {
     "task": "Công việc",
     "bug": "Lỗi",
-    "review": "Đánh giá"
+    "review": "Đánh giá",
+    "subissue": "Sub Task"
   },
   "PriorityOptions": {
     "high": "Cao",
@@ -291,12 +292,12 @@
     "createdAt": "Tạo lúc",
     "summary": "Tóm tắt",
     "description": "Mô tả",
-    "subIssues": "Issue con",
+    "subIssues": "Issue",
     "comments": "Bình luận",
     "addComment": "Thêm bình luận",
     "commentPlaceholder": "Vui lòng nhập bình luận",
     "submit": "Gửi",
-    "addSubIssue": "Issue con",
+    "addSubIssue": "Issue",
     "addSubIssuePlaceholder": "Cần làm gì?",
     "selectType": "Chọn loại",
     "selectPriority": "Chọn mức ưu tiên",
@@ -304,7 +305,8 @@
     "selectAssignees": "Chọn người được giao",
     "selectProgress": "Chọn tiến độ",
     "selectDueDate": "Chọn hạn",
-    "add": "Thêm"
+    "add": "Thêm",
+    "statusInSprint": "Trạng thái trong Sprint"
   },
     "completeSprint": {
     "title": "Hoàn thành Sprint",

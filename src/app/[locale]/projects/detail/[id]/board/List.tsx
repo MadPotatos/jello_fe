@@ -114,7 +114,7 @@ const List: React.FC<ListProps> = ({
   const handleSubmitIssue = async (values: any) => {
     try {
       values.listId = list.id;
-      values.sprintId = sprintId;
+      //values.sprintId = sprintId;
       values.projectId = projectId;
       values.reporterId = session?.user.id;
       await createIssue(values, session?.backendTokens.accessToken);
@@ -193,7 +193,7 @@ const List: React.FC<ListProps> = ({
               layout="vertical"
               initialValues={{
                 summary: "",
-                type: IssueType.TASK,
+                type: IssueType.SUBISSUE,
                 priority: IssuePriority.HIGH,
               }}
             >

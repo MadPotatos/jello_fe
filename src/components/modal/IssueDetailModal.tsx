@@ -19,6 +19,7 @@ import { Comment } from "@ant-design/compatible";
 import { usePathname } from "next/navigation";
 import { IssueComment, List as ListType, Member } from "@/lib/types";
 import {
+  capitalizeFirstLetter,
   getColoredIconByIssueType,
   getColoredIconByPriority,
   priorityOptions,
@@ -51,7 +52,7 @@ import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import TextEditor from "../TextEditor";
 import ReactQuill from "react-quill";
-import { IssuePriority, IssueType } from "@/lib/enum";
+import { IssuePriority, IssueType, StatusInSprint } from "@/lib/enum";
 
 const { confirm } = Modal;
 
@@ -127,6 +128,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
             assignees: defaultAssigneeIds,
             descr: issue.descr,
             summary: issue.summary,
+            statusInSprint: issue.statusInSprint,
           });
         }
       } catch (error) {
@@ -530,7 +532,7 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
           <Form form={form} layout="vertical">
             <div className="p-4">
               <Space direction="vertical" size={8}>
-                {issue.type !== 4 && (
+                {issue.type !== IssueType.TASK && (
                   <Form.Item
                     label={t("issueDetail.type")}
                     name="type"
@@ -557,6 +559,28 @@ const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
                     options={priorityOptions(t)}
                     onChange={(value) => handleUpdateIssue("priority", value)}
                   />
+                </Form.Item>
+                <Form.Item
+                  name="statusInSprint"
+                  labelCol={{ span: 24 }}
+                  label={t("issueDetail.statusInSprint")}
+                  hidden={issue.type === IssueType.SUBISSUE}
+                >
+                  <Select
+                    onChange={(value) =>
+                      handleUpdateIssue("statusInSprint", value)
+                    }
+                  >
+                    {Object.values(StatusInSprint).map(
+                      (status: StatusInSprint) => (
+                        <Select.Option key={status} value={status}>
+                          {capitalizeFirstLetter(
+                            status.toLowerCase().replace(/_/g, " ")
+                          )}
+                        </Select.Option>
+                      )
+                    )}
+                  </Select>
                 </Form.Item>
                 <Form.Item
                   label={t("issueDetail.status")}

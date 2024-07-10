@@ -23,3 +23,9 @@ export enum IssuePriority {
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
 }
+
+export enum StatusInSprint {
+  IN_SPRINT_PLANNING = "IN_SPRINT_PLANNING",
+  IN_SPRINT = "IN_SPRINT",
+  IN_SPRINT_REVIEW = "IN_SPRINT_REVIEW",
+}

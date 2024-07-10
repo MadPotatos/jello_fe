@@ -45,11 +45,11 @@ export const typeOptions = (
     {
       label: (
         <span className="flex gap-2">
-          {getColoredIconByIssueType(IssueType.TASK)}
-          {t("TypeOptions.task")}
+          {getColoredIconByIssueType(IssueType.SUBISSUE)}
+          {t("TypeOptions.subissue")}
         </span>
       ),
-      value: IssueType.TASK,
+      value: IssueType.SUBISSUE,
     },
     {
       label: (
@@ -121,3 +121,7 @@ export const validateRepository = (rule: any, value: string, callback: any) => {
     callback("Invalid repository format");
   }
 };
+
+export function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

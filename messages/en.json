@@ -216,7 +216,8 @@
    "TypeOptions": {
     "task": "Task",
     "bug": "Bug",
-    "review": "Review"
+    "review": "Review",
+    "subissue": "Sub Task"
   },
   "PriorityOptions": {
     "high": "High",
@@ -301,7 +302,8 @@
     "selectAssignees": "Select Assignees",
     "selectProgress": "Select Progress",
     "selectDueDate": "Select Due Date",
-    "add": "Add"
+    "add": "Add",
+    "statusInSprint": "Status in Sprint"
   },
     "completeSprint": {
     "title": "Complete Sprint",
