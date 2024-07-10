@@ -26,6 +26,7 @@ export type ProjectDetail = {
   repo?: string;
   description?: string;
   isDeleted?: boolean;
+  productGoal?: string;
   createdAt: Date;
   updatedAt: Date;
 };

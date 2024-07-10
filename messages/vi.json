@@ -374,7 +374,8 @@
     "development": "Phát triển",
     "pullRequests": "Pull Requests",
     "projectSetting": "Cài đặt dự án",
-    "softwareProject": "Dự án phần mềm"
+    "softwareProject": "Dự án phần mềm",
+    "productBacklog": "Product backlog"
   },
    "TimelineChart": {
     "timeline": "Dòng thời gian",

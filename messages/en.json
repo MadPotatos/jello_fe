@@ -371,7 +371,8 @@
     "development": "Development",
     "pullRequests": "Pull requests",
     "projectSetting": "Project setting",
-    "softwareProject": "Software Project"
+    "softwareProject": "Software Project",
+    "productBacklog": "Product backlog"
   },
   "TimelineChart": {
     "timeline": "Timeline",

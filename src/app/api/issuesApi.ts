@@ -120,3 +120,16 @@ export const updateIssueDate = async (issueId: number) => {
     throw new Error("Failed to update issue date");
   }
 };
+
+export const createTask = async (values: any) => {
+  const response = await fetch(`${Backend_URL}/issues/task`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...values }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create task");
+  }
+};

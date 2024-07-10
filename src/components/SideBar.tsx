@@ -8,6 +8,7 @@ import {
   GroupOutlined,
   UnorderedListOutlined,
   TableOutlined,
+  CarryOutOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { usePathname } from "next/navigation";
@@ -49,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
   useEffect(() => {
     if (pathname.includes("timeline")) {
       setSelectedKeys(["2"]);
-    } else if (pathname.includes("backlog")) {
+    } else if (pathname.includes("sprint-backlog")) {
       setSelectedKeys(["3"]);
     } else if (pathname.includes("all-issues")) {
       setSelectedKeys(["4"]);
@@ -57,6 +58,8 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       setSelectedKeys(["5"]);
     } else if (pathname.includes("setting")) {
       setSelectedKeys(["6"]);
+    } else if (pathname.includes("product-backlog")) {
+      setSelectedKeys(["7"]);
     } else {
       setSelectedKeys(["1"]); // Default key
     }
@@ -71,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
         router.push("/projects/detail/" + project?.id + "/timeline")
       ),
       getItem(t("backlog"), "3", <TableOutlined />, undefined, () =>
-        router.push("/projects/detail/" + project?.id + "/backlog")
+        router.push("/projects/detail/" + project?.id + "/sprint-backlog")
       ),
       getItem(t("issues"), "4", <UnorderedListOutlined />, undefined, () =>
         router.push("/projects/detail/" + project?.id + "/all-issues")
@@ -83,6 +86,9 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       ),
     ]),
     { type: "divider" },
+    getItem(t("productBacklog"), "7", <CarryOutOutlined />, undefined, () =>
+      router.push("/projects/detail/" + project?.id + "/product-backlog")
+    ),
     getItem(t("projectSetting"), "6", <ToolOutlined />, undefined, () =>
       router.push("/projects/detail/" + project?.id + "/setting")
     ),
