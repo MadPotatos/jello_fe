@@ -125,4 +125,6 @@ export type Sprint = {
   endDate?: Date;
   createdAt: Date;
   status: SprintStatus;
+  userStories?: any;
+  totalUserStoryPoints?: number;
 };

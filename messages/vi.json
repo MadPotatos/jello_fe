@@ -413,7 +413,8 @@
     "maxSummaryLength": "Mô tả không được vượt quá 100 ký tự",
     "issueSummaryPlaceholder": "Nhập mô tả issue",
     "issuePriorityPlaceholder": "Chọn ưu tiên",
-     "addIssue": "+ Thêm Issue"
+     "addIssue": "+ Thêm Task",
+     "totalUserStoryPoints" : "Tổng điểm user story"
   },
   "SprintModal": {
     "title": "Chỉnh sửa Sprint",

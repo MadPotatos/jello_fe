@@ -410,7 +410,8 @@
     "maxSummaryLength": "The issue summary must be less than 100 characters",
     "issueSummaryPlaceholder": "What needs to be done?",
     "issuePriorityPlaceholder": "Select issue priority",
-     "addIssue": "+ Add Issue"
+     "addIssue": "+ Add Task",
+     "totalUserStoryPoints" : "Total user story points"
   },
   "SprintModal": {
     "title": "Edit Sprint",

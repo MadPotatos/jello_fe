@@ -10,6 +10,7 @@ import {
   MenuProps,
   Modal,
   Select,
+  Tag,
   message,
   notification,
 } from "antd";
@@ -99,6 +100,7 @@ const SprintCard: React.FC<SprintProps> = ({
 
   const handleSubmitIssue = async (values: any) => {
     try {
+      values.type = IssueType.TASK;
       values.sprintId = sprint.id;
       values.reporterId = session?.user.id;
       values.projectId = projectId;
@@ -208,6 +210,18 @@ const SprintCard: React.FC<SprintProps> = ({
     setDetailModalVisible(true);
   };
 
+  const userStoryTags =
+    sprint.userStories?.map((userStory: any, index: number) => (
+      <Tag
+        key={index}
+        color="blue"
+        className="text-base mb-2 mr-2"
+        style={{ fontSize: "1rem" }}
+      >
+        {userStory.title}
+      </Tag>
+    )) ?? [];
+
   return (
     <div key={sprint.id} className="bg-gray-100 p-2">
       <div className="flex justify-between">
@@ -289,6 +303,12 @@ const SprintCard: React.FC<SprintProps> = ({
       {sprint.goal && (
         <p className="text-base px-2 pb-4 text-gray-500">{sprint.goal}</p>
       )}
+      <div className="flex px-2 pb-4 justify-between">
+        <div>{userStoryTags}</div>
+        <div className="text-base px-2 pb-4 text-gray-500">
+          {t("Backlog.totalUserStoryPoints")}: {sprint.totalUserStoryPoints}
+        </div>
+      </div>
       <Droppable
         droppableId={`sprint-${sprint.id}`}
         isDropDisabled={isDragging}
@@ -333,10 +353,6 @@ const SprintCard: React.FC<SprintProps> = ({
           className="border border-gray-200 p-3 flex justify-between text-lg bg-white"
         >
           <div className="flex  gap-6 text-lg">
-            <Form.Item name="type">
-              <Select options={typeOptions(t)}></Select>
-            </Form.Item>
-
             <Form.Item
               name="summary"
               rules={[
@@ -412,6 +428,7 @@ const SprintCard: React.FC<SprintProps> = ({
         onCancel={() => setIsModalVisible(false)}
         sprint={sprint}
         onUpdate={handleUpdate}
+        projectId={projectId}
       />
 
       <CompleteSprintModel

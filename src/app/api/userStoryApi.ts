@@ -59,3 +59,43 @@ export const deleteUserStory = async (userStoryId: number) => {
     throw error;
   }
 };
+
+export const addUserStoryToSprint = async (
+  sprintId: number,
+  userStoryId: number
+) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/user-story/${userStoryId}/sprint/${sprintId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to add user story to sprint");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error adding user story to sprint:", error);
+    throw error;
+  }
+};
+
+export const getNotDoneUserStories = async (projectId: number) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/user-story/not-done/${projectId}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching not done user stories:", error);
+    throw error;
+  }
+};
