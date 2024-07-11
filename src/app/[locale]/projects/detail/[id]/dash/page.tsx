@@ -8,6 +8,7 @@ import {
   List,
   Row,
   Space,
+  Tag,
   Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -169,6 +170,17 @@ const DashBoardPage: React.FC = () => {
         [],
     },
   ];
+  const userStoryTags =
+    sprint?.userStories?.map((userStory: any, index: number) => (
+      <Tag
+        key={index}
+        color="blue"
+        className="text-base mb-2 mr-2"
+        style={{ fontSize: "1rem" }}
+      >
+        {userStory.title}
+      </Tag>
+    )) ?? [];
   return (
     <div className="site-layout-content">
       <Title level={2} className="text-xl font-semibold text-gray-800 mb-4">
@@ -208,13 +220,19 @@ const DashBoardPage: React.FC = () => {
                 <Title level={3}>{sprint?.name}</Title>
                 <Text strong>Mục tiêu: </Text>
                 <Text>{sprint?.goal}</Text>
-                <Divider />
+                <div className="flex justify-between pt-2">
+                  <div>{userStoryTags}</div>
+                </div>
+                <div className="text-base text-gray-500">
+                  <Text strong>Tổng User Stories Point: </Text>
+                  {sprint.totalUserStoryPoints}
+                </div>
                 <Text strong>Thời gian: </Text>
-                <Text>
+                <Text className="text-base text-gray-500">
                   {sprint?.startDate
                     ? `${dayjs(sprint?.startDate).format(
-                        "YYYY-MM-DD"
-                      )} - ${dayjs(sprint?.endDate).format("YYYY-MM-DD")}`
+                        "DD/MM/YYYY"
+                      )} - ${dayjs(sprint?.endDate).format("DD/MM/YYYY")}`
                     : ""}
                 </Text>
               </div>
