@@ -362,7 +362,8 @@
   "memberRemoveError": "Error removing member",
   "removeMember": "Remove Member",
 "removeMemberDesc": "Are you sure you want to remove this member?",
-"cancel": "Cancel"
+"cancel": "Cancel",
+"productGoal": "Product Goal"
 },
 
    "Sidebar": {

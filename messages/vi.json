@@ -365,7 +365,8 @@
     "memberRemoveError": "Không thể xóa thành viên",
     "removeMember": "Xóa thành viên",
     "removeMemberDesc": "Bạn có chắc chắn muốn xóa thành viên này không?",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "productGoal": "Mục tiêu sản phẩm"
 
   },
    "Sidebar": {

@@ -179,8 +179,8 @@ const DashBoardPage: React.FC = () => {
           <Card className="border border-gray-200 shadow-md">
             <div className="p-4">
               <Title level={3}>{project?.name}</Title>
+              <Title level={5}>Mục tiêu sản phẩm: {project?.productGoal}</Title>
               <Text>{project?.description}</Text>
-              <Text>{project?.productGoal}</Text>
             </div>
             <div className="ml-4">
               <Title level={5}>Thành viên</Title>
@@ -203,20 +203,26 @@ const DashBoardPage: React.FC = () => {
         </Col>
         <Col span={12}>
           <Card className="border border-gray-200 shadow-md">
-            <div className="p-4">
-              <Title level={3}>{sprint?.name}</Title>
-              <Text strong>Mục tiêu: </Text>
-              <Text>{sprint?.goal}</Text>
-              <Divider />
-              <Text strong>Thời gian: </Text>
-              <Text>
-                {sprint?.startDate
-                  ? `${dayjs(sprint?.startDate).format("YYYY-MM-DD")} - ${dayjs(
-                      sprint?.endDate
-                    ).format("YYYY-MM-DD")}`
-                  : ""}
-              </Text>
-            </div>
+            {sprint ? (
+              <div className="p-4">
+                <Title level={3}>{sprint?.name}</Title>
+                <Text strong>Mục tiêu: </Text>
+                <Text>{sprint?.goal}</Text>
+                <Divider />
+                <Text strong>Thời gian: </Text>
+                <Text>
+                  {sprint?.startDate
+                    ? `${dayjs(sprint?.startDate).format(
+                        "YYYY-MM-DD"
+                      )} - ${dayjs(sprint?.endDate).format("YYYY-MM-DD")}`
+                    : ""}
+                </Text>
+              </div>
+            ) : (
+              <div className="p-4">
+                <Title level={3}>Không có Sprint đang trong tiến độ</Title>
+              </div>
+            )}
           </Card>
         </Col>
         <Col span={12}>

@@ -89,6 +89,7 @@ const ProjectSettingPage = () => {
       name: project?.name,
       repo: project?.repo,
       descr: project?.description,
+      productGoal: project?.productGoal,
     });
   }, [project]);
 
@@ -148,6 +149,9 @@ const ProjectSettingPage = () => {
               ]}
             >
               <Input.TextArea disabled={!isAdmin} rows={4} />
+            </Form.Item>
+            <Form.Item label={t("productGoal")} name="productGoal">
+              <Input disabled={!isAdmin} />
             </Form.Item>
             {isAdmin && (
               <Button type="primary" htmlType="submit" size="large">
