@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -14,7 +14,12 @@ import {
   Tag,
 } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { createUserStory, fetchUserStory } from "@/app/api/userStoryApi";
+import {
+  createUserStory,
+  fetchUserStory,
+  updateUserStory,
+  deleteUserStory,
+} from "@/app/api/userStoryApi";
 import { usePathname } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import {
@@ -22,7 +27,6 @@ import {
   getColoredIconByPriority,
   priorityOptions,
 } from "@/lib/utils";
-
 import { useTranslations } from "next-intl";
 import CreateTaskModal from "@/components/modal/CreateTaskModal";
 import { createTask } from "@/app/api/issuesApi";
@@ -37,8 +41,10 @@ const ProductBacklogPage: React.FC = () => {
   const projectId = Number(pathname.split("/")[4]);
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [isTaskModalVisible, setIsTaskModalVisible] = useState(false);
   const [isProductOwner, setIsProductOwner] = useState(false);
+  const [selectedUserStory, setSelectedUserStory] = useState<any>(null);
   const [selectedUserStoryId, setSelectedUserStoryId] = useState<number | null>(
     null
   );
@@ -51,8 +57,15 @@ const ProductBacklogPage: React.FC = () => {
     setIsModalVisible(true);
   };
 
+  const showUpdateModal = (userStory: any) => {
+    setSelectedUserStory(userStory);
+    setIsUpdateModalVisible(true);
+    form.setFieldsValue(userStory);
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsUpdateModalVisible(false);
     form.resetFields();
   };
 
@@ -75,7 +88,7 @@ const ProductBacklogPage: React.FC = () => {
     try {
       const { title, description, priority, point } = values;
       const pointInt = parseInt(point, 10);
-      const response = await createUserStory({
+      await createUserStory({
         projectId,
         title,
         description,
@@ -97,6 +110,49 @@ const ProductBacklogPage: React.FC = () => {
     }
   };
 
+  const handleUpdateUserStory = async (values: any) => {
+    try {
+      const { title, description, priority, point } = values;
+      const pointInt = parseInt(point, 10);
+      await updateUserStory(
+        {
+          title: title,
+          description: description,
+          priority: priority,
+          point: pointInt,
+        },
+        selectedUserStory.id
+      );
+
+      setIsUpdateModalVisible(false);
+      form.resetFields();
+      notification.success({
+        message: "Cập nhật user story thành công",
+      });
+      mutate(`userStories-${projectId}`);
+    } catch (error) {
+      console.error("Failed to update user story", error);
+      notification.error({
+        message: "Lỗi khi cập nhật user story",
+      });
+    }
+  };
+
+  const handleDelete = async (id: any) => {
+    try {
+      await deleteUserStory(id);
+      notification.success({
+        message: "Xóa user story thành công",
+      });
+      mutate(`userStories-${projectId}`);
+    } catch (error) {
+      console.error("Failed to delete user story", error);
+      notification.error({
+        message: "Lỗi khi xóa user story",
+      });
+    }
+  };
+
   const onFinishFailed = (errorInfo: any) => {
     console.error("Failed:", errorInfo);
   };
@@ -106,14 +162,8 @@ const ProductBacklogPage: React.FC = () => {
     setIsTaskModalVisible(true);
   };
 
-  const handleEdit = (id: any) => {
-    // Implement logic for editing a user story
-    console.log("Edit user story id:", id);
-  };
-
-  const handleDelete = (id: any) => {
-    // Implement logic for deleting a user story
-    console.log("Delete user story id:", id);
+  const handleEdit = (userStory: any) => {
+    showUpdateModal(userStory);
   };
 
   const handleTaskModalClose = () => {
@@ -217,11 +267,10 @@ const ProductBacklogPage: React.FC = () => {
             type="text"
             icon={<PlusOutlined />}
             onClick={() => handleCreateTask(record.id)}
-            disabled={!isProductOwner}
           ></Button>
           <Button
             icon={<EditOutlined />}
-            onClick={() => handleEdit(record.id)}
+            onClick={() => handleEdit(record)}
             disabled={!isProductOwner}
           ></Button>
           <Popconfirm
@@ -313,6 +362,56 @@ const ProductBacklogPage: React.FC = () => {
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Tạo
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Cập nhật User Story"
+        open={isUpdateModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form
+          form={form}
+          name="updateUserStoryForm"
+          onFinish={handleUpdateUserStory}
+          onFinishFailed={onFinishFailed}
+          layout="vertical"
+        >
+          <Form.Item
+            name="title"
+            label="Tiêu đề"
+            rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Mô tả"
+            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+          >
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item
+            name="priority"
+            label="Độ ưu tiên"
+            rules={[{ required: true, message: "Vui lòng chọn độ ưu tiên" }]}
+          >
+            <Select options={priorityOptions(t)}></Select>
+          </Form.Item>
+          <Form.Item
+            name="point"
+            label="Điểm User Story"
+            rules={[
+              { required: true, message: "Vui lòng nhập điểm User Story" },
+            ]}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Cập nhật
             </Button>
           </Form.Item>
         </Form>
