@@ -60,6 +60,8 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
       setSelectedKeys(["6"]);
     } else if (pathname.includes("product-backlog")) {
       setSelectedKeys(["7"]);
+    } else if (pathname.includes("dash")) {
+      setSelectedKeys(["8"]);
     } else {
       setSelectedKeys(["1"]); // Default key
     }
@@ -89,6 +91,11 @@ const Sidebar: React.FC<SidebarProps> = ({ project }) => {
     getItem(t("productBacklog"), "7", <CarryOutOutlined />, undefined, () =>
       router.push("/projects/detail/" + project?.id + "/product-backlog")
     ),
+    { type: "divider" },
+    getItem("Dashboard", "8", <GroupOutlined />, undefined, () =>
+      router.push("/projects/detail/" + project?.id + "/dash")
+    ),
+    { type: "divider" },
     getItem(t("projectSetting"), "6", <ToolOutlined />, undefined, () =>
       router.push("/projects/detail/" + project?.id + "/setting")
     ),

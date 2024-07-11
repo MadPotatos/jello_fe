@@ -179,3 +179,16 @@ export const fetchAssignedIssues = async (
     throw error;
   }
 };
+
+export const fetchAllIssuesAndUserStory = async (projectId: number) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/issues/all-issues-and-user-story/${projectId}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching all issues and user story:", error);
+    throw error;
+  }
+};
