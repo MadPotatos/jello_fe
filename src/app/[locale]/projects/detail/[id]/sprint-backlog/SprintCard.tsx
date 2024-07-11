@@ -97,7 +97,7 @@ const SprintCard: React.FC<SprintProps> = ({
   const handleAddTaskFromUserStory = () => {
     setIsAddTaskFromUserStoryVisible(false);
     setIsCreatingIssue(false);
-    mutate(`sprints-issues-${projectId}`);
+    mutate(`sprint-issues-${projectId}`);
   };
 
   const handleComplete = () => {

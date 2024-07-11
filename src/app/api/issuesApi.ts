@@ -163,3 +163,19 @@ export const addIssueToSprint = async (issueId: number, sprintId: number) => {
     throw error;
   }
 };
+
+export const fetchAssignedIssues = async (
+  projectId: number,
+  userId: number
+) => {
+  try {
+    const response = await fetch(
+      `${Backend_URL}/issues/assigned/${projectId}/${userId}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching assigned issues:", error);
+    throw error;
+  }
+};
