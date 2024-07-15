@@ -244,7 +244,7 @@ const SprintCard: React.FC<SprintProps> = ({
           )}
           <div>
             <span className="text-lg text-gray-400">
-              ({filteredIssues?.length ?? 0} issues)
+              ({filteredIssues?.length ?? 0} tasks)
             </span>
           </div>
         </div>

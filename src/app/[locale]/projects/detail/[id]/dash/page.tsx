@@ -31,9 +31,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 const { Title, Text } = Typography;
 
 const DashBoardPage: React.FC = () => {
-  const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   const projectId: number = parseInt(pathname.split("/")[4]);
 

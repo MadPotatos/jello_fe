@@ -177,12 +177,11 @@ const ProductBacklogPage: React.FC = () => {
       const { summary, priority } = values;
 
       await createTask({
-        projectId,
         userStoryId: selectedUserStoryId,
+        projectId,
         summary,
         priority,
         type: IssueType.TASK,
-        reporterId: session?.user.id,
       });
       setIsTaskModalVisible(false);
       notification.success({

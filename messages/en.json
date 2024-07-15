@@ -307,12 +307,12 @@
     "assign": "Assign role"
   },
     "completeSprint": {
-    "title": "Complete Sprint",
+    "title": "Complete ",
     "complete": "Complete",
     "cancel": "Cancel",
     "containsOpenIssues": "This sprint contains: ",
-    "openIssues": " open issues",
-    "moveOpenIssuesToSprint": "Move open issues to sprint",
+    "openIssues": " open Tasks",
+    "moveOpenIssuesToSprint": "Move open Tasks to",
     "pleaseSelectSprint": "Please select a sprint",
     "sprintCompletedSuccess": "Sprint completed"
   },
@@ -370,7 +370,7 @@
     "planning": "Planning",
     "board": "Board",
     "timeline": "Timeline",
-    "backlog": "Backlog",
+    "backlog": "Sprint Backlog",
     "issues": "Issues",
     "development": "Development",
     "pullRequests": "Pull requests",

@@ -310,12 +310,12 @@
     "assign":"Phân công"
   },
     "completeSprint": {
-    "title": "Hoàn thành Sprint",
+    "title": "Hoàn thành",
     "complete": "Hoàn thành",
     "cancel": "Hủy",
     "containsOpenIssues": "Sprint này chứa: ",
-    "openIssues": " Issue mở",
-    "moveOpenIssuesToSprint": "Di chuyển các Issue mở sang sprint",
+    "openIssues": " Task mở",
+    "moveOpenIssuesToSprint": "Di chuyển các Task mở sang",
     "pleaseSelectSprint": "Vui lòng chọn một sprint",
     "sprintCompletedSuccess": "Hoàn thành sprint thành công"
   },
@@ -373,8 +373,8 @@
     "planning": "Lập kế hoạch",
     "board": "Bảng",
     "timeline": "Dòng thời gian",
-    "backlog": "Backlog",
-    "issues": "Issues",
+    "backlog": "Sprint Backlog",
+    "issues": "Danh sách công việc",
     "development": "Phát triển",
     "pullRequests": "Pull Requests",
     "projectSetting": "Cài đặt dự án",

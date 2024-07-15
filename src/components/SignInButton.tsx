@@ -85,7 +85,7 @@ const SignInButton: React.FC = () => {
   ) => {
     switch (type) {
       case NotificationType.ASSIGNED_TO_ISSUE:
-        return `${t("assginToIssue")} ${notification.Issue.summary}`;
+        return `${t("assginToIssue")} ${notification.WorkItems.summary}`;
       case NotificationType.PROJECT_INVITE:
         return `${t("inviteToProject")} ${notification.Project.name}`;
       case NotificationType.SPRINT_STARTED:
