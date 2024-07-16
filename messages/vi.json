@@ -209,7 +209,7 @@
     "project": "Dự án"
   },
   "Filter": {
-    "searchIssues": "Tìm kiếm Issue",
+    "searchIssues": "Tìm kiếm",
     "type": "Loại",
     "priority": "Ưu tiên",
     "clearFilter": "Xóa bộ lọc",

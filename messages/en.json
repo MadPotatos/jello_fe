@@ -207,7 +207,7 @@
     "project": "Project"
   },
   "Filter": {
-    "searchIssues": "Search issues",
+    "searchIssues": "Search",
     "type": "Type",
     "priority": "Priority",
     "clearFilter": "Clear Filter",
