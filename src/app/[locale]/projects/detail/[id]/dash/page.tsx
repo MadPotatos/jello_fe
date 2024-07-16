@@ -26,13 +26,14 @@ import {
   fetchAllIssuesAndUserStory,
   fetchAssignedIssues,
 } from "@/app/api/issuesApi";
+import { useTranslations } from "next-intl";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const { Title, Text } = Typography;
 
 const DashBoardPage: React.FC = () => {
   const pathname = usePathname();
-
+  const t = useTranslations("Dash");
   const projectId: number = parseInt(pathname.split("/")[4]);
 
   const { data: project } = useSWR<ProjectDetail>(`project-${projectId}`, () =>
@@ -72,23 +73,23 @@ const DashBoardPage: React.FC = () => {
 
   const pieChartData = [
     {
-      name: "User Stories",
+      name: t("userStories"),
       data: totalWork?.totalUserStories,
     },
     {
-      name: "Tasks",
+      name: t("tasks"),
       data: totalWork?.totalTasks,
     },
     {
-      name: "Bugs",
+      name: t("bugs"),
       data: totalWork?.totalBugs,
     },
     {
-      name: "Reviews",
+      name: t("reviews"),
       data: totalWork?.totalReviews,
     },
     {
-      name: "Sub Tasks",
+      name: t("subTasks"),
       data: totalWork?.totalSubtasks,
     },
   ];
@@ -97,7 +98,13 @@ const DashBoardPage: React.FC = () => {
     chart: {
       type: "pie",
     },
-    labels: ["User Stories", "Tasks", "Bugs", "Reviews", "Sub Tasks"],
+    labels: [
+      t("userStories"),
+      t("tasks"),
+      t("bugs"),
+      t("reviews"),
+      t("subTasks"),
+    ],
     responsive: [
       {
         breakpoint: 480,
@@ -149,20 +156,20 @@ const DashBoardPage: React.FC = () => {
 
   const barChartData = [
     {
-      name: "Todo",
+      name: t("todo"),
       data:
         members?.map((member) => assignedIssues[member.userId]?.todo || 0) ||
         [],
     },
     {
-      name: "In Progress",
+      name: t("inProgress"),
       data:
         members?.map(
           (member) => assignedIssues[member.userId]?.inProgress || 0
         ) || [],
     },
     {
-      name: "Done",
+      name: t("done"),
       data:
         members?.map((member) => assignedIssues[member.userId]?.done || 0) ||
         [],
@@ -182,18 +189,20 @@ const DashBoardPage: React.FC = () => {
   return (
     <div className="site-layout-content">
       <Title level={2} className="text-xl font-semibold text-gray-800 mb-4">
-        Dashboard
+        {t("dashboard")}
       </Title>
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Card className="border border-gray-200 shadow-md">
             <div className="p-4">
               <Title level={3}>{project?.name}</Title>
-              <Title level={5}>Mục tiêu sản phẩm: {project?.productGoal}</Title>
+              <Title level={5}>
+                {t("productGoal")}: {project?.productGoal}
+              </Title>
               <Text>{project?.description}</Text>
             </div>
             <div className="ml-4">
-              <Title level={5}>Thành viên</Title>
+              <Title level={5}>{t("members")}</Title>
               <Avatar.Group
                 maxCount={5}
                 size="large"
@@ -216,16 +225,16 @@ const DashBoardPage: React.FC = () => {
             {sprint ? (
               <div className="p-4">
                 <Title level={3}>{sprint?.name}</Title>
-                <Text strong>Mục tiêu: </Text>
+                <Text strong>{t("goal")}: </Text>
                 <Text>{sprint?.goal}</Text>
                 <div className="flex justify-between pt-2">
                   <div>{userStoryTags}</div>
                 </div>
                 <div className="text-base text-gray-500">
-                  <Text strong>Tổng User Stories Point: </Text>
+                  <Text strong>{t("totalUserStoryPoints")}: </Text>
                   {sprint.totalUserStoryPoints}
                 </div>
-                <Text strong>Thời gian: </Text>
+                <Text strong>{t("time")}: </Text>
                 <Text className="text-base text-gray-500">
                   {sprint?.startDate
                     ? `${dayjs(sprint?.startDate).format(
@@ -236,7 +245,7 @@ const DashBoardPage: React.FC = () => {
               </div>
             ) : (
               <div className="p-4">
-                <Title level={3}>Không có Sprint đang trong tiến độ</Title>
+                <Title level={3}>{t("noCurrentSprint")}</Title>
               </div>
             )}
           </Card>
@@ -244,7 +253,9 @@ const DashBoardPage: React.FC = () => {
         <Col span={12}>
           <Card className="border border-gray-200 shadow-md">
             <div className="p-4">
-              <Title level={3}>Tổng công việc: {totalWork?.total}</Title>
+              <Title level={3}>
+                {t("totalWork")}: {totalWork?.total}
+              </Title>
               <Chart
                 options={pieChartOptions}
                 series={pieChartData.map((data) => data.data)}
@@ -261,7 +272,7 @@ const DashBoardPage: React.FC = () => {
             style={{ maxHeight: "480px", overflowY: "scroll" }}
           >
             <div className="p-4">
-              <Title level={3}>Tiến độ của thành viên</Title>
+              <Title level={3}>{t("memberProgress")}</Title>
               <Chart
                 options={barChartOptions}
                 series={barChartData}

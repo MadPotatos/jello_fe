@@ -202,6 +202,7 @@ const ProjectSettingPage = () => {
         members={members || []}
         projectId={projectId}
         onClose={handleCancelMembersModal}
+        isAdmin={isAdmin}
       />
     </div>
   );

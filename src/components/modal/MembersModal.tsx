@@ -6,7 +6,7 @@ import { mutate } from "swr";
 import { removeMember, updateRole } from "@/app/api/memberApi";
 import { useRouter } from "next-nprogress-bar";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Role } from "@/lib/enum"; // Assuming Role enum is defined elsewhere
+import { Role } from "@/lib/enum";
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -16,6 +16,7 @@ interface MembersModalProps {
   members: Member[];
   projectId: number;
   onClose: () => void;
+  isAdmin: boolean | undefined;
 }
 
 const MembersModal: React.FC<MembersModalProps> = ({
@@ -23,6 +24,7 @@ const MembersModal: React.FC<MembersModalProps> = ({
   members,
   projectId,
   onClose,
+  isAdmin,
 }) => {
   const t = useTranslations("projectSettings");
   const router = useRouter();
@@ -99,6 +101,7 @@ const MembersModal: React.FC<MembersModalProps> = ({
                 defaultValue={member.role}
                 style={{ minWidth: 200 }}
                 onChange={(value) => handleRoleChange(member.userId, value)}
+                disabled={!isAdmin}
               >
                 {Object.values(Role).map((role: Role) => (
                   <Option key={role} value={role}>
@@ -111,6 +114,7 @@ const MembersModal: React.FC<MembersModalProps> = ({
                   type="link"
                   danger
                   onClick={() => handleDeleteMember(member.userId)}
+                  disabled={!isAdmin}
                 >
                   {t("remove")}
                 </Button>

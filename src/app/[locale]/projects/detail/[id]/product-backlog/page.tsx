@@ -99,13 +99,13 @@ const ProductBacklogPage: React.FC = () => {
       setIsModalVisible(false);
       form.resetFields();
       notification.success({
-        message: "Tạo user story thành công",
+        message: t("ProductBacklogPage.createUserStorySuccess"),
       });
       mutate(`userStories-${projectId}`);
     } catch (error) {
       console.error("Failed to create user story", error);
       notification.error({
-        message: "Lỗi khi tạo user story",
+        message: t("ProductBacklogPage.createUserStoryError"),
       });
     }
   };
@@ -127,13 +127,13 @@ const ProductBacklogPage: React.FC = () => {
       setIsUpdateModalVisible(false);
       form.resetFields();
       notification.success({
-        message: "Cập nhật user story thành công",
+        message: t("ProductBacklogPage.updateUserStorySuccess"),
       });
       mutate(`userStories-${projectId}`);
     } catch (error) {
       console.error("Failed to update user story", error);
       notification.error({
-        message: "Lỗi khi cập nhật user story",
+        message: t("ProductBacklogPage.updateUserStoryError"),
       });
     }
   };
@@ -142,13 +142,13 @@ const ProductBacklogPage: React.FC = () => {
     try {
       await deleteUserStory(id);
       notification.success({
-        message: "Xóa user story thành công",
+        message: t("ProductBacklogPage.deleteUserStorySuccess"),
       });
       mutate(`userStories-${projectId}`);
     } catch (error) {
       console.error("Failed to delete user story", error);
       notification.error({
-        message: "Lỗi khi xóa user story",
+        message: t("ProductBacklogPage.deleteUserStoryError"),
       });
     }
   };
@@ -185,30 +185,30 @@ const ProductBacklogPage: React.FC = () => {
       });
       setIsTaskModalVisible(false);
       notification.success({
-        message: "Tạo công việc thành công",
+        message: t("ProductBacklogPage.createTaskSuccess"),
       });
       mutate(`userStories-${projectId}`);
     } catch (error) {
       console.error("Failed to create task", error);
       notification.error({
-        message: "Lỗi khi tạo công việc",
+        message: t("ProductBacklogPage.createTaskError"),
       });
     }
   };
 
   const columns: any[] = [
     {
-      title: "Tiêu đề",
+      title: t("ProductBacklogPage.title"),
       dataIndex: "title",
       key: "title",
     },
     {
-      title: "Mô tả",
+      title: t("ProductBacklogPage.description"),
       dataIndex: "description",
       key: "description",
     },
     {
-      title: "Trạng thái",
+      title: t("ProductBacklogPage.status"),
       dataIndex: "status",
       key: "status",
       align: "center",
@@ -221,7 +221,7 @@ const ProductBacklogPage: React.FC = () => {
       },
     },
     {
-      title: "Độ ưu tiên",
+      title: t("ProductBacklogPage.priority"),
       dataIndex: "priority",
       key: "priority",
       align: "center",
@@ -230,12 +230,12 @@ const ProductBacklogPage: React.FC = () => {
       ),
     },
     {
-      title: "Điểm",
+      title: t("ProductBacklogPage.point"),
       dataIndex: "point",
       key: "point",
     },
     {
-      title: "Công việc",
+      title: t("ProductBacklogPage.tasks"),
       key: "tasks",
       render: (_: any, record: any) => (
         <Table
@@ -258,7 +258,7 @@ const ProductBacklogPage: React.FC = () => {
       ),
     },
     {
-      title: "Hành động",
+      title: t("ProductBacklogPage.action"),
       key: "action",
       render: (_: any, record: any) => (
         <Space size="middle">
@@ -273,10 +273,10 @@ const ProductBacklogPage: React.FC = () => {
             disabled={!isProductOwner}
           ></Button>
           <Popconfirm
-            title={t("Bạn có chắc muốn xóa user story này không?")}
+            title={t("ProductBacklogPage.confirmDeleteUserStory")}
             onConfirm={() => handleDelete(record.id)}
-            okText={t("Đồng ý")}
-            cancelText={t("Hủy")}
+            okText={t("ProductBacklogPage.confirm")}
+            cancelText={t("ProductBacklogPage.cancel")}
           >
             <Button
               danger
@@ -304,7 +304,7 @@ const ProductBacklogPage: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Product Backlog</h1>
         <Button type="primary" onClick={showModal} disabled={!isProductOwner}>
-          Tạo User Story
+          {t("ProductBacklogPage.createUserStory")}
         </Button>
       </div>
 
@@ -316,7 +316,7 @@ const ProductBacklogPage: React.FC = () => {
         pagination={{ pageSize: 5 }}
       />
       <Modal
-        title="Tạo User Story"
+        title={t("ProductBacklogPage.createUserStoryTitle")}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -330,30 +330,48 @@ const ProductBacklogPage: React.FC = () => {
         >
           <Form.Item
             name="title"
-            label="Tiêu đề"
-            rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
+            label={t("ProductBacklogPage.title")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.titleRequired"),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="description"
-            label="Mô tả"
-            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+            label={t("ProductBacklogPage.description")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.descriptionRequired"),
+              },
+            ]}
           >
             <Input.TextArea />
           </Form.Item>
           <Form.Item
             name="priority"
-            label="Độ ưu tiên"
-            rules={[{ required: true, message: "Vui lòng chọn độ ưu tiên" }]}
+            label={t("ProductBacklogPage.priority")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.priorityRequired"),
+              },
+            ]}
           >
             <Select options={priorityOptions(t)}></Select>
           </Form.Item>
           <Form.Item
             name="point"
-            label="Điểm User Story"
+            label={t("ProductBacklogPage.point")}
             rules={[
-              { required: true, message: "Vui lòng nhập điểm User Story" },
+              {
+                required: true,
+                message: t("ProductBacklogPage.pointRequired"),
+              },
             ]}
           >
             <Input type="number" />
@@ -366,7 +384,7 @@ const ProductBacklogPage: React.FC = () => {
         </Form>
       </Modal>
       <Modal
-        title="Cập nhật User Story"
+        title={t("ProductBacklogPage.updateUserStoryTitle")}
         open={isUpdateModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -380,37 +398,55 @@ const ProductBacklogPage: React.FC = () => {
         >
           <Form.Item
             name="title"
-            label="Tiêu đề"
-            rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
+            label={t("ProductBacklogPage.title")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.titleRequired"),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="description"
-            label="Mô tả"
-            rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
+            label={t("ProductBacklogPage.description")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.descriptionRequired"),
+              },
+            ]}
           >
             <Input.TextArea />
           </Form.Item>
           <Form.Item
             name="priority"
-            label="Độ ưu tiên"
-            rules={[{ required: true, message: "Vui lòng chọn độ ưu tiên" }]}
+            label={t("ProductBacklogPage.priority")}
+            rules={[
+              {
+                required: true,
+                message: t("ProductBacklogPage.priorityRequired"),
+              },
+            ]}
           >
             <Select options={priorityOptions(t)}></Select>
           </Form.Item>
           <Form.Item
             name="point"
-            label="Điểm User Story"
+            label={t("ProductBacklogPage.point")}
             rules={[
-              { required: true, message: "Vui lòng nhập điểm User Story" },
+              {
+                required: true,
+                message: t("ProductBacklogPage.pointRequired"),
+              },
             ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Cập nhật
+              {t("ProductBacklogPage.confirm")}
             </Button>
           </Form.Item>
         </Form>

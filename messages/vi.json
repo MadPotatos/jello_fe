@@ -213,7 +213,7 @@
     "type": "Loại",
     "priority": "Ưu tiên",
     "clearFilter": "Xóa bộ lọc",
-    "addMember": "Chỉ Admin mới có thể thêm thành viên vào dự án"
+    "addMember": "Chỉ Scrum master mới có thể thêm thành viên vào dự án"
   },
     "TypeOptions": {
     "task": "Công việc",
@@ -237,7 +237,7 @@
     "deleteListSuccess": "Danh sách đã được xóa",
     "delete": "Xóa",
     "cancel": "Hủy",
-    "toolTip": "Chỉ trưởng dự án mới có thể hoàn thành Sprint",
+    "toolTip": "Chỉ Scrum master mới có thể hoàn thành Sprint",
     "issueCreated": "Issue đã được tạo",
     "issueCreateFailed": "Không thể tạo issue",
     "validateIssueSummary": "Vui lòng nhập mô tả issue",
@@ -405,12 +405,12 @@
     "delete": "Xóa",
     "cancel": "Hủy bỏ",
     "startSprint": "Bắt đầu Sprint",
-    "startSprintTooltip": "Chỉ trưởng dự án  mới có thể bắt đầu sprint",
+    "startSprintTooltip": "Chỉ Scrum master  mới có thể bắt đầu sprint",
     "completeSprint": "Hoàn thành Sprint",
-    "completeSprintTooltip": "Chỉ trưởng dự án  mới có thể hoàn thành sprint",
-    "editSprintTooltip": "Chỉ trưởng dự án  mới có thể chỉnh sửa sprint",
+    "completeSprintTooltip": "Chỉ Scrum master  mới có thể hoàn thành sprint",
+    "editSprintTooltip": "Chỉ Scrum master  mới có thể chỉnh sửa sprint",
     "createSprint": "Tạo Sprint",
-    "createSprintTooltip": "Chỉ trưởng dự án mới có thể tạo sprint",
+    "createSprintTooltip": "Chỉ Scrum master mới có thể tạo sprint",
     "backlogPlaceholder": "Backlog trống",
     "sprintPlaceholder": "Lập kế hoạch sprint bằng cách kéo các Task vào đây hoặc tạo Task mới",
     "validateIssueSummary": "Vui lòng nhập mô tả Task",
@@ -436,7 +436,73 @@
    "NotMember":{     
     "notMemberDesc" :"Bạn không phải là thành viên của dự án này.",
     "goBackHome" :"Quay lại trang chủ"
+  },
+  
+ 
+  "Dash": {
+    "dashboard": "Dashboard",
+    "productGoal": "Mục tiêu sản phẩm",
+    "members": "Thành viên",
+    "goal": "Mục tiêu",
+    "totalUserStoryPoints": "Tổng số điểm User Stories",
+    "time": "Thời gian",
+    "noCurrentSprint": "Không có Sprint đang trong tiến độ",
+    "totalWork": "Tổng công việc",
+    "memberProgress": "Tiến độ của thành viên",
+    "userStories": "User Stories",
+    "tasks": "Công việc",
+    "bugs": "Lỗi",
+    "reviews": "Đánh giá",
+    "subTasks": "Công việc phụ",
+    "todo": "Cần làm",
+    "inProgress": "Đang tiến hành",
+    "done": "Hoàn thành"
+  },
+    "ProductBacklogPage": {
+    "title": "Tiêu đề",
+    "description": "Mô tả",
+    "status": "Trạng thái",
+    "priority": "Độ ưu tiên",
+    "point": "Điểm",
+    "tasks": "Công việc",
+    "action": "Hành động",
+    "createUserStory": "Tạo User Story",
+    "createUserStoryTitle": "Tạo User Story",
+    "updateUserStoryTitle": "Cập nhật User Story",
+    "confirmDeleteUserStory": "Bạn có chắc muốn xóa user story này không?",
+    "confirm": "Đồng ý",
+    "cancel": "Hủy",
+    "createUserStorySuccess": "Tạo user story thành công",
+    "createUserStoryError": "Lỗi khi tạo user story",
+    "updateUserStorySuccess": "Cập nhật user story thành công",
+    "updateUserStoryError": "Lỗi khi cập nhật user story",
+    "deleteUserStorySuccess": "Xóa user story thành công",
+    "deleteUserStoryError": "Lỗi khi xóa user story",
+    "createTaskSuccess": "Tạo công việc thành công",
+    "createTaskError": "Lỗi khi tạo công việc",
+    "titleLabel": "Tiêu đề",
+    "descriptionLabel": "Mô tả",
+    "priorityLabel": "Độ ưu tiên",
+    "pointLabel": "Điểm User Story",
+    "titleRequired": "Vui lòng nhập tiêu đề",
+    "descriptionRequired": "Vui lòng nhập mô tả",
+    "priorityRequired": "Vui lòng chọn độ ưu tiên",
+    "pointRequired": "Vui lòng nhập điểm User Story"
+  },
+  "CreateTaskModal": {
+    "title": "Tạo công việc",
+    "summaryLabel": "Mô tả",
+    "summaryRequired": "Vui lòng nhập mô tả công việc",
+    "summaryMaxLength": "Mô tả không vượt quá 100 ký tự",
+    "priorityLabel": "Độ ưu tiên",
+    "priorityPlaceholder": "Chọn độ ưu tiên",
+    "cancel": "Hủy",
+    "create": "Tạo"
   }
+
+
+
+
 
 }
 

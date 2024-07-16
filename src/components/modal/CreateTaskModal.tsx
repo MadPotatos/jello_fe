@@ -1,6 +1,8 @@
 import React from "react";
 import { Modal, Form, Input, Select, Button } from "antd";
 import { IssuePriority } from "@/lib/enum";
+import { useTranslations } from "next-intl";
+import { getColoredIconByPriority, priorityOptions } from "@/lib/utils";
 
 interface CreateTaskModalProps {
   visible: boolean;
@@ -15,6 +17,8 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const t = useTranslations(); // Access translations
+
   const handleSubmit = (values: any) => {
     onSubmit(values);
   };
@@ -25,52 +29,46 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   return (
     <Modal
-      title="Tạo công việc"
-      open={visible}
+      title={t("CreateTaskModal.title")}
+      visible={visible}
       onCancel={handleCancel}
       footer={null}
     >
       <Form onFinish={handleSubmit} layout="vertical">
         <Form.Item
           name="summary"
-          label="Mô tả"
+          label={t("CreateTaskModal.summaryLabel")}
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập mô tả công việc",
+              message: t("CreateTaskModal.summaryRequired"),
             },
             {
               max: 100,
-              message: "Mô tả không vượt quá 100 ký tự",
+              message: t("CreateTaskModal.summaryMaxLength"),
             },
           ]}
         >
-          <Input placeholder="Nhập mô tả công việc" />
+          <Input placeholder={t("CreateTaskModal.summaryLabel")} />
         </Form.Item>
 
         <Form.Item
           name="priority"
-          label="Độ ưu tiên"
+          label={t("CreateTaskModal.priorityLabel")}
           initialValue={IssuePriority.HIGH}
         >
-          <Select placeholder="Chọn độ ưu tiên">
-            {Object.keys(IssuePriority).map((key) => (
-              <Option
-                key={key}
-                value={IssuePriority[key as keyof typeof IssuePriority]}
-              >
-                {IssuePriority[key as keyof typeof IssuePriority]}
-              </Option>
-            ))}
-          </Select>
+          <Select
+            placeholder={t("CreateTaskModal.priorityPlaceholder")}
+            options={priorityOptions(t)}
+          ></Select>
         </Form.Item>
 
         <div className="flex justify-end">
           <Button type="default" onClick={handleCancel} className="mr-2">
-            Hủy
+            {t("CreateTaskModal.cancel")}
           </Button>
           <Button type="primary" htmlType="submit">
-            Tạo
+            {t("CreateTaskModal.create")}
           </Button>
         </div>
       </Form>
